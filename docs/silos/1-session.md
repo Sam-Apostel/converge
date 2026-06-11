@@ -36,10 +36,16 @@ speakerId,speakerName}` — reuse it via import, or add a richer one in your fil
   social icons** (GitHub / X / website) read from `profile.socials`
   (`{github,x,website}`) rendered as the soft icon buttons from the design (NOT a
   follow button). Then the **live slide**: a `Thumb` (diagonal hatch) with a
-  "Slide N — topic" chip, an "on stage now" lime-dot chip, and the lime
-  **`★ Bookmark this slide`** button (`Button variant="lime"`). Below: a tabbed
-  strip (Live questions / Discussion / Notes) showing the session's `question`
-  rows with `VoteControl`.
+  "Slide N — topic" chip (top-left), an "on stage now" lime-dot chip (top-right),
+  and the slide-meta chip bottom-left. **The Bookmark button is NOT on the slide.**
+  - **Capture dock** (design update — see `design/Converge.dc.html` ~lines
+    261–271 and `design/screenshots/01-capture-dock.png`): directly **below** the
+    slide, a dark container — use **`Spotlight`** — with the lime radial glow,
+    holding a pulsing `LiveDot` + mono **`CAPTURE · {time}`** and **"Keep this
+    slide on your timeline"** on the left, and the lime **`★ Bookmark this slide`**
+    button (`Button variant="lime"`) on the right.
+  - Below the dock: a tabbed strip (Live questions / Discussion / Notes) showing
+    the session's `question` rows with `VoteControl`.
 - **Right — Moments rail** (`bg-inner`): "Your moments" + a lime count `Badge`,
   empty state, then a **2-col grid of moment thumbnails** — each a `Thumb` with a
   lime `★ {time}` chip, slide number, topic, and a remove ×. Below: "In the room
