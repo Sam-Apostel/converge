@@ -4,7 +4,6 @@
     "builder": "RAILPACK"
   },
   "deploy": {
-    "preDeployCommand": ["bun run db:migrate"],
     "startCommand": "bun run start",
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 120,

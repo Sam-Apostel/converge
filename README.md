@@ -86,7 +86,8 @@ return JSON. See `src/mcp/`.
 
 `railway.json` defines the build/deploy. Provision a PostgreSQL plugin and set
 `DATABASE_URL=${{Postgres.DATABASE_URL}}` plus the auth env vars on the service.
-Migrations run via the `preDeployCommand`.
+Migrations run on container start (the `start` script runs `db:migrate` before
+booting the server, where the `DATABASE_URL` reference is resolved).
 
 ## Agent tooling
 
