@@ -1,69 +1,87 @@
-# Silo 7 — AI Concierge
+# Silo 7 — AI Concierge (TanStack AI, BYOK)
 
 > Read [`README.md`](./README.md) first. Design source: **§1, Direction C**
-> ("Glass concierge") of `design/Converge.dc.html` for the look — frosted glass
-> frame around an opaque neumorphic surface, lime-forward.
+> ("Glass concierge") of `design/Converge.dc.html` for the look.
 
 A streaming chat that guides attendees and can **act on Converge data** — "who
 should I meet?", "what did I miss?", "find AI engineers into manufacturing",
 "summarize today's talks".
 
+## The model strategy (read carefully)
+
+Use **[TanStack AI](https://tanstack.com/ai)** (`@tanstack/ai`) — provider-agnostic,
+streaming, tool-calling, with React bindings. Two modes:
+
+- **Local, for dev:** the **`@tanstack/ai-ollama`** adapter against a local Ollama
+  server (`OLLAMA_BASE_URL`, default `http://localhost:11434`; a default model via
+  `CONCIERGE_DEV_MODEL`, e.g. `llama3.1`). No key, no cost. This is the fallback
+  whenever a user hasn't configured their own provider.
+- **Bring-your-own, for everyone else:** each user picks a **provider + model +
+  API key** in settings; the server resolves the matching adapter per request
+  (`@tanstack/ai-openai` / `-anthropic` / `-openrouter` / `-ollama`).
+
+Confirm exact adapter package names + versions on npm before installing.
+
 ## Owns (write only here)
 
 - `src/routes/_app/concierge.tsx` — the chat screen (replace the placeholder)
-- `src/routes/api/concierge.ts` — streaming chat endpoint (tool-use loop)
+- `src/routes/api/concierge.ts` — streaming chat endpoint (resolves the user's
+  provider, runs the tool-use loop, streams back)
 - `src/components/concierge/*` — message list, composer, tool-result cards
-- `src/lib/concierge/*` — the model client + tool definitions
-- `package.json` — **you are the only silo allowed to add a dependency** (the
-  Anthropic SDK). Add it cleanly; don't reformat unrelated lines.
-- `.env.example` — add `ANTHROPIC_API_KEY=` (and document it)
-
-## Model
-
-Use **Claude via the Anthropic API** (`@anthropic-ai/sdk`) — this is a
-Claude-centric project. Default to the latest model id **`claude-opus-4-8`**
-(swap to `claude-sonnet-4-6` if you want cheaper/faster). Needs
-`ANTHROPIC_API_KEY` (server-side only — never expose it to the client). The app
-already deploys on Railway; the key gets set there + in local `.env.local`.
+- `src/lib/concierge/*` — provider resolution + tool definitions + key crypto
+- `src/routes/_app/settings.tsx` — **new** settings screen for the AI provider /
+  model / key (don't edit `profile.tsx`; link to `/settings` from the concierge —
+  wiring it into the avatar menu is a later coordinated shell edit)
+- `src/db/domain-schema.ts` — **a schema change is allowed now** (silos merged):
+  add a small **`userAiSettings`** table (`userId` PK → `provider`, `model`,
+  `apiKeyEncrypted`, `baseUrl`, timestamps). Then `bun run db:generate` +
+  `bun run db:migrate` and commit the migration.
+- `package.json` — you're the only silo adding deps (TanStack AI + adapters)
+- `.env.example` — add `OLLAMA_BASE_URL`, `CONCIERGE_DEV_MODEL`, and
+  `CONCIERGE_KEY_SECRET` (for encrypting stored keys; can default to
+  `BETTER_AUTH_SECRET`)
 
 ## Build
 
-**Endpoint (`api/concierge.ts`)** — a server route that accepts the chat
-messages, calls Claude with **tool use** + **streaming**, runs the tool-use loop
-(execute the tool, feed the result back, continue), and streams text deltas to
-the client (SSE / a `ReadableStream` `text/event-stream`, like
-`src/routes/api/stream.ts`). Gate it with `requireUser` once auth is live; for
-now run it open with a `// TODO(auth)`.
+**Provider resolution (`lib/concierge/provider.ts`)** — given the current user,
+load their `userAiSettings`; if present, build the matching TanStack AI adapter
+with their decrypted key + model; else fall back to the local Ollama adapter.
+**API keys are secrets:** encrypt at rest (AES-256-GCM with `CONCIERGE_KEY_SECRET`),
+decrypt only server-side, never send a key (or another user's) to the client.
 
-**Tools** — give the model a small set of typed tools that wrap the existing
-query layer. **Do NOT edit `src/mcp/*`** (that's the merged MCP silo) and don't
-call the OAuth-protected `/mcp` endpoint over HTTP. Instead define thin tool
-functions in `src/lib/concierge/tools.ts` that reuse Converge's data (drizzle via
-`#/db`, or import server-side query helpers). Start with: `search_people(query)`,
-`list_sessions()`, `get_schedule()`, `list_projects()`, `get_profile(userId)`,
-`my_schedule()`. Each returns compact JSON the model can reason over. (The MCP
-server in `src/mcp/` is a good reference for what each should return.)
+**Endpoint (`api/concierge.ts`)** — accept the chat messages, run TanStack AI's
+streaming chat with the resolved provider + the tools, and stream tokens/tool
+events to the client. Gate with `requireUser` (there's no UI session yet — use a
+`// TODO(auth)` stand-in viewer for now).
 
-**UI (`concierge.tsx`)** — replace the static placeholder with a real chat:
-- The §1-C glass frame (frosted outer, opaque `#f6f7fc` inner) as the container.
-- Example-prompt chips (the ones already in the placeholder), an input dock
-  (`bg-pillow`, lime send), and a streamed message list.
-- Render **tool results inline** with the existing components — e.g. a
-  `search_people` result as a row of `Avatar` + name, a session as a row — so
-  answers are interactive, not just text. Reuse `PersonCard`/`ProjectCard` or
-  compact variants.
-- Stream tokens as they arrive (`animate`-friendly), show a thinking state.
+**Tools** — typed, **read-only** tools that wrap Converge data. **Do NOT edit
+`src/mcp/*`** and don't call the OAuth-protected `/mcp` over HTTP — define thin
+functions in `src/lib/concierge/tools.ts` over `#/db` (the MCP server in
+`src/mcp/` is a good reference for shapes): `search_people`, `list_sessions`,
+`get_schedule`, `list_projects`, `get_profile`, `my_schedule`.
+
+**Settings UI (`settings.tsx`)** — a form to choose provider (Ollama / OpenAI /
+Anthropic / OpenRouter), enter a model id, and paste a key (write-only field —
+show "key set", never render the stored key back). Persists to `userAiSettings`
+via a server fn / API route you own. Include a "test connection" affordance.
+
+**Chat UI (`concierge.tsx`)** — the §1-C glass frame (frosted outer, opaque
+`#f6f7fc` inner). Use `@tanstack/ai-react`'s `useChat`. Example-prompt chips, an
+input dock (`bg-pillow`, lime send), streamed messages, and **tool results
+rendered inline** with the existing components (a `search_people` result as
+`Avatar` rows, a session as a row) so answers are interactive. If no provider is
+configured **and** no local model is reachable, degrade gracefully — show the UI
++ a "configure a model in Settings" notice, not a crash.
 
 ## Don't
 
-Don't touch the shell, `ui/`, `src/mcp/*`, or other silos' files. Keep the API
-key server-only. Keep tool functions read-only for now (no destructive actions
-from chat without a confirm step).
+Don't touch the shell, `ui/`, `src/mcp/*`, `profile.tsx`, or other silos' files.
+Keep keys server-only + encrypted. Keep chat tools read-only (no destructive
+actions without an explicit confirm step).
 
 ## Done when
 
-`/concierge` streams a real Claude conversation that can call the tools and
-render results inline; `ANTHROPIC_API_KEY` documented in `.env.example`;
-`bun run typecheck` + `bun run build` pass; PR opened. (Without a key set the
-screen should degrade gracefully — show the prompt UI + a "set ANTHROPIC_API_KEY"
-notice rather than crash.)
+`/concierge` streams a real conversation (local Ollama out of the box) that can
+call the tools and render results inline; `/settings` lets a user set their own
+provider/model/key and the endpoint uses it; keys are encrypted at rest;
+`bun run typecheck` + `bun run build` pass; PR opened.
