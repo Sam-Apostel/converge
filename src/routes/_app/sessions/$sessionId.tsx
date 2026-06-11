@@ -44,7 +44,10 @@ function SessionScreen() {
   const collection = useMemo(() => momentsCollection(sessionId), [sessionId])
   const videoId = livestreamFor(sessionId)
 
-  // The playhead walks the deck; every capture advances it one slide.
+  // Livestream is the model: the talk progress bar follows the stream position.
+  // The slide playhead only drives the no-stream fallback (some talks are demos
+  // / webapps / canvases with no deck at all).
+  const [streamFraction, setStreamFraction] = useState(0)
   const [playhead, setPlayhead] = useState(INITIAL_SLIDE)
   const [toast, setToast] = useState(false)
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -136,7 +139,7 @@ function SessionScreen() {
         roomName={session.roomName}
         startsAt={session.startsAt}
         endsAt={session.endsAt}
-        fraction={talkFraction(playhead)}
+        fraction={videoId ? streamFraction : talkFraction(playhead)}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr]">
@@ -168,6 +171,7 @@ function SessionScreen() {
               videoId={videoId}
               posterUrl={youtubeThumb(videoId)}
               onBookmark={captureLive}
+              onProgress={setStreamFraction}
             />
           ) : (
             <LiveSlide
