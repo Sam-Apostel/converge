@@ -18,6 +18,7 @@ import { Route as ApiStreamRouteImport } from './routes/api/stream'
 import { Route as ApiSessionsRouteImport } from './routes/api/sessions'
 import { Route as ApiProjectsRouteImport } from './routes/api/projects'
 import { Route as ApiPeopleRouteImport } from './routes/api/people'
+import { Route as ApiMomentsRouteImport } from './routes/api/moments'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as AppVenueRouteImport } from './routes/_app/venue'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
@@ -76,6 +77,11 @@ const ApiProjectsRoute = ApiProjectsRouteImport.update({
 const ApiPeopleRoute = ApiPeopleRouteImport.update({
   id: '/api/people',
   path: '/api/people',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMomentsRoute = ApiMomentsRouteImport.update({
+  id: '/api/moments',
+  path: '/api/moments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
@@ -168,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AppProfileRoute
   '/venue': typeof AppVenueRoute
   '/api/health': typeof ApiHealthRoute
+  '/api/moments': typeof ApiMomentsRoute
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/sessions': typeof ApiSessionsRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AppProfileRoute
   '/venue': typeof AppVenueRoute
   '/api/health': typeof ApiHealthRoute
+  '/api/moments': typeof ApiMomentsRoute
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/sessions': typeof ApiSessionsRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   '/_app/profile': typeof AppProfileRoute
   '/_app/venue': typeof AppVenueRoute
   '/api/health': typeof ApiHealthRoute
+  '/api/moments': typeof ApiMomentsRoute
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/sessions': typeof ApiSessionsRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/venue'
     | '/api/health'
+    | '/api/moments'
     | '/api/people'
     | '/api/projects'
     | '/api/sessions'
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/venue'
     | '/api/health'
+    | '/api/moments'
     | '/api/people'
     | '/api/projects'
     | '/api/sessions'
@@ -297,6 +308,7 @@ export interface FileRouteTypes {
     | '/_app/profile'
     | '/_app/venue'
     | '/api/health'
+    | '/api/moments'
     | '/api/people'
     | '/api/projects'
     | '/api/sessions'
@@ -319,6 +331,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93OauthAuthorizationServerRoute: typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiHealthRoute: typeof ApiHealthRoute
+  ApiMomentsRoute: typeof ApiMomentsRoute
   ApiPeopleRoute: typeof ApiPeopleRoute
   ApiProjectsRoute: typeof ApiProjectsRoute
   ApiSessionsRoute: typeof ApiSessionsRoute
@@ -390,6 +403,13 @@ declare module '@tanstack/react-router' {
       path: '/api/people'
       fullPath: '/api/people'
       preLoaderRoute: typeof ApiPeopleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/moments': {
+      id: '/api/moments'
+      path: '/api/moments'
+      fullPath: '/api/moments'
+      preLoaderRoute: typeof ApiMomentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/health': {
@@ -541,6 +561,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ApiHealthRoute: ApiHealthRoute,
+  ApiMomentsRoute: ApiMomentsRoute,
   ApiPeopleRoute: ApiPeopleRoute,
   ApiProjectsRoute: ApiProjectsRoute,
   ApiSessionsRoute: ApiSessionsRoute,
