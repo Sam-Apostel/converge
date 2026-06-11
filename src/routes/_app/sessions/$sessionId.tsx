@@ -3,8 +3,15 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 import { useLiveQuery } from '@tanstack/react-db'
 
 import { Avatar } from '#/components/ui'
+import { LivePlayer } from '#/components/session/live-player'
 import { LiveProgress } from '#/components/session/live-progress'
 import { LiveSlide } from '#/components/session/live-slide'
+import {
+  livestreamFor,
+  youtubeDeepLink,
+  youtubeId,
+  youtubeThumb,
+} from '#/components/session/livestream'
 import {
   MomentsRail,
   type MomentView,
@@ -35,6 +42,7 @@ function SessionScreen() {
   const detail = Route.useLoaderData()
 
   const collection = useMemo(() => momentsCollection(sessionId), [sessionId])
+  const videoId = livestreamFor(sessionId)
 
   // The playhead walks the deck; every capture advances it one slide.
   const [playhead, setPlayhead] = useState(INITIAL_SLIDE)
@@ -51,24 +59,53 @@ function SessionScreen() {
     [],
   )
 
-  const capture = useCallback(() => {
+  const addMoment = useCallback(
+    (fields: {
+      timestampMs: number
+      slideRef: string
+      transcriptSnippet: string
+    }) => {
+      collection.insert({
+        id: crypto.randomUUID(),
+        sessionId,
+        userId: 'me', // TODO(auth): the server assigns the real viewer
+        timestampMs: fields.timestampMs,
+        slideRef: fields.slideRef,
+        transcriptSnippet: fields.transcriptSnippet,
+        note: null,
+        aiHighlight: false,
+        createdAt: new Date(),
+      })
+      setPlayhead((n) => Math.min(SLIDES.length, n + 1))
+      setToast(true)
+      if (toastTimer.current) clearTimeout(toastTimer.current)
+      toastTimer.current = setTimeout(() => setToast(false), 2200)
+    },
+    [collection, sessionId],
+  )
+
+  // Live stream: record the exact stream timecode + a resumable deep link.
+  const captureLive = useCallback(
+    (seconds: number) => {
+      if (!videoId) return
+      addMoment({
+        timestampMs: seconds * 1000,
+        slideRef: youtubeDeepLink(videoId, seconds),
+        transcriptSnippet: `Live moment · ${formatOffset(seconds * 1000)}`,
+      })
+    },
+    [addMoment, videoId],
+  )
+
+  // Slide deck fallback: capture the slide on the playhead.
+  const captureSlide = useCallback(() => {
     const slide = SLIDES[playhead - 1]
-    collection.insert({
-      id: crypto.randomUUID(),
-      sessionId,
-      userId: 'me', // TODO(auth): the server assigns the real viewer
+    addMoment({
       timestampMs: Math.round(slide.n * SLIDE_MS),
       slideRef: `#${slide.n}`,
       transcriptSnippet: slide.topic,
-      note: null,
-      aiHighlight: false,
-      createdAt: new Date(),
     })
-    setPlayhead((n) => Math.min(SLIDES.length, n + 1))
-    setToast(true)
-    if (toastTimer.current) clearTimeout(toastTimer.current)
-    toastTimer.current = setTimeout(() => setToast(false), 2200)
-  }, [collection, playhead, sessionId])
+  }, [addMoment, playhead])
 
   const remove = useCallback(
     (id: string) => {
@@ -126,7 +163,19 @@ function SessionScreen() {
             </div>
           ) : null}
 
-          <LiveSlide slide={slide} total={SLIDES.length} onBookmark={capture} />
+          {videoId ? (
+            <LivePlayer
+              videoId={videoId}
+              posterUrl={youtubeThumb(videoId)}
+              onBookmark={captureLive}
+            />
+          ) : (
+            <LiveSlide
+              slide={slide}
+              total={SLIDES.length}
+              onBookmark={captureSlide}
+            />
+          )}
 
           <QuestionList questions={questions} />
         </div>
@@ -183,12 +232,19 @@ function LiveRail({
 
   const moments: Array<MomentView> = [...(data ?? [])]
     .sort((a, b) => a.timestampMs - b.timestampMs)
-    .map((m) => ({
-      id: m.id,
-      time: formatOffset(m.timestampMs),
-      slideRef: m.slideRef,
-      topic: m.transcriptSnippet || m.note || 'Moment',
-    }))
+    .map((m) => {
+      // A livestream moment stores its resumable deep link in `slideRef`.
+      const link = m.slideRef && /^https?:/.test(m.slideRef) ? m.slideRef : null
+      const id = link ? youtubeId(link) : null
+      return {
+        id: m.id,
+        time: formatOffset(m.timestampMs),
+        slideRef: link ? null : m.slideRef,
+        topic: m.transcriptSnippet || m.note || 'Moment',
+        thumbnailUrl: link && id ? youtubeThumb(id) : null,
+        href: link,
+      }
+    })
 
   return (
     <MomentsRail
