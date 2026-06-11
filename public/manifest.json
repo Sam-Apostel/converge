@@ -1,25 +1,47 @@
 {
-  "short_name": "TanStack App",
-  "name": "Create TanStack App Sample",
+  "id": "/",
+  "name": "Converge — The Conference Companion",
+  "short_name": "Converge",
+  "description": "A people-first conference platform: discover the right people, capture moments, and continue conversations long after the event ends.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#1f3f97",
+  "theme_color": "#2a4eac",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["productivity", "social", "business"],
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
     },
     {
-      "src": "logo192.png",
+      "src": "/icon-192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any"
     },
     {
-      "src": "logo512.png",
+      "src": "/icon-512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192-maskable.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512-maskable.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  ]
 }
