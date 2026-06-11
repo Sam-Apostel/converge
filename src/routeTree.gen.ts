@@ -18,6 +18,7 @@ import { Route as ApiStreamRouteImport } from './routes/api/stream'
 import { Route as ApiSessionsRouteImport } from './routes/api/sessions'
 import { Route as ApiProjectsRouteImport } from './routes/api/projects'
 import { Route as ApiPeopleRouteImport } from './routes/api/people'
+import { Route as ApiMomentsRouteImport } from './routes/api/moments'
 import { Route as ApiMessagesRouteImport } from './routes/api/messages'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiConnectionsRouteImport } from './routes/api/connections'
@@ -35,6 +36,7 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppSessionsSessionIdRouteImport } from './routes/_app/sessions/$sessionId'
 import { Route as AppProjectsSlugRouteImport } from './routes/_app/projects/$slug'
 import { Route as AppPeopleUserIdRouteImport } from './routes/_app/people/$userId'
+import { Route as AppDiscussionsIdRouteImport } from './routes/_app/discussions/$id'
 
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
@@ -78,6 +80,11 @@ const ApiProjectsRoute = ApiProjectsRouteImport.update({
 const ApiPeopleRoute = ApiPeopleRouteImport.update({
   id: '/api/people',
   path: '/api/people',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMomentsRoute = ApiMomentsRouteImport.update({
+  id: '/api/moments',
+  path: '/api/moments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiMessagesRoute = ApiMessagesRouteImport.update({
@@ -167,6 +174,11 @@ const AppPeopleUserIdRoute = AppPeopleUserIdRouteImport.update({
   path: '/people/$userId',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDiscussionsIdRoute = AppDiscussionsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppDiscussionsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -175,18 +187,20 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/concierge': typeof AppConciergeRoute
-  '/discussions': typeof AppDiscussionsRoute
+  '/discussions': typeof AppDiscussionsRouteWithChildren
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
   '/venue': typeof AppVenueRoute
   '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
   '/api/messages': typeof ApiMessagesRoute
+  '/api/moments': typeof ApiMomentsRoute
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/sessions': typeof ApiSessionsRoute
   '/api/stream': typeof ApiStreamRoute
   '/api/tasks': typeof ApiTasksRoute
+  '/discussions/$id': typeof AppDiscussionsIdRoute
   '/people/$userId': typeof AppPeopleUserIdRoute
   '/projects/$slug': typeof AppProjectsSlugRoute
   '/sessions/$sessionId': typeof AppSessionsSessionIdRoute
@@ -201,19 +215,21 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/concierge': typeof AppConciergeRoute
-  '/discussions': typeof AppDiscussionsRoute
+  '/discussions': typeof AppDiscussionsRouteWithChildren
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
   '/venue': typeof AppVenueRoute
   '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
   '/api/messages': typeof ApiMessagesRoute
+  '/api/moments': typeof ApiMomentsRoute
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/sessions': typeof ApiSessionsRoute
   '/api/stream': typeof ApiStreamRoute
   '/api/tasks': typeof ApiTasksRoute
   '/': typeof AppIndexRoute
+  '/discussions/$id': typeof AppDiscussionsIdRoute
   '/people/$userId': typeof AppPeopleUserIdRoute
   '/projects/$slug': typeof AppProjectsSlugRoute
   '/sessions/$sessionId': typeof AppSessionsSessionIdRoute
@@ -230,19 +246,21 @@ export interface FileRoutesById {
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_app/concierge': typeof AppConciergeRoute
-  '/_app/discussions': typeof AppDiscussionsRoute
+  '/_app/discussions': typeof AppDiscussionsRouteWithChildren
   '/_app/messages': typeof AppMessagesRoute
   '/_app/profile': typeof AppProfileRoute
   '/_app/venue': typeof AppVenueRoute
   '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
   '/api/messages': typeof ApiMessagesRoute
+  '/api/moments': typeof ApiMomentsRoute
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/sessions': typeof ApiSessionsRoute
   '/api/stream': typeof ApiStreamRoute
   '/api/tasks': typeof ApiTasksRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/discussions/$id': typeof AppDiscussionsIdRoute
   '/_app/people/$userId': typeof AppPeopleUserIdRoute
   '/_app/projects/$slug': typeof AppProjectsSlugRoute
   '/_app/sessions/$sessionId': typeof AppSessionsSessionIdRoute
@@ -267,11 +285,13 @@ export interface FileRouteTypes {
     | '/api/connections'
     | '/api/health'
     | '/api/messages'
+    | '/api/moments'
     | '/api/people'
     | '/api/projects'
     | '/api/sessions'
     | '/api/stream'
     | '/api/tasks'
+    | '/discussions/$id'
     | '/people/$userId'
     | '/projects/$slug'
     | '/sessions/$sessionId'
@@ -293,12 +313,14 @@ export interface FileRouteTypes {
     | '/api/connections'
     | '/api/health'
     | '/api/messages'
+    | '/api/moments'
     | '/api/people'
     | '/api/projects'
     | '/api/sessions'
     | '/api/stream'
     | '/api/tasks'
     | '/'
+    | '/discussions/$id'
     | '/people/$userId'
     | '/projects/$slug'
     | '/sessions/$sessionId'
@@ -321,12 +343,14 @@ export interface FileRouteTypes {
     | '/api/connections'
     | '/api/health'
     | '/api/messages'
+    | '/api/moments'
     | '/api/people'
     | '/api/projects'
     | '/api/sessions'
     | '/api/stream'
     | '/api/tasks'
     | '/_app/'
+    | '/_app/discussions/$id'
     | '/_app/people/$userId'
     | '/_app/projects/$slug'
     | '/_app/sessions/$sessionId'
@@ -345,6 +369,7 @@ export interface RootRouteChildren {
   ApiConnectionsRoute: typeof ApiConnectionsRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ApiMessagesRoute: typeof ApiMessagesRoute
+  ApiMomentsRoute: typeof ApiMomentsRoute
   ApiPeopleRoute: typeof ApiPeopleRoute
   ApiProjectsRoute: typeof ApiProjectsRoute
   ApiSessionsRoute: typeof ApiSessionsRoute
@@ -416,6 +441,13 @@ declare module '@tanstack/react-router' {
       path: '/api/people'
       fullPath: '/api/people'
       preLoaderRoute: typeof ApiPeopleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/moments': {
+      id: '/api/moments'
+      path: '/api/moments'
+      fullPath: '/api/moments'
+      preLoaderRoute: typeof ApiMomentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/messages': {
@@ -537,12 +569,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPeopleUserIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/discussions/$id': {
+      id: '/_app/discussions/$id'
+      path: '/$id'
+      fullPath: '/discussions/$id'
+      preLoaderRoute: typeof AppDiscussionsIdRouteImport
+      parentRoute: typeof AppDiscussionsRoute
+    }
   }
 }
 
+interface AppDiscussionsRouteChildren {
+  AppDiscussionsIdRoute: typeof AppDiscussionsIdRoute
+}
+
+const AppDiscussionsRouteChildren: AppDiscussionsRouteChildren = {
+  AppDiscussionsIdRoute: AppDiscussionsIdRoute,
+}
+
+const AppDiscussionsRouteWithChildren = AppDiscussionsRoute._addFileChildren(
+  AppDiscussionsRouteChildren,
+)
+
 interface AppRouteChildren {
   AppConciergeRoute: typeof AppConciergeRoute
-  AppDiscussionsRoute: typeof AppDiscussionsRoute
+  AppDiscussionsRoute: typeof AppDiscussionsRouteWithChildren
   AppMessagesRoute: typeof AppMessagesRoute
   AppProfileRoute: typeof AppProfileRoute
   AppVenueRoute: typeof AppVenueRoute
@@ -557,7 +608,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppConciergeRoute: AppConciergeRoute,
-  AppDiscussionsRoute: AppDiscussionsRoute,
+  AppDiscussionsRoute: AppDiscussionsRouteWithChildren,
   AppMessagesRoute: AppMessagesRoute,
   AppProfileRoute: AppProfileRoute,
   AppVenueRoute: AppVenueRoute,
@@ -583,6 +634,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiConnectionsRoute: ApiConnectionsRoute,
   ApiHealthRoute: ApiHealthRoute,
   ApiMessagesRoute: ApiMessagesRoute,
+  ApiMomentsRoute: ApiMomentsRoute,
   ApiPeopleRoute: ApiPeopleRoute,
   ApiProjectsRoute: ApiProjectsRoute,
   ApiSessionsRoute: ApiSessionsRoute,
