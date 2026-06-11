@@ -18,7 +18,9 @@ import { Route as ApiStreamRouteImport } from './routes/api/stream'
 import { Route as ApiSessionsRouteImport } from './routes/api/sessions'
 import { Route as ApiProjectsRouteImport } from './routes/api/projects'
 import { Route as ApiPeopleRouteImport } from './routes/api/people'
+import { Route as ApiMessagesRouteImport } from './routes/api/messages'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
+import { Route as ApiConnectionsRouteImport } from './routes/api/connections'
 import { Route as AppVenueRouteImport } from './routes/_app/venue'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppMessagesRouteImport } from './routes/_app/messages'
@@ -78,9 +80,19 @@ const ApiPeopleRoute = ApiPeopleRouteImport.update({
   path: '/api/people',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMessagesRoute = ApiMessagesRouteImport.update({
+  id: '/api/messages',
+  path: '/api/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
   id: '/api/health',
   path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiConnectionsRoute = ApiConnectionsRouteImport.update({
+  id: '/api/connections',
+  path: '/api/connections',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppVenueRoute = AppVenueRouteImport.update({
@@ -167,7 +179,9 @@ export interface FileRoutesByFullPath {
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
   '/venue': typeof AppVenueRoute
+  '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
+  '/api/messages': typeof ApiMessagesRoute
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/sessions': typeof ApiSessionsRoute
@@ -191,7 +205,9 @@ export interface FileRoutesByTo {
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
   '/venue': typeof AppVenueRoute
+  '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
+  '/api/messages': typeof ApiMessagesRoute
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/sessions': typeof ApiSessionsRoute
@@ -218,7 +234,9 @@ export interface FileRoutesById {
   '/_app/messages': typeof AppMessagesRoute
   '/_app/profile': typeof AppProfileRoute
   '/_app/venue': typeof AppVenueRoute
+  '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
+  '/api/messages': typeof ApiMessagesRoute
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/sessions': typeof ApiSessionsRoute
@@ -246,7 +264,9 @@ export interface FileRouteTypes {
     | '/messages'
     | '/profile'
     | '/venue'
+    | '/api/connections'
     | '/api/health'
+    | '/api/messages'
     | '/api/people'
     | '/api/projects'
     | '/api/sessions'
@@ -270,7 +290,9 @@ export interface FileRouteTypes {
     | '/messages'
     | '/profile'
     | '/venue'
+    | '/api/connections'
     | '/api/health'
+    | '/api/messages'
     | '/api/people'
     | '/api/projects'
     | '/api/sessions'
@@ -296,7 +318,9 @@ export interface FileRouteTypes {
     | '/_app/messages'
     | '/_app/profile'
     | '/_app/venue'
+    | '/api/connections'
     | '/api/health'
+    | '/api/messages'
     | '/api/people'
     | '/api/projects'
     | '/api/sessions'
@@ -318,7 +342,9 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   Char91DotwellKnownChar93OauthAuthorizationServerRoute: typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ApiConnectionsRoute: typeof ApiConnectionsRoute
   ApiHealthRoute: typeof ApiHealthRoute
+  ApiMessagesRoute: typeof ApiMessagesRoute
   ApiPeopleRoute: typeof ApiPeopleRoute
   ApiProjectsRoute: typeof ApiProjectsRoute
   ApiSessionsRoute: typeof ApiSessionsRoute
@@ -392,11 +418,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPeopleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/messages': {
+      id: '/api/messages'
+      path: '/api/messages'
+      fullPath: '/api/messages'
+      preLoaderRoute: typeof ApiMessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/health': {
       id: '/api/health'
       path: '/api/health'
       fullPath: '/api/health'
       preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/connections': {
+      id: '/api/connections'
+      path: '/api/connections'
+      fullPath: '/api/connections'
+      preLoaderRoute: typeof ApiConnectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/venue': {
@@ -540,7 +580,9 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OauthAuthorizationServerRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ApiConnectionsRoute: ApiConnectionsRoute,
   ApiHealthRoute: ApiHealthRoute,
+  ApiMessagesRoute: ApiMessagesRoute,
   ApiPeopleRoute: ApiPeopleRoute,
   ApiProjectsRoute: ApiProjectsRoute,
   ApiSessionsRoute: ApiSessionsRoute,
