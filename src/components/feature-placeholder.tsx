@@ -27,7 +27,7 @@ export function FeaturePlaceholder({
               key={item}
               className="flex items-start gap-2 text-sm text-ink/80"
             >
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-400" />
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-lime" />
               {item}
             </li>
           ))}
