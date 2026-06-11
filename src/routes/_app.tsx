@@ -1,82 +1,61 @@
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
-import { AppBar, AppBarSection, AppBarSpacer, Avatar } from '@progress/kendo-react-layout'
-import { Button } from '@progress/kendo-react-buttons'
 
-import { navItems } from '#/lib/navigation'
-import { useSession } from '#/lib/auth-client'
+import { Avatar } from '#/components/ui'
 
 export const Route = createFileRoute('/_app')({
   component: AppLayout,
 })
 
+const NAV = [
+  { to: '/', label: 'Home', exact: true },
+  { to: '/sessions', label: 'Sessions', exact: false },
+  { to: '/people', label: 'People', exact: false },
+  { to: '/projects', label: 'Projects', exact: false },
+  { to: '/discussions', label: 'Discussions', exact: false },
+] as const
+
 function AppLayout() {
-  const { data: session } = useSession()
-  const user = session?.user
-
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-black/5 bg-white/70 p-4 backdrop-blur md:flex">
-        <Link to="/" className="mb-6 flex items-center gap-2 px-2">
-          <span className="grid h-8 w-8 place-items-center rounded-xl bg-brand-500 font-bold text-white">
-            C
+    <div className="min-h-screen pb-28">
+      <header className="sticky top-0 z-50 border-b border-[rgba(120,130,180,.14)] bg-[rgba(238,240,250,.72)] backdrop-blur-xl [backdrop-filter:blur(18px)_saturate(1.5)]">
+        <div className="mx-auto flex max-w-[1320px] items-center gap-6 px-6 py-3.5 md:px-[30px]">
+          <Link to="/" className="flex items-center gap-2.5">
+            <span className="inline-block h-[13px] w-[13px] rounded-[5px] bg-lime shadow-[0_0_0_3px_rgba(153,255,0,.22),0_2px_6px_rgba(120,160,20,.4)]" />
+            <span className="text-[19px] font-semibold tracking-[-0.03em]">
+              converge
+            </span>
+          </Link>
+
+          <span className="hidden h-5 w-px bg-[rgba(120,130,180,.22)] sm:block" />
+          <span className="hidden font-mono text-[12px] tracking-[0.02em] text-mist lg:block">
+            React Summit 2026 · Amsterdam · Day 1
           </span>
-          <span className="text-lg font-semibold tracking-tight">Converge</span>
-        </Link>
 
-        <nav className="flex flex-1 flex-col gap-1">
-          {navItems.map(({ to, label, icon: Icon }) => (
-            <Link
-              key={to}
-              to={to}
-              activeOptions={{ exact: to === '/' }}
-              className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-brand-50 hover:text-ink"
-              activeProps={{
-                className: 'bg-brand-50 text-brand-700',
-              }}
-            >
-              <Icon size={18} strokeWidth={2} />
-              {label}
-            </Link>
-          ))}
-        </nav>
-
-        <p className="px-3 pt-4 text-xs text-muted">The conference companion.</p>
-      </aside>
-
-      {/* Main column */}
-      <div className="flex min-w-0 flex-1 flex-col">
-        <AppBar className="border-b border-black/5 bg-white/70 backdrop-blur">
-          <AppBarSection>
-            <span className="text-sm font-medium text-muted md:hidden">Converge</span>
-          </AppBarSection>
-          <AppBarSpacer />
-          <AppBarSection>
-            <Link to="/concierge">
-              <Button fillMode="flat" themeColor="primary">
-                Ask the concierge
-              </Button>
-            </Link>
-          </AppBarSection>
-          <AppBarSection>
-            {user ? (
-              <Link to="/profile" className="flex items-center gap-2">
-                <Avatar type="text" themeColor="primary" size="medium" rounded="full">
-                  {(user.name ?? 'U').charAt(0)}
-                </Avatar>
+          <nav className="ml-auto flex items-center gap-1.5">
+            {NAV.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                activeOptions={{ exact: item.exact }}
+                className="rounded-full px-[15px] py-2 text-[13.5px] font-medium text-slate transition-colors hover:text-ink"
+                activeProps={{
+                  className:
+                    'rounded-full px-[15px] py-2 text-[13.5px] font-medium !text-ink bg-white shadow-soft [box-shadow:0_1px_3px_rgba(40,50,110,.08),inset_0_1px_0_rgba(255,255,255,.7)]',
+                }}
+              >
+                {item.label}
               </Link>
-            ) : (
-              <Link to="/login">
-                <Button themeColor="primary">Sign in</Button>
-              </Link>
-            )}
-          </AppBarSection>
-        </AppBar>
+            ))}
+            <Link to="/profile" className="ml-1.5">
+              <Avatar name="Sam Conway" size={34} />
+            </Link>
+          </nav>
+        </div>
+      </header>
 
-        <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-7">
-          <Outlet />
-        </main>
-      </div>
+      <main className="mx-auto max-w-[1320px] px-6 py-8 md:px-[30px]">
+        <Outlet />
+      </main>
     </div>
   )
 }
