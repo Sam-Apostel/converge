@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { Button } from '#/components/ui'
+import { CaptureDock } from './capture-dock'
 
 /**
  * The embedded YouTube live player + one-tap capture. Bookmarking reads the
@@ -95,18 +95,12 @@ export function LivePlayer({
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between gap-3">
-        <span className="text-[12.5px] text-mist">
-          Bookmarking saves the exact stream timecode.
-        </span>
-        <Button
-          variant="lime"
-          onClick={handleBookmark}
-          className="text-[14.5px]"
-        >
-          <span className="text-base leading-none">★</span> Bookmark this moment
-        </Button>
-      </div>
+      <CaptureDock
+        time="LIVE"
+        label="Keep this moment on your timeline"
+        buttonLabel="Bookmark this moment"
+        onCapture={handleBookmark}
+      />
     </div>
   )
 }
