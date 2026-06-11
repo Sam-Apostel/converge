@@ -34,6 +34,7 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppSessionsSessionIdRouteImport } from './routes/_app/sessions/$sessionId'
 import { Route as AppProjectsSlugRouteImport } from './routes/_app/projects/$slug'
 import { Route as AppPeopleUserIdRouteImport } from './routes/_app/people/$userId'
+import { Route as AppDiscussionsIdRouteImport } from './routes/_app/discussions/$id'
 
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
@@ -161,6 +162,11 @@ const AppPeopleUserIdRoute = AppPeopleUserIdRouteImport.update({
   path: '/people/$userId',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDiscussionsIdRoute = AppDiscussionsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppDiscussionsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -169,7 +175,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/concierge': typeof AppConciergeRoute
-  '/discussions': typeof AppDiscussionsRoute
+  '/discussions': typeof AppDiscussionsRouteWithChildren
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
   '/venue': typeof AppVenueRoute
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/api/sessions': typeof ApiSessionsRoute
   '/api/stream': typeof ApiStreamRoute
   '/api/tasks': typeof ApiTasksRoute
+  '/discussions/$id': typeof AppDiscussionsIdRoute
   '/people/$userId': typeof AppPeopleUserIdRoute
   '/projects/$slug': typeof AppProjectsSlugRoute
   '/sessions/$sessionId': typeof AppSessionsSessionIdRoute
@@ -194,7 +201,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/concierge': typeof AppConciergeRoute
-  '/discussions': typeof AppDiscussionsRoute
+  '/discussions': typeof AppDiscussionsRouteWithChildren
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
   '/venue': typeof AppVenueRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/api/stream': typeof ApiStreamRoute
   '/api/tasks': typeof ApiTasksRoute
   '/': typeof AppIndexRoute
+  '/discussions/$id': typeof AppDiscussionsIdRoute
   '/people/$userId': typeof AppPeopleUserIdRoute
   '/projects/$slug': typeof AppProjectsSlugRoute
   '/sessions/$sessionId': typeof AppSessionsSessionIdRoute
@@ -222,7 +230,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_app/concierge': typeof AppConciergeRoute
-  '/_app/discussions': typeof AppDiscussionsRoute
+  '/_app/discussions': typeof AppDiscussionsRouteWithChildren
   '/_app/messages': typeof AppMessagesRoute
   '/_app/profile': typeof AppProfileRoute
   '/_app/venue': typeof AppVenueRoute
@@ -234,6 +242,7 @@ export interface FileRoutesById {
   '/api/stream': typeof ApiStreamRoute
   '/api/tasks': typeof ApiTasksRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/discussions/$id': typeof AppDiscussionsIdRoute
   '/_app/people/$userId': typeof AppPeopleUserIdRoute
   '/_app/projects/$slug': typeof AppProjectsSlugRoute
   '/_app/sessions/$sessionId': typeof AppSessionsSessionIdRoute
@@ -262,6 +271,7 @@ export interface FileRouteTypes {
     | '/api/sessions'
     | '/api/stream'
     | '/api/tasks'
+    | '/discussions/$id'
     | '/people/$userId'
     | '/projects/$slug'
     | '/sessions/$sessionId'
@@ -288,6 +298,7 @@ export interface FileRouteTypes {
     | '/api/stream'
     | '/api/tasks'
     | '/'
+    | '/discussions/$id'
     | '/people/$userId'
     | '/projects/$slug'
     | '/sessions/$sessionId'
@@ -315,6 +326,7 @@ export interface FileRouteTypes {
     | '/api/stream'
     | '/api/tasks'
     | '/_app/'
+    | '/_app/discussions/$id'
     | '/_app/people/$userId'
     | '/_app/projects/$slug'
     | '/_app/sessions/$sessionId'
@@ -517,12 +529,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPeopleUserIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/discussions/$id': {
+      id: '/_app/discussions/$id'
+      path: '/$id'
+      fullPath: '/discussions/$id'
+      preLoaderRoute: typeof AppDiscussionsIdRouteImport
+      parentRoute: typeof AppDiscussionsRoute
+    }
   }
 }
 
+interface AppDiscussionsRouteChildren {
+  AppDiscussionsIdRoute: typeof AppDiscussionsIdRoute
+}
+
+const AppDiscussionsRouteChildren: AppDiscussionsRouteChildren = {
+  AppDiscussionsIdRoute: AppDiscussionsIdRoute,
+}
+
+const AppDiscussionsRouteWithChildren = AppDiscussionsRoute._addFileChildren(
+  AppDiscussionsRouteChildren,
+)
+
 interface AppRouteChildren {
   AppConciergeRoute: typeof AppConciergeRoute
-  AppDiscussionsRoute: typeof AppDiscussionsRoute
+  AppDiscussionsRoute: typeof AppDiscussionsRouteWithChildren
   AppMessagesRoute: typeof AppMessagesRoute
   AppProfileRoute: typeof AppProfileRoute
   AppVenueRoute: typeof AppVenueRoute
@@ -537,7 +568,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppConciergeRoute: AppConciergeRoute,
-  AppDiscussionsRoute: AppDiscussionsRoute,
+  AppDiscussionsRoute: AppDiscussionsRouteWithChildren,
   AppMessagesRoute: AppMessagesRoute,
   AppProfileRoute: AppProfileRoute,
   AppVenueRoute: AppVenueRoute,
