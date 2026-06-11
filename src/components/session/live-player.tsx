@@ -10,7 +10,11 @@ import { CaptureDock } from './capture-dock'
  */
 
 // Minimal shape of the bits of the IFrame API we touch.
-type YTPlayer = { getCurrentTime?: () => number; destroy?: () => void }
+type YTPlayer = {
+  getCurrentTime?: () => number
+  getDuration?: () => number
+  destroy?: () => void
+}
 type YTApi = { Player: new (el: Element, opts: unknown) => YTPlayer }
 declare global {
   interface Window {
@@ -40,10 +44,13 @@ export function LivePlayer({
   videoId,
   posterUrl,
   onBookmark,
+  onProgress,
 }: {
   videoId: string
   posterUrl: string
   onBookmark: (seconds: number) => void
+  /** Reports stream position (0–1) as it plays, to drive the talk progress bar. */
+  onProgress?: (fraction: number) => void
 }) {
   const mountRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<YTPlayer | null>(null)
@@ -72,6 +79,18 @@ export function LivePlayer({
       playerRef.current = null
     }
   }, [videoId])
+
+  // Walk the talk progress bar from the real stream position.
+  useEffect(() => {
+    if (!ready || !onProgress) return
+    const id = setInterval(() => {
+      const player = playerRef.current
+      const current = player?.getCurrentTime?.() ?? 0
+      const duration = player?.getDuration?.() ?? 0
+      if (duration > 0) onProgress(Math.min(1, current / duration))
+    }, 1000)
+    return () => clearInterval(id)
+  }, [ready, onProgress])
 
   function handleBookmark() {
     const seconds = playerRef.current?.getCurrentTime?.() ?? 0
