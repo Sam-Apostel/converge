@@ -434,3 +434,27 @@ Clean now — square avatars, names sit below the avatar, intent chips are neutr
 
 Still open whenever you want it: locking in one Home direction as the canonical homepage, or merging A's option list + B's prefilled cards into C.
 
+## User
+
+I noticed you removed the nice looking container around the bookmark button when you removed transcripts. can you bring that back?
+
+## Assistant
+
+_[tool: dc_html_str_replace]_
+
+Good eye — that dark container was a nice anchor for the action. I'll bring it back below the live slide (with the lime glow), just without the transcript — a short label plus the button.Let me verify it looks right and still captures.
+
+_[tool: save_screenshot]_
+
+_[tool: show_html]_
+
+The preview looks stale — that's the old overlay layout. Let me reload and check the new dark dock.
+
+_[tool: save_screenshot]_
+
+The dark capture dock is back — clean separation now: the live slide on top (Slide 12 — The cost of the SPA · on stage now · Slide 12 of 42), then the dark container with the lime glow holding **"CAPTURE · 09:38 / Keep this slide on your timeline"** and the lime **Bookmark this slide** button. Exactly the container you liked, minus the transcript.
+
+_[tool: snip]_
+
+Done — the dark capture container is restored beneath the live slide, with its lime glow and a short "Keep this slide on your timeline" label in place of the old transcript. The button still captures the current slide into your moments grid.
+
