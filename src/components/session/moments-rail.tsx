@@ -9,6 +9,8 @@ export type MomentView = {
   time: string
   slideRef: string | null
   topic: string
+  thumbnailUrl?: string | null
+  href?: string | null
 }
 
 export type RelatedPerson = {
@@ -81,6 +83,8 @@ export function MomentsRail({
               time={m.time}
               slideRef={m.slideRef}
               topic={m.topic}
+              thumbnailUrl={m.thumbnailUrl}
+              href={m.href}
               onRemove={() => onRemove(m.id)}
             />
           ))}
