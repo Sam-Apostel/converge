@@ -18,7 +18,7 @@ const rpID = new URL(baseURL).hostname
  * external AI agents obtain tokens and call `/mcp` on behalf of a signed-in user
  * while sharing the same Postgres database and session model as the web app.
  *
- * Sign-in methods: email + password, GitHub, LinkedIn (OIDC), and passkeys.
+ * Sign-in methods: email + password, GitHub, and passkeys.
  */
 export const auth = betterAuth({
   baseURL,
@@ -34,25 +34,14 @@ export const auth = betterAuth({
       clientId: process.env.GITHUB_CLIENT_ID ?? '',
       clientSecret: process.env.GITHUB_CLIENT_SECRET ?? '',
     },
-    linkedin: {
-      clientId: process.env.LINKEDIN_CLIENT_ID ?? '',
-      clientSecret: process.env.LINKEDIN_CLIENT_SECRET ?? '',
-      // LinkedIn's `email` claim is optional under OIDC; fall back so a missing
-      // email never violates the NOT NULL / unique constraint on `user.email`.
-      mapProfileToUser: (profile) => ({
-        email: profile.email ?? `${profile.sub}@linkedin.local`,
-        name: profile.name,
-        image: profile.picture,
-      }),
-    },
   },
 
-  // One person may sign in with GitHub, LinkedIn, a passkey and a password.
+  // One person may sign in with GitHub, a passkey and a password.
   // Link them all to a single `user` row by verified email.
   account: {
     accountLinking: {
       enabled: true,
-      trustedProviders: ['github', 'linkedin'],
+      trustedProviders: ['github'],
     },
   },
 

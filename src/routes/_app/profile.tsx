@@ -66,7 +66,7 @@ function ProfilePage() {
             'Current focus + featured projects',
             'Conversation preferences (interested / not interested topics)',
             'Manage passkeys (authClient.passkey.addPasskey)',
-            'Link GitHub / LinkedIn accounts',
+            'Link GitHub account',
             'Availability toggle',
           ].map((item) => (
             <li key={item} className="flex items-start gap-2 text-sm text-ink/80">

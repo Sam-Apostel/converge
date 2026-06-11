@@ -61,12 +61,6 @@ function LoginPage() {
             Continue with GitHub
           </Button>
           <Button
-            onClick={() => authClient.signIn.social({ provider: 'linkedin' })}
-            fillMode="outline"
-          >
-            Continue with LinkedIn
-          </Button>
-          <Button
             onClick={() => authClient.signIn.passkey().then(afterAuth)}
             fillMode="outline"
           >

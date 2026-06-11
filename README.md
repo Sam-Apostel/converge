@@ -15,7 +15,7 @@ continue conversations long after the event ends.
 | Framework      | [TanStack Start](https://tanstack.com/start) (Vite, React 19)     |
 | Client data    | [TanStack DB](https://tanstack.com/db) + TanStack Query           |
 | Database       | PostgreSQL via [Drizzle ORM](https://orm.drizzle.team)            |
-| Auth           | [better-auth](https://better-auth.com) — passkeys, GitHub, LinkedIn |
+| Auth           | [better-auth](https://better-auth.com) — passkeys, GitHub         |
 | Realtime       | Server-Sent Events (`/api/stream`)                                |
 | Agent platform | MCP server with OAuth + MCP Apps (`/mcp`)                         |
 | UI             | [KendoReact](https://www.telerik.com/kendo-react-ui) (free) + Tailwind v4 |
