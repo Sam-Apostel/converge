@@ -70,8 +70,8 @@ function MessagesPage() {
 
   // Realtime: incoming messages refresh unread counts + the open conversation.
   // NOTE: subscribing with a raw EventSource because the shared `useEventStream`
-  // hook doesn't list `message.created` among its event names (frozen file —
-  // flagged as a coordination point in the PR).
+  // hook doesn't list `message.created` among its event names. Tracked in #67 —
+  // once that's added, switch this to useEventStream.
   useEffect(() => {
     const source = new EventSource(
       `/api/stream?channel=${encodeURIComponent(`user:${me}`)}`,
