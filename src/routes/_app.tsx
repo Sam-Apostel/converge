@@ -1,6 +1,7 @@
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
 
 import { Avatar } from '#/components/ui'
+import { ConvergeLogo } from '#/components/converge-logo'
 
 export const Route = createFileRoute('/_app')({
   component: AppLayout,
@@ -20,7 +21,7 @@ function AppLayout() {
       <header className="sticky top-0 z-50 border-b border-[rgba(120,130,180,.14)] bg-[rgba(238,240,250,.72)] backdrop-blur-xl [backdrop-filter:blur(18px)_saturate(1.5)]">
         <div className="mx-auto flex max-w-[1320px] items-center gap-6 px-6 py-3.5 md:px-[30px]">
           <Link to="/" className="flex items-center gap-2.5">
-            <span className="inline-block h-[13px] w-[13px] rounded-[5px] bg-lime shadow-[0_0_0_3px_rgba(153,255,0,.22),0_2px_6px_rgba(120,160,20,.4)]" />
+            <ConvergeLogo size={28} rounded="8px" />
             <span className="text-[19px] font-semibold tracking-[-0.03em]">
               converge
             </span>
