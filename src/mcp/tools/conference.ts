@@ -58,7 +58,8 @@ export function register(server: McpServer, userId: string) {
     'list_sessions',
     {
       title: 'List sessions',
-      description: 'List sessions (talks) for a conference, ordered by start time.',
+      description:
+        'List sessions (talks) for a conference, ordered by start time.',
       inputSchema: { conferenceId: z.string().describe('Conference id') },
     },
     async ({ conferenceId }) =>
@@ -91,10 +92,7 @@ export function register(server: McpServer, userId: string) {
     },
     async ({ conferenceId }) =>
       text(
-        await db
-          .select()
-          .from(room)
-          .where(eq(room.conferenceId, conferenceId)),
+        await db.select().from(room).where(eq(room.conferenceId, conferenceId)),
       ),
   )
 
@@ -230,16 +228,24 @@ export function register(server: McpServer, userId: string) {
       // Count, per attendee, how many of their moments land near one of mine.
       const byUser = new Map<
         string,
-        { userId: string; name: string; image: string | null; sharedMoments: number }
+        {
+          userId: string
+          name: string
+          image: string | null
+          sharedMoments: number
+        }
       >()
       for (const o of others) {
         const near = mine.some(
           (m) => Math.abs(m.timestampMs - o.timestampMs) <= windowMs,
         )
         if (!near) continue
-        const entry =
-          byUser.get(o.userId) ??
-          { userId: o.userId, name: o.name, image: o.image, sharedMoments: 0 }
+        const entry = byUser.get(o.userId) ?? {
+          userId: o.userId,
+          name: o.name,
+          image: o.image,
+          sharedMoments: 0,
+        }
         entry.sharedMoments += 1
         byUser.set(o.userId, entry)
       }

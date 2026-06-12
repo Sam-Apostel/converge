@@ -41,11 +41,11 @@ const uid = () => crypto.randomUUID()
 /** Build a Date from a base day + "HH:MM" local-ish offset. */
 const at = (day: string, time: string) => new Date(`${day}T${time}:00+02:00`)
 
-const avatar = (seed: string) =>
-  `https://api.dicebear.com/9.x/glass/svg?seed=${encodeURIComponent(seed)}`
+const avatar = (key: string) =>
+  `https://api.dicebear.com/9.x/glass/svg?seed=${encodeURIComponent(key)}`
 
-const shot = (seed: string) =>
-  `https://picsum.photos/seed/${encodeURIComponent(seed)}/1200/750`
+const shot = (key: string) =>
+  `https://picsum.photos/seed/${encodeURIComponent(key)}/1200/750`
 
 /* ------------------------------------------------------------------ */
 /* People                                                             */
@@ -389,7 +389,8 @@ const people: PersonSeed[] = [
     name: 'Luca Mezzalira',
     email: 'luca.mezzalira@converge.seed',
     handle: 'lucamezzalira',
-    headline: 'Author of Building Micro-Frontends; principal solutions architect',
+    headline:
+      'Author of Building Micro-Frontends; principal solutions architect',
     company: 'Author of Building Micro-Frontends book',
     title: 'Principal Solutions Architect',
     bio: 'Principal solutions architect, international speaker, and O’Reilly author. Twenty years mastering software architectures from frontend to cloud.',
@@ -421,7 +422,11 @@ const people: PersonSeed[] = [
     currentFocus: 'A design system for 1B+ WhatsApp users',
     interestedTopics: ['design-systems', 'frontend', 'ai', 'ux'],
     availability: 'open',
-    socials: { github: 'Egrodo', linkedin: '~noah', site: 'https://noahyamamoto.com' },
+    socials: {
+      github: 'Egrodo',
+      linkedin: '~noah',
+      site: 'https://noahyamamoto.com',
+    },
     image:
       'https://gitnation.imgix.net/stichting-frontend-amsterdam/image/upload/v1770900416/u%402BmVlZxHvW12FLwbCBfz%402B%402BJkDpzb9Y3GxnZNdUeQUjE%403D.jpg?auto=format,compress&fit=crop&w=300&h=300',
   },
@@ -439,7 +444,11 @@ const people: PersonSeed[] = [
     currentFocus: 'The official Svelte MCP server',
     interestedTopics: ['svelte', 'ai', 'mcp', 'javascript'],
     availability: 'open',
-    socials: { github: 'paoloricciuti', x: 'PaoloRicciuti', site: 'https://ricciuti.me' },
+    socials: {
+      github: 'paoloricciuti',
+      x: 'PaoloRicciuti',
+      site: 'https://ricciuti.me',
+    },
     image:
       'https://gitnation.imgix.net/stichting-frontend-amsterdam/image/upload/v1750147359/BfrBIi7ajx7pHOH3NCpWwrhMwgX7Uzk8dS6x%402FIW8J8k%403D.jpg?auto=format,compress&fit=crop&w=300&h=300',
   },
@@ -680,7 +689,12 @@ const people: PersonSeed[] = [
     location: 'USA',
     intents: ['speaking', 'standards', 'platform strategy'],
     currentFocus: 'Building bridges to a post-SPA future',
-    interestedTopics: ['performance', 'web-platform', 'standards', 'architecture'],
+    interestedTopics: [
+      'performance',
+      'web-platform',
+      'standards',
+      'architecture',
+    ],
     availability: 'open',
     socials: { linkedin: 'alexrussell' },
     image:
@@ -700,7 +714,11 @@ const people: PersonSeed[] = [
     currentFocus: 'Spec-driven development with AI',
     interestedTopics: ['ai', 'dx', 'future-of-dev', 'javascript'],
     availability: 'open',
-    socials: { x: 'alexdotgs', linkedin: 'alexgarrettsmith', site: 'https://alex.gs' },
+    socials: {
+      x: 'alexdotgs',
+      linkedin: 'alexgarrettsmith',
+      site: 'https://alex.gs',
+    },
     image:
       'https://gitnation.imgix.net/stichting-frontend-amsterdam/image/upload/v1778680191/95B3C87F-FE21-416E-ACFB-B8309113C707_2_bsu9me.png?auto=format,compress&fit=crop&w=300&h=300',
   },
@@ -918,11 +936,45 @@ async function seed() {
     rsWorkshop: uid(),
   }
   await db.insert(room).values([
-    { id: rooms.jsMain, conferenceId: jsnationId, name: 'Forum Hall', floor: 'Ground', capacity: 1600, location: { lat: 52.341, lng: 4.889 } },
-    { id: rooms.jsAtrium, conferenceId: jsnationId, name: 'Atrium Stage', floor: '1', capacity: 400, location: { lat: 52.3412, lng: 4.8895 } },
-    { id: rooms.rsMain, conferenceId: reactSummitId, name: 'Forum Hall', floor: 'Ground', capacity: 1600, location: { lat: 52.341, lng: 4.889 } },
-    { id: rooms.rsCommunity, conferenceId: reactSummitId, name: 'Community Stage', floor: '1', capacity: 500, location: { lat: 52.3413, lng: 4.8898 } },
-    { id: rooms.rsWorkshop, conferenceId: reactSummitId, name: 'Workshop Room E', floor: '2', capacity: 80 },
+    {
+      id: rooms.jsMain,
+      conferenceId: jsnationId,
+      name: 'Forum Hall',
+      floor: 'Ground',
+      capacity: 1600,
+      location: { lat: 52.341, lng: 4.889 },
+    },
+    {
+      id: rooms.jsAtrium,
+      conferenceId: jsnationId,
+      name: 'Atrium Stage',
+      floor: '1',
+      capacity: 400,
+      location: { lat: 52.3412, lng: 4.8895 },
+    },
+    {
+      id: rooms.rsMain,
+      conferenceId: reactSummitId,
+      name: 'Forum Hall',
+      floor: 'Ground',
+      capacity: 1600,
+      location: { lat: 52.341, lng: 4.889 },
+    },
+    {
+      id: rooms.rsCommunity,
+      conferenceId: reactSummitId,
+      name: 'Community Stage',
+      floor: '1',
+      capacity: 500,
+      location: { lat: 52.3413, lng: 4.8898 },
+    },
+    {
+      id: rooms.rsWorkshop,
+      conferenceId: reactSummitId,
+      name: 'Workshop Room E',
+      floor: '2',
+      capacity: 80,
+    },
   ])
   console.log('  ✓ 2 conferences, 5 rooms')
 
@@ -931,14 +983,83 @@ async function seed() {
   const memberships: Membership[] = [
     // JSNation
     [jsnationId, 'organizer', ['elena']],
-    [jsnationId, 'speaker', ['sacha', 'liad', 'ido', 'luca', 'noah', 'paolo', 'joyee', 'alem', 'eddie', 'tobias', 'wesbos']],
+    [
+      jsnationId,
+      'speaker',
+      [
+        'sacha',
+        'liad',
+        'ido',
+        'luca',
+        'noah',
+        'paolo',
+        'joyee',
+        'alem',
+        'eddie',
+        'tobias',
+        'wesbos',
+      ],
+    ],
     [jsnationId, 'sponsor', ['tom']],
-    [jsnationId, 'attendee', ['mara', 'devin', 'priya', 'noa', 'jonas', 'yuki', 'aisha', 'lukas', 'sven', 'theo']],
+    [
+      jsnationId,
+      'attendee',
+      [
+        'mara',
+        'devin',
+        'priya',
+        'noa',
+        'jonas',
+        'yuki',
+        'aisha',
+        'lukas',
+        'sven',
+        'theo',
+      ],
+    ],
     // React Summit (co-located, same day)
     [reactSummitId, 'organizer', ['elena']],
-    [reactSummitId, 'speaker', ['aurora', 'scott', 'manuel', 'mark', 'adrian', 'faris', 'alexrussell', 'alexgs', 'gaauwe', 'kitze', 'kathryn', 'kevin', 'sam', 'ryan', 'alem']],
+    [
+      reactSummitId,
+      'speaker',
+      [
+        'aurora',
+        'scott',
+        'manuel',
+        'mark',
+        'adrian',
+        'faris',
+        'alexrussell',
+        'alexgs',
+        'gaauwe',
+        'kitze',
+        'kathryn',
+        'kevin',
+        'sam',
+        'ryan',
+        'alem',
+      ],
+    ],
     [reactSummitId, 'sponsor', ['tom']],
-    [reactSummitId, 'attendee', ['theo', 'imani', 'devin', 'priya', 'noa', 'jonas', 'lukas', 'mara', 'sasha', 'yuki', 'grace', 'aisha', 'finn']],
+    [
+      reactSummitId,
+      'attendee',
+      [
+        'theo',
+        'imani',
+        'devin',
+        'priya',
+        'noa',
+        'jonas',
+        'lukas',
+        'mara',
+        'sasha',
+        'yuki',
+        'grace',
+        'aisha',
+        'finn',
+      ],
+    ],
   ]
   let memberCount = 0
   for (const [confId, role, keys] of memberships) {
@@ -996,7 +1117,10 @@ async function seed() {
       lookingFor: ['contributors', 'feedback', 'early adopters'],
       links: { github: 'sashak/glasswire', docs: 'https://glasswire.dev' },
       trendingScore: 142,
-      members: [['mara', 'advisor'], ['yuki', 'contributor']],
+      members: [
+        ['mara', 'advisor'],
+        ['yuki', 'contributor'],
+      ],
     },
     {
       key: 'particula',
@@ -1059,9 +1183,15 @@ async function seed() {
       trendingScore: pr.trendingScore,
     })
     // owner is implicitly a member; add explicit members too
-    await db.insert(projectMember).values({ projectId: id, userId: U(pr.owner), role: 'owner' }).onConflictDoNothing()
+    await db
+      .insert(projectMember)
+      .values({ projectId: id, userId: U(pr.owner), role: 'owner' })
+      .onConflictDoNothing()
     for (const [k, role] of pr.members ?? []) {
-      await db.insert(projectMember).values({ projectId: id, userId: U(k), role }).onConflictDoNothing()
+      await db
+        .insert(projectMember)
+        .values({ projectId: id, userId: U(k), role })
+        .onConflictDoNothing()
     }
   }
   console.log(`  ✓ ${projects.length} projects`)
@@ -1080,159 +1210,224 @@ async function seed() {
     aiSummary?: string
     livestreamUrl?: string
   }
-  const day = (conf: string) => (conf === jsnationId ? JSNATION_DAY : REACT_SUMMIT_DAY)
+  const day = (conf: string) =>
+    conf === jsnationId ? JSNATION_DAY : REACT_SUMMIT_DAY
 
   const sessions: SessionSeed[] = [
     // --- JSNation Amsterdam 2026 — JSNation Track (single track, Forum Hall) ---
     // Times are Europe/Amsterdam local (the `at` helper anchors them to +02:00).
     {
       key: 'js-opening',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: 'Opening Ceremony',
       abstract:
         'Kick off JSNation Amsterdam 2026 — what to expect across the day, the people to meet, and the housekeeping before the talks begin.',
-      track: 'Ceremony', start: '09:10', end: '09:30', speakers: ['elena'],
+      track: 'Ceremony',
+      start: '09:10',
+      end: '09:30',
+      speakers: ['elena'],
     },
     {
       key: 'js-state-ai',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: 'The State of AI for Web Development',
       abstract:
         "A look through the main trends revealed by this year's State of Web Dev AI survey results, based on data collected from over 6800 developers.",
-      track: 'AI', start: '09:30', end: '10:00', speakers: ['sacha'],
+      track: 'AI',
+      start: '09:30',
+      end: '10:00',
+      speakers: ['sacha'],
       aiSummary:
         'Adoption is broad but shallow — most devs use AI for autocomplete and boilerplate, far fewer for architecture. Trust, not capability, is the current ceiling.',
     },
     {
       key: 'js-mcp-apps',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: 'MCP Apps – the Next Web',
       abstract:
-        "MCP Apps are the last piece in moving toward a new, nearly headless web. Agents interact with most sites through MCP and APIs, but some moments still need human eyes — choosing a seat, completing a check-in, verifying intent. MCP Apps let tools send composable, interactive UI directly to agents, exactly when needed.",
-      track: 'AI', start: '10:15', end: '10:45', speakers: ['liad', 'ido'],
+        'MCP Apps are the last piece in moving toward a new, nearly headless web. Agents interact with most sites through MCP and APIs, but some moments still need human eyes — choosing a seat, completing a check-in, verifying intent. MCP Apps let tools send composable, interactive UI directly to agents, exactly when needed.',
+      track: 'AI',
+      start: '10:15',
+      end: '10:45',
+      speakers: ['liad', 'ido'],
       aiSummary:
         'The web is going headless-with-a-human-eye: agents drive, but tools push interactive UI chunks for the last mile. MCP Apps standardize that UI layer.',
     },
     {
       key: 'js-microfrontends',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: 'Designing a Migration to Micro-Frontends',
       abstract:
         'Migrating to a micro-frontend architecture promises scalability, faster development cycles, and autonomous teams — but the journey is rarely straightforward. Practical lessons, challenges, and trade-offs from modernising hundreds of companies.',
-      track: 'Architecture', start: '10:50', end: '11:20', speakers: ['luca'],
+      track: 'Architecture',
+      start: '10:50',
+      end: '11:20',
+      speakers: ['luca'],
       aiSummary:
         'Define clear boundaries first, evolve incrementally, and treat inter-team dependencies as the real cost. Most failed migrations are org problems, not tech problems.',
     },
     {
       key: 'js-design-system',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: 'Creating a Design System for 1B+ Users in the Age of AI',
       abstract:
         'For 11 years the WhatsApp Web platform served a billion people with no consistent design system. The story of selling, building, and migrating one into a 1M+ LoC frontend — and how the project was both boosted by AI and benefits AI productivity.',
-      track: 'Design Systems', start: '11:50', end: '12:20', speakers: ['noah'],
+      track: 'Design Systems',
+      start: '11:50',
+      end: '12:20',
+      speakers: ['noah'],
       aiSummary:
         'A design system at this scale is a migration problem, not a component problem. AI accelerates both the build and the long tail of adoption across teams.',
     },
     {
       key: 'js-svelte-llm',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: 'How I Taught LLMs How to Svelte',
       abstract:
         "LLMs are changing how we write code, but they degrade fast outside their training set. Releasing Svelte 5 with a big syntax rewrite right as LLMs got good at code was unfortunate — here's how an MCP server adds context and guides models to write perfect Svelte 5 runes and reactivity.",
-      track: 'Svelte', start: '12:25', end: '12:55', speakers: ['paolo'],
+      track: 'Svelte',
+      start: '12:25',
+      end: '12:55',
+      speakers: ['paolo'],
       aiSummary:
         'New framework syntax falls outside model training data; an MCP server that injects current docs and examples closes the gap better than fine-tuning.',
     },
     {
       key: 'js-esm-node',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: "Life of an ESM in Node.js – and How It's Changing for the Better",
       abstract:
         'What actually happens when Node.js loads an ES module: resolution, loading, parsing, compilation, linking, instantiation, and evaluation. Where the work splits between V8 and Node.js, how it differs from browsers and bundlers, and recent changes that unlock better interop and performance.',
-      track: 'Node.js', start: '13:00', end: '13:30', speakers: ['joyee'],
+      track: 'Node.js',
+      start: '13:00',
+      end: '13:30',
+      speakers: ['joyee'],
       aiSummary:
         'The ESM loader does far more before your code runs than most assume. Recent Node changes improve interop and let you customize resolution without hacks.',
     },
     {
       key: 'js-tanstack-ai',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: 'How We Used AI to Build TanStack AI',
       abstract:
         'TanStack AI is an open-source project that makes it easy to use AI in your apps. How the team used AI to prototype concepts, solidify APIs, and ship the final library in under a month — with practical, repeatable use-cases for AI in your day to day.',
-      track: 'AI', start: '14:30', end: '15:00', speakers: ['alem'],
+      track: 'AI',
+      start: '14:30',
+      end: '15:00',
+      speakers: ['alem'],
       aiSummary:
         'AI is strongest at prototyping and API exploration, weakest at the last 20% of correctness. Ship faster by letting it draft and keeping humans on the seams.',
     },
     {
       key: 'js-stress-test',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: 'Stress Test Your Reflexes (And My App)',
       abstract:
         'What happens when you turn the audience into a live, distributed load test? A high-stakes multiplayer Whack-a-Mole played from your phone generates a stream of concurrent data — then we dig into the architecture, the realtime stack, and how helpful (or distracting) AI was building it.',
-      track: 'Fun Demos', start: '15:05', end: '15:35', speakers: ['eddie'],
+      track: 'Fun Demos',
+      start: '15:05',
+      end: '15:35',
+      speakers: ['eddie'],
     },
     {
       key: 'js-awards',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: 'JavaScript OS Awards Ceremony',
       abstract:
         'Celebrating the open-source projects and maintainers that kept the JavaScript ecosystem moving this year.',
-      track: 'Ceremony', start: '15:40', end: '16:10', speakers: ['elena'],
+      track: 'Ceremony',
+      start: '15:40',
+      end: '16:10',
+      speakers: ['elena'],
     },
     {
       key: 'js-chunking',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: 'Chunking',
       abstract:
         'How bundlers place modules into output files — the competing metrics chunking influences, why CSS and JS chunking are completely different, performance considerations for large apps, and how JS/CSS chunking works in webpack, Turbopack, and Next.js.',
-      track: 'Tooling', start: '16:30', end: '17:00', speakers: ['tobias'],
+      track: 'Tooling',
+      start: '16:30',
+      end: '17:00',
+      speakers: ['tobias'],
       aiSummary:
         'Chunking is a balance between request count, cache hit-rate, and initial payload. CSS and JS pull in opposite directions; the bundler defaults are rarely optimal for large apps.',
     },
     {
       key: 'js-lightning',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: 'Lightning Talks',
       abstract:
         'Four fast talks: A Brief History of Code Review (Santosh Yadav), Rustifying Vite: Designing a Hybrid Toolchain for the Real World (Alexander Lichter), Debugging Performance With AI (Bernie Sumption), and Taste in Software Development (Steven Hao).',
-      track: 'Lightning', start: '17:05', end: '17:35', speakers: ['elena'],
+      track: 'Lightning',
+      start: '17:05',
+      end: '17:35',
+      speakers: ['elena'],
     },
     {
       key: 'js-agentic',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: 'Agentic Interfaces: Tools, Skills, Generative UI and Web MCP',
       abstract:
         'Who is ordering Starbucks with ChatGPT? Will an agent just make the perfect UI for you? Do we even need websites anymore? A look at the current landscape of agentic interfaces and the future of UI, websites, and browsers — do we add AI to our site, or does our site get added to AI?',
-      track: 'AI', start: '17:40', end: '18:10', speakers: ['wesbos'],
+      track: 'AI',
+      start: '17:40',
+      end: '18:10',
+      speakers: ['wesbos'],
       aiSummary:
         'Sites will be consumed by agents as much as by people. Web MCP + generative UI is the bet: expose capabilities as tools, let the agent compose the interface.',
     },
     {
       key: 'js-closing',
-      conf: jsnationId, room: rooms.jsMain,
+      conf: jsnationId,
+      room: rooms.jsMain,
       title: 'Closing Ceremony',
       abstract:
         'Wrapping up JSNation Amsterdam 2026 — thank-yous, the highlights, and where the conversations continue.',
-      track: 'Ceremony', start: '18:10', end: '18:20', speakers: ['elena'],
+      track: 'Ceremony',
+      start: '18:10',
+      end: '18:20',
+      speakers: ['elena'],
     },
 
     // --- React Summit Amsterdam 2026 — Summit Track (single track, Forum Hall) ---
     // The day after JSNation; times are Europe/Amsterdam local.
     {
       key: 'rs-opening',
-      conf: reactSummitId, room: rooms.rsMain,
+      conf: reactSummitId,
+      room: rooms.rsMain,
       title: 'Opening Ceremony',
       abstract:
         'Welcome to React Summit Amsterdam 2026 — the shape of the day, the people to find, and what is new this year.',
-      track: 'Ceremony', start: '09:10', end: '09:30', speakers: ['elena'],
+      track: 'Ceremony',
+      start: '09:10',
+      end: '09:30',
+      speakers: ['elena'],
     },
     {
       key: 'rs-rsc-next',
-      conf: reactSummitId, room: rooms.rsMain,
+      conf: reactSummitId,
+      room: rooms.rsMain,
       title: 'What RSCs Can Do in Next.js Today',
       abstract:
         'Building app-like UX once meant reaching for an SPA — shipping the data layer to the browser, juggling a client cache and loading states. Next.js takes a different path: each piece of your app runs where it belongs while the mental model stays the same — components. See how that translates into instant-feeling, streamed UI, fresh data, caching across the stack, and Core Web Vitals that hold up as you scale.',
-      track: 'React Server Components', start: '09:30', end: '10:00', speakers: ['aurora'],
+      track: 'React Server Components',
+      start: '09:30',
+      end: '10:00',
+      speakers: ['aurora'],
       aiSummary:
         'RSC in Next.js lets you keep the component model while moving work to where it belongs. The payoff is streamed UI, fresh data, and strong Core Web Vitals without SPA boilerplate.',
       // React Summit main-stage livestream on YouTube.
@@ -1240,118 +1435,166 @@ async function seed() {
     },
     {
       key: 'rs-platform',
-      conf: reactSummitId, room: rooms.rsMain,
+      conf: reactSummitId,
+      room: rooms.rsMain,
       title: 'This Component Could Have Been A Class',
       abstract:
         'The web platform is not what it was in 2013, yet many of us still construct every UI element from scratch in React. Scott explores platform advancements — dialog, popover, details/summary and more — that can greatly simplify your React components while making them more accessible.',
-      track: 'Web Platform', start: '10:10', end: '10:40', speakers: ['scott'],
+      track: 'Web Platform',
+      start: '10:10',
+      end: '10:40',
+      speakers: ['scott'],
       aiSummary:
         'Reach for native elements (dialog, popover, details) before hand-building. They cut code and are accessible by default — let the platform do the work.',
     },
     {
       key: 'rs-rsc',
-      conf: reactSummitId, room: rooms.rsMain,
+      conf: reactSummitId,
+      room: rooms.rsMain,
       title: 'Tanstack Start and How It Supports React Server Components',
       abstract:
         'Most RSC implementations make components feel like a fixed, server-owned tree. TanStack Start treats RSC as data — server-rendered fragments the client can fetch, cache, and compose into its own UI tree. Because RSC fit the same caching story as data, they use TanStack Router’s cache, TanStack Query, or others directly, enabling fine-grained caching and invalidation, and composing cleanly with middleware and different rendering strategies.',
-      track: 'React Server Components', start: '10:45', end: '11:15', speakers: ['manuel'],
+      track: 'React Server Components',
+      start: '10:45',
+      end: '11:15',
+      speakers: ['manuel'],
       aiSummary:
         'Treat RSC as data, not a fixed server tree: fetch, cache, and compose it with the same tools you already use for queries. No separate caching model just for components.',
     },
     {
       key: 'rs-compiler',
-      conf: reactSummitId, room: rooms.rsMain,
+      conf: reactSummitId,
+      room: rooms.rsMain,
       title: 'A Guide to React Compiler Rendering',
       abstract:
         'The React Compiler promises to “automatically optimize your React app” — but what is it actually doing to your component, and how does that make your app faster? We clear up the confusion around when, why, and how React renders, demystify the compiler’s output, and show how it rewrites our mental model of using React.',
-      track: 'React Internals', start: '11:45', end: '12:15', speakers: ['mark'],
+      track: 'React Internals',
+      start: '11:45',
+      end: '12:15',
+      speakers: ['mark'],
       aiSummary:
         'The compiler auto-memoizes at build time; bailouts happen on mutation and dynamic access. Keep components pure and the compiler does the rest. Delete most useMemo.',
     },
     {
       key: 'rs-ai-educator',
-      conf: reactSummitId, room: rooms.rsMain,
+      conf: reactSummitId,
+      room: rooms.rsMain,
       title: 'How I use AI as a Technical Educator',
       abstract:
         'Over the past year, building applications has changed dramatically — projects that took weeks now take days. But the bigger shift is in how we learn and teach. Adrian shares using AI not just as a coding assistant but as a teaching layer: exploring architectures, validating decisions, iterating faster, and the growing gap between fast “vibe coding” and real understanding.',
-      track: 'AI', start: '12:20', end: '12:50', speakers: ['adrian'],
+      track: 'AI',
+      start: '12:20',
+      end: '12:50',
+      speakers: ['adrian'],
       aiSummary:
         'Use AI as a teaching layer, not just autocomplete: explore architectures and validate decisions out loud. Beware the gap between vibe-coding speed and real understanding.',
     },
     {
       key: 'rs-failure',
-      conf: reactSummitId, room: rooms.rsMain,
+      conf: reactSummitId,
+      room: rooms.rsMain,
       title: "Designing for Failure: The Senior React Dev's Production Toolkit",
       abstract:
         'You can be a strong frontend engineer while staying oblivious to availability, SLAs, SLOs, and delivery metrics — until you want more impact. This talk expands the frontend perspective to the system it lives in: resilience as a mindset, and how atomic changes, trunk-based development, feature flags, and automated rollbacks affect frontend work, tied to availability targets, SLOs, and DORA metrics.',
-      track: 'Best Practices', start: '12:55', end: '13:25', speakers: ['faris'],
+      track: 'Best Practices',
+      start: '12:55',
+      end: '13:25',
+      speakers: ['faris'],
       aiSummary:
         'Resilience is a frontend concern. Atomic changes, feature flags, and automated rollbacks tied to SLOs turn a bad deploy into a non-event.',
     },
     {
       key: 'rs-post-spa',
-      conf: reactSummitId, room: rooms.rsMain,
+      conf: reactSummitId,
+      room: rooms.rsMain,
       title: 'Building Bridges to a Post-SPA Future',
       abstract:
         'SPAs were always based on contingent logic: the benefits only materialise when users spend a lot of time in one interface, updating state in place — which never described most experiences. As the industry moves away from SPAs, the largest hurdle is organisational: retaining the trust of managers who signed off on the SPAs that now feel slow. This talk covers the evidence and approaches that build senior-leader confidence in the new analysis.',
-      track: 'Performance', start: '14:25', end: '14:55', speakers: ['alexrussell'],
+      track: 'Performance',
+      start: '14:25',
+      end: '14:55',
+      speakers: ['alexrussell'],
       aiSummary:
         'Most journeys never persisted state across screens — the SPA tax was rarely worth it. Moving past SPAs is as much an organisational journey (manager trust) as a technical one.',
     },
     {
       key: 'rs-specs',
-      conf: reactSummitId, room: rooms.rsMain,
+      conf: reactSummitId,
+      room: rooms.rsMain,
       title: 'We Need More Than Prompts',
       abstract:
         'Coding with an agent tends to settle into the same loop: prompt, check, re-prompt, repeat — burning time and tokens. There’s a better way, and it starts before any code is written. This talk puts the prompt-and-iterate loop head to head with spec-driven development, showing what a spec gives you that prompting can’t: decisions you can review before code exists, and context your whole team can build on.',
-      track: 'Future of Development', start: '15:00', end: '15:30', speakers: ['alexgs'],
+      track: 'Future of Development',
+      start: '15:00',
+      end: '15:30',
+      speakers: ['alexgs'],
       aiSummary:
         'Spec-driven development beats prompt-and-iterate: a spec captures reviewable decisions before any code exists and gives the whole team shared context.',
     },
     {
       key: 'rs-lightning',
-      conf: reactSummitId, room: rooms.rsMain,
+      conf: reactSummitId,
+      room: rooms.rsMain,
       title: 'Lightning Talks',
       abstract:
         "Four fast talks: I Did Everything Wrong So You Don't Have To (Angel Pichardo), Taming the Flicker: Firebase Patterns for React Server Components (Rosario Fernandes), Framework Native Rendering Without Code Duplication? (Stephen Cooper), and CLI, GUI, or Just Blind Trust? A Tour of Code Review Styles (Santosh Yadav).",
-      track: 'Lightning', start: '15:35', end: '16:05', speakers: ['elena'],
+      track: 'Lightning',
+      start: '15:35',
+      end: '16:05',
+      speakers: ['elena'],
     },
     {
       key: 'rs-panel',
-      conf: reactSummitId, room: rooms.rsMain,
-      title: 'Panel Discussion: Fullstack is Eating Frontend — Should FE Engineers Adapt?',
+      conf: reactSummitId,
+      room: rooms.rsMain,
+      title:
+        'Panel Discussion: Fullstack is Eating Frontend — Should FE Engineers Adapt?',
       abstract:
         'A panel on whether the move toward fullstack should change how frontend engineers work — and where the craft of the frontend still matters.',
-      track: 'Panel', start: '16:25', end: '17:00',
+      track: 'Panel',
+      start: '16:25',
+      end: '17:00',
       speakers: ['kathryn', 'kevin', 'scott', 'sam', 'alem', 'ryan'],
     },
     {
       key: 'rs-quality-ai',
-      conf: reactSummitId, room: rooms.rsMain,
+      conf: reactSummitId,
+      room: rooms.rsMain,
       title: "Speed, Quality, and AI: You Can't Have It All (Or Can You?)",
       abstract:
         'Every team building with AI faces the same tension: move fast and ship, or slow down and get it right. At Zed — an IDE obsessed with performance and quality — that means being brutally honest about where AI helps, where it hurts, and how to decide when the answer isn’t obvious. The tradeoffs, the mistakes, and the framework for keeping quality alive when speed is the default.',
-      track: 'Performance', start: '17:05', end: '17:35', speakers: ['gaauwe'],
+      track: 'Performance',
+      start: '17:05',
+      end: '17:35',
+      speakers: ['gaauwe'],
       aiSummary:
         'Be brutally honest about where AI helps and where it hurts. Quality survives the speed default only with an explicit framework for the tradeoffs.',
     },
     {
       key: 'rs-vibe',
-      conf: reactSummitId, room: rooms.rsMain,
+      conf: reactSummitId,
+      room: rooms.rsMain,
       title: 'From Vibe Coding to Vibe Engineering',
       abstract:
         'Web development moves in cycles of hype, from frameworks to tooling. With large language models we’re entering an era of “vibe coding,” where developers shape software through collaboration with AI rather than syntax. What does that mean for the future of coding — especially frontend — and how does it echo the past while redefining what comes next?',
-      track: 'AI', start: '17:40', end: '18:10', speakers: ['kitze'],
+      track: 'AI',
+      start: '17:40',
+      end: '18:10',
+      speakers: ['kitze'],
       aiSummary:
         'Vibe coding shifts the craft from syntax to collaboration with AI. The cycle echoes past framework hype — the discipline (“vibe engineering”) is what makes it stick.',
     },
     {
       key: 'rs-closing',
-      conf: reactSummitId, room: rooms.rsMain,
+      conf: reactSummitId,
+      room: rooms.rsMain,
       title: 'Closing Ceremony',
       abstract:
         'Closing out React Summit Amsterdam 2026 — the highlights, the thank-yous, and where the after-hours conversations continue.',
-      track: 'Ceremony', start: '18:10', end: '18:20', speakers: ['elena'],
+      track: 'Ceremony',
+      start: '18:10',
+      end: '18:20',
+      speakers: ['elena'],
     },
   ]
 
@@ -1369,11 +1612,16 @@ async function seed() {
       startsAt: at(day(s.conf), s.start),
       endsAt: at(day(s.conf), s.end),
       livestreamUrl: s.livestreamUrl ?? null,
-      transcriptUrl: s.aiSummary ? `https://cdn.converge.dev/transcripts/${id}.vtt` : null,
+      transcriptUrl: s.aiSummary
+        ? `https://cdn.converge.dev/transcripts/${id}.vtt`
+        : null,
       aiSummary: s.aiSummary ?? null,
     })
     for (const sp of s.speakers) {
-      await db.insert(sessionSpeaker).values({ sessionId: id, userId: U(sp) }).onConflictDoNothing()
+      await db
+        .insert(sessionSpeaker)
+        .values({ sessionId: id, userId: U(sp) })
+        .onConflictDoNothing()
     }
   }
   const S = (key: string) => sessionIds.get(key)!
@@ -1381,20 +1629,114 @@ async function seed() {
 
   /* --- moments (bookmarked highlights within talks) --- */
   const moments: Array<{
-    session: string; user: string; ms: number; snippet: string; note?: string; slide?: string; ai?: boolean
+    session: string
+    user: string
+    ms: number
+    snippet: string
+    note?: string
+    slide?: string
+    ai?: boolean
   }> = [
-    { session: 'rs-compiler', user: 'devin', ms: 8 * 60_000, snippet: 'You can basically delete most of your useMemo and useCallback calls.', note: 'Finally. Try this on the checkout page Monday.', slide: '#14', ai: true },
-    { session: 'rs-compiler', user: 'priya', ms: 18 * 60_000, snippet: 'The compiler bails out the moment it sees a mutation it cannot prove is safe.', note: 'This is the gotcha for our team' },
-    { session: 'rs-rsc-next', user: 'theo', ms: 22 * 60_000, snippet: 'The boundary between server and client is the new core skill.', ai: true },
-    { session: 'rs-rsc-next', user: 'noa', ms: 12 * 60_000, snippet: 'Each piece of your app runs where it belongs, and the mental model stays the same: components.', note: 'This is exactly the model I want for Tidereel', slide: '#9' },
-    { session: 'rs-post-spa', user: 'jonas', ms: 9 * 60_000, snippet: 'Most user journeys never persisted state across screens — the SPA tax was never worth it for them.', note: 'Re-evaluate our SPA assumptions' },
-    { session: 'js-esm-node', user: 'devin', ms: 14 * 60_000, snippet: "Node's ESM loader does resolution, linking, and evaluation before a single line of your code runs.", ai: true },
-    { session: 'js-chunking', user: 'priya', ms: 11 * 60_000, snippet: 'Bad chunking is the difference between a 200kb initial load and a 2mb one.', note: 'Initial-load budget — flag for the platform team' },
-    { session: 'rs-failure', user: 'devin', ms: 16 * 60_000, snippet: 'Resilience is a frontend concern — atomic changes, feature flags, and rollbacks tied to your SLOs.', slide: '#21' },
-    { session: 'rs-vibe', user: 'grace', ms: 25 * 60_000, snippet: 'We shape software through collaboration with AI now — not syntax.', ai: true },
-    { session: 'js-tanstack-ai', user: 'theo', ms: 7 * 60_000 + 30_000, snippet: 'Backpressure is the hidden cost nobody benchmarks — your client will buffer silently until it doesn\'t.', note: 'Check if our streaming proxy handles this', slide: '#5', ai: true },
-    { session: 'js-tanstack-ai', user: 'finn', ms: 12 * 60_000, snippet: 'Abort controllers are your best friend. If the user navigates away, you have to stop the model.', slide: '#8' },
-    { session: 'js-tanstack-ai', user: 'imani', ms: 18 * 60_000, snippet: 'Token budget on the server side — never let the model output more than the UI can meaningfully render.', note: 'Hard limit for our chat feature' },
+    {
+      session: 'rs-compiler',
+      user: 'devin',
+      ms: 8 * 60_000,
+      snippet:
+        'You can basically delete most of your useMemo and useCallback calls.',
+      note: 'Finally. Try this on the checkout page Monday.',
+      slide: '#14',
+      ai: true,
+    },
+    {
+      session: 'rs-compiler',
+      user: 'priya',
+      ms: 18 * 60_000,
+      snippet:
+        'The compiler bails out the moment it sees a mutation it cannot prove is safe.',
+      note: 'This is the gotcha for our team',
+    },
+    {
+      session: 'rs-rsc-next',
+      user: 'theo',
+      ms: 22 * 60_000,
+      snippet: 'The boundary between server and client is the new core skill.',
+      ai: true,
+    },
+    {
+      session: 'rs-rsc-next',
+      user: 'noa',
+      ms: 12 * 60_000,
+      snippet:
+        'Each piece of your app runs where it belongs, and the mental model stays the same: components.',
+      note: 'This is exactly the model I want for Tidereel',
+      slide: '#9',
+    },
+    {
+      session: 'rs-post-spa',
+      user: 'jonas',
+      ms: 9 * 60_000,
+      snippet:
+        'Most user journeys never persisted state across screens — the SPA tax was never worth it for them.',
+      note: 'Re-evaluate our SPA assumptions',
+    },
+    {
+      session: 'js-esm-node',
+      user: 'devin',
+      ms: 14 * 60_000,
+      snippet:
+        "Node's ESM loader does resolution, linking, and evaluation before a single line of your code runs.",
+      ai: true,
+    },
+    {
+      session: 'js-chunking',
+      user: 'priya',
+      ms: 11 * 60_000,
+      snippet:
+        'Bad chunking is the difference between a 200kb initial load and a 2mb one.',
+      note: 'Initial-load budget — flag for the platform team',
+    },
+    {
+      session: 'rs-failure',
+      user: 'devin',
+      ms: 16 * 60_000,
+      snippet:
+        'Resilience is a frontend concern — atomic changes, feature flags, and rollbacks tied to your SLOs.',
+      slide: '#21',
+    },
+    {
+      session: 'rs-vibe',
+      user: 'grace',
+      ms: 25 * 60_000,
+      snippet:
+        'We shape software through collaboration with AI now — not syntax.',
+      ai: true,
+    },
+    {
+      session: 'js-tanstack-ai',
+      user: 'theo',
+      ms: 7 * 60_000 + 30_000,
+      snippet:
+        "Backpressure is the hidden cost nobody benchmarks — your client will buffer silently until it doesn't.",
+      note: 'Check if our streaming proxy handles this',
+      slide: '#5',
+      ai: true,
+    },
+    {
+      session: 'js-tanstack-ai',
+      user: 'finn',
+      ms: 12 * 60_000,
+      snippet:
+        'Abort controllers are your best friend. If the user navigates away, you have to stop the model.',
+      slide: '#8',
+    },
+    {
+      session: 'js-tanstack-ai',
+      user: 'imani',
+      ms: 18 * 60_000,
+      snippet:
+        'Token budget on the server side — never let the model output more than the UI can meaningfully render.',
+      note: 'Hard limit for our chat feature',
+    },
   ]
   for (const m of moments) {
     await db.insert(moment).values({
@@ -1410,13 +1752,40 @@ async function seed() {
   console.log(`  ✓ ${moments.length} moments`)
 
   /* --- notes --- */
-  const notes: Array<{ user: string; session?: string; kind?: string; body: string }> = [
-    { user: 'devin', session: 'rs-compiler', body: 'TODO: audit our codebase for manual memoization once we upgrade. Ask Priya if we can bump React this quarter.' },
-    { user: 'priya', session: 'js-chunking', body: 'Our initial bundle is 2mb — chunking is the lever. Action: audit the design-system repo first (smallest blast radius).' },
-    { user: 'noa', body: 'Glasswire Sync might be the answer for offline. Talk to Sasha — could save me months.' },
-    { user: 'jonas', kind: 'voice', body: 'Voice memo: ask the post-SPA talk speaker how View Transitions hold up with a real router. Recorded in the hallway.' },
-    { user: 'theo', session: 'rs-rsc-next', body: 'Server/client boundary as the core skill — good framing for the next video.' },
-    { user: 'grace', body: 'Hallway idea: a workshop on incremental RN architecture migration. There is clearly demand.' },
+  const notes: Array<{
+    user: string
+    session?: string
+    kind?: string
+    body: string
+  }> = [
+    {
+      user: 'devin',
+      session: 'rs-compiler',
+      body: 'TODO: audit our codebase for manual memoization once we upgrade. Ask Priya if we can bump React this quarter.',
+    },
+    {
+      user: 'priya',
+      session: 'js-chunking',
+      body: 'Our initial bundle is 2mb — chunking is the lever. Action: audit the design-system repo first (smallest blast radius).',
+    },
+    {
+      user: 'noa',
+      body: 'Glasswire Sync might be the answer for offline. Talk to Sasha — could save me months.',
+    },
+    {
+      user: 'jonas',
+      kind: 'voice',
+      body: 'Voice memo: ask the post-SPA talk speaker how View Transitions hold up with a real router. Recorded in the hallway.',
+    },
+    {
+      user: 'theo',
+      session: 'rs-rsc-next',
+      body: 'Server/client boundary as the core skill — good framing for the next video.',
+    },
+    {
+      user: 'grace',
+      body: 'Hallway idea: a workshop on incremental RN architecture migration. There is clearly demand.',
+    },
   ]
   for (const n of notes) {
     await db.insert(note).values({
@@ -1424,7 +1793,10 @@ async function seed() {
       sessionId: n.session ? S(n.session) : null,
       kind: n.kind ?? 'text',
       body: n.body,
-      audioUrl: n.kind === 'voice' ? `https://cdn.converge.dev/notes/${uid()}.webm` : null,
+      audioUrl:
+        n.kind === 'voice'
+          ? `https://cdn.converge.dev/notes/${uid()}.webm`
+          : null,
     })
   }
   console.log(`  ✓ ${notes.length} notes`)
@@ -1432,81 +1804,153 @@ async function seed() {
   /* --- questions + answers --- */
   const questionIds = new Map<string, string>()
   const questions: Array<{
-    key: string; session: string; author: string; body: string; status?: string; upvotes: number
+    key: string
+    session: string
+    author: string
+    body: string
+    status?: string
+    upvotes: number
     answers?: Array<{ author: string; body: string; fromSpeaker?: boolean }>
   }> = [
     {
       key: 'q-compiler-eslint',
-      session: 'rs-compiler', author: 'devin', upvotes: 47, status: 'answered',
+      session: 'rs-compiler',
+      author: 'devin',
+      upvotes: 47,
+      status: 'answered',
       body: 'If the compiler memoizes everything, is the react-hooks/exhaustive-deps lint rule still useful?',
       answers: [
-        { author: 'mark', fromSpeaker: true, body: 'Yes — the rule still catches genuinely missing dependencies that would change behaviour, not just performance. Keep it on.' },
-        { author: 'theo', body: 'Was about to ask the same thing. Good to know.' },
+        {
+          author: 'mark',
+          fromSpeaker: true,
+          body: 'Yes — the rule still catches genuinely missing dependencies that would change behaviour, not just performance. Keep it on.',
+        },
+        {
+          author: 'theo',
+          body: 'Was about to ask the same thing. Good to know.',
+        },
       ],
     },
     {
       key: 'q-compiler-bailout',
-      session: 'rs-compiler', author: 'priya', upvotes: 31, status: 'answered',
+      session: 'rs-compiler',
+      author: 'priya',
+      upvotes: 31,
+      status: 'answered',
       body: 'How do we know when the compiler has bailed out on a component in production?',
       answers: [
-        { author: 'mark', fromSpeaker: true, body: 'The React DevTools shows a “Memo ✨” badge on compiled components. No badge means it bailed — usually a mutation or a ref escape.' },
+        {
+          author: 'mark',
+          fromSpeaker: true,
+          body: 'The React DevTools shows a “Memo ✨” badge on compiled components. No badge means it bailed — usually a mutation or a ref escape.',
+        },
       ],
     },
     {
       key: 'q-platform-replace',
-      session: 'rs-platform', author: 'noa', upvotes: 22, status: 'answered',
+      session: 'rs-platform',
+      author: 'noa',
+      upvotes: 22,
+      status: 'answered',
       body: 'Which React patterns are you replacing with native web platform features first?',
       answers: [
-        { author: 'scott', fromSpeaker: true, body: 'Dialog, popover, and details/summary cover a huge amount of what we used to hand-build — and they are accessible by default. Start there, then look at anchor positioning.' },
+        {
+          author: 'scott',
+          fromSpeaker: true,
+          body: 'Dialog, popover, and details/summary cover a huge amount of what we used to hand-build — and they are accessible by default. Start there, then look at anchor positioning.',
+        },
       ],
     },
     {
       key: 'q-post-spa-nav',
-      session: 'rs-post-spa', author: 'jonas', upvotes: 19, status: 'open',
+      session: 'rs-post-spa',
+      author: 'jonas',
+      upvotes: 19,
+      status: 'open',
       body: 'If we move off the SPA model, do we lose the instant in-app navigation users are used to?',
     },
     {
       key: 'q-specs-migrate',
-      session: 'rs-specs', author: 'devin', upvotes: 14, status: 'open',
+      session: 'rs-specs',
+      author: 'devin',
+      upvotes: 14,
+      status: 'open',
       body: 'For a big migration, is it worth writing a spec up front, or do you just prompt your way through it with the agent?',
     },
     {
       key: 'q-failure-rollout',
-      session: 'rs-failure', author: 'priya', upvotes: 26, status: 'answered',
+      session: 'rs-failure',
+      author: 'priya',
+      upvotes: 26,
+      status: 'answered',
       body: 'How do you keep a risky frontend change from taking down production?',
       answers: [
-        { author: 'faris', fromSpeaker: true, body: 'Atomic changes behind feature flags, with automated rollbacks tied to your SLOs. If the error budget starts burning, the flag flips off before anyone gets paged.' },
+        {
+          author: 'faris',
+          fromSpeaker: true,
+          body: 'Atomic changes behind feature flags, with automated rollbacks tied to your SLOs. If the error budget starts burning, the flag flips off before anyone gets paged.',
+        },
       ],
     },
     {
       key: 'q-streaming-backpressure',
-      session: 'js-tanstack-ai', author: 'theo', upvotes: 28, status: 'answered',
-      body: 'How does TanStack AI handle backpressure when the client can\'t consume tokens as fast as the model produces them?',
+      session: 'js-tanstack-ai',
+      author: 'theo',
+      upvotes: 28,
+      status: 'answered',
+      body: "How does TanStack AI handle backpressure when the client can't consume tokens as fast as the model produces them?",
       answers: [
-        { author: 'alem', fromSpeaker: true, body: 'ReadableStream with a TransformStream as a token buffer. If the queue depth exceeds a threshold we pause the upstream and let the UI drain. The key is never dropping tokens — buffering is fine, losing data is not.' },
-        { author: 'theo', body: 'This is the piece I was missing. Going to spike on this tomorrow.' },
+        {
+          author: 'alem',
+          fromSpeaker: true,
+          body: 'ReadableStream with a TransformStream as a token buffer. If the queue depth exceeds a threshold we pause the upstream and let the UI drain. The key is never dropping tokens — buffering is fine, losing data is not.',
+        },
+        {
+          author: 'theo',
+          body: 'This is the piece I was missing. Going to spike on this tomorrow.',
+        },
       ],
     },
     {
       key: 'q-streaming-abort',
-      session: 'js-tanstack-ai', author: 'lukas', upvotes: 21, status: 'answered',
+      session: 'js-tanstack-ai',
+      author: 'lukas',
+      upvotes: 21,
+      status: 'answered',
       body: 'If the user cancels mid-stream, does the model keep running and billing you on the server?',
       answers: [
-        { author: 'alem', fromSpeaker: true, body: 'Yes, unless you propagate the AbortSignal all the way through. Pass it to the fetch, then forward it to the SDK. Most providers stop billing the moment the connection drops — but you have to actually close it.' },
+        {
+          author: 'alem',
+          fromSpeaker: true,
+          body: 'Yes, unless you propagate the AbortSignal all the way through. Pass it to the fetch, then forward it to the SDK. Most providers stop billing the moment the connection drops — but you have to actually close it.',
+        },
       ],
     },
     {
       key: 'q-streaming-edge',
-      session: 'js-tanstack-ai', author: 'finn', upvotes: 15, status: 'open',
+      session: 'js-tanstack-ai',
+      author: 'finn',
+      upvotes: 15,
+      status: 'open',
       body: 'Does streaming LLM responses work well from edge runtimes, or does the cold start kill the TTFT advantage?',
     },
     {
       key: 'q-rsc-tanstack-query',
-      session: 'rs-rsc', author: 'devin', upvotes: 34, status: 'answered',
+      session: 'rs-rsc',
+      author: 'devin',
+      upvotes: 34,
+      status: 'answered',
       body: 'Does this play nicely with TanStack Query, or do RSC and client-side caching just fight each other the whole time?',
       answers: [
-        { author: 'manuel', fromSpeaker: true, body: 'They are complementary, not competing. In TanStack Start, RSC is just data — it flows into the same cache as everything else. RSC handles the initial fetch and server work; Query owns client cache and invalidation. The boundary is the serialization point — what crosses it is data, not cache state.' },
-        { author: 'noa', body: 'We use both in Tidereel. RSC for the page shell, Query for everything that updates without a navigation. The only footgun is deduplication — make sure you are not fetching the same data twice.' },
+        {
+          author: 'manuel',
+          fromSpeaker: true,
+          body: 'They are complementary, not competing. In TanStack Start, RSC is just data — it flows into the same cache as everything else. RSC handles the initial fetch and server work; Query owns client cache and invalidation. The boundary is the serialization point — what crosses it is data, not cache state.',
+        },
+        {
+          author: 'noa',
+          body: 'We use both in Tidereel. RSC for the page shell, Query for everything that updates without a navigation. The only footgun is deduplication — make sure you are not fetching the same data twice.',
+        },
       ],
     },
   ]
@@ -1535,66 +1979,145 @@ async function seed() {
   /* --- discussions + threaded posts --- */
   type Post = { author: string; body: string; replies?: Post[] }
   const discussions: Array<{
-    title: string; topic?: string; conf?: string; session?: string; project?: string; question?: string
-    createdBy: string; posts: Post[]
+    title: string
+    topic?: string
+    conf?: string
+    session?: string
+    project?: string
+    question?: string
+    createdBy: string
+    posts: Post[]
   }> = [
     {
       title: 'React Compiler: who has shipped it to prod?',
       topic: 'react-compiler',
-      conf: reactSummitId, session: 'rs-compiler', question: 'q-compiler-bailout',
+      conf: reactSummitId,
+      session: 'rs-compiler',
+      question: 'q-compiler-bailout',
       createdBy: 'devin',
       posts: [
-        { author: 'devin', body: 'After Mark Erikson’s talk I’m convinced. Anyone running the compiler in production already? What broke?', replies: [
-          { author: 'mark', body: 'We’ve had it on for ~6 months at work. The only real surprise was a few components that mutated props in render — those bailed silently until we fixed them.' },
-          { author: 'priya', body: 'We’re gated on a React upgrade. Mark, did you need any codemods or was it just turning the plugin on?', replies: [
-            { author: 'mark', body: 'Just the Babel/SWC plugin + the eslint plugin to catch rule-of-React violations. No codemod.' },
-          ] },
-        ] },
-        { author: 'theo', body: 'Doing a video on this. Will link the repo here when it’s up.' },
+        {
+          author: 'devin',
+          body: 'After Mark Erikson’s talk I’m convinced. Anyone running the compiler in production already? What broke?',
+          replies: [
+            {
+              author: 'mark',
+              body: 'We’ve had it on for ~6 months at work. The only real surprise was a few components that mutated props in render — those bailed silently until we fixed them.',
+            },
+            {
+              author: 'priya',
+              body: 'We’re gated on a React upgrade. Mark, did you need any codemods or was it just turning the plugin on?',
+              replies: [
+                {
+                  author: 'mark',
+                  body: 'Just the Babel/SWC plugin + the eslint plugin to catch rule-of-React violations. No codemod.',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          author: 'theo',
+          body: 'Doing a video on this. Will link the repo here when it’s up.',
+        },
       ],
     },
     {
       title: 'Local-first: is it ready for real apps?',
       topic: 'local-first',
-      conf: reactSummitId, project: 'glasswire',
+      conf: reactSummitId,
+      project: 'glasswire',
       createdBy: 'noa',
       posts: [
-        { author: 'noa', body: 'Sasha’s sync engine looks like exactly what I need for Tidereel’s offline mode. Anyone using Glasswire in anger yet?', replies: [
-          { author: 'sasha', body: 'It’s early but stable for single-user-multi-device. Multi-user collaboration is the next milestone. Happy to pair if you want to try it.' },
-          { author: 'yuki', body: 'I contributed the edge-sync adapter — works great with Durable Objects if you go that route.' },
-        ] },
+        {
+          author: 'noa',
+          body: 'Sasha’s sync engine looks like exactly what I need for Tidereel’s offline mode. Anyone using Glasswire in anger yet?',
+          replies: [
+            {
+              author: 'sasha',
+              body: 'It’s early but stable for single-user-multi-device. Multi-user collaboration is the next milestone. Happy to pair if you want to try it.',
+            },
+            {
+              author: 'yuki',
+              body: 'I contributed the edge-sync adapter — works great with Durable Objects if you go that route.',
+            },
+          ],
+        },
       ],
     },
     {
       title: 'Cutting build & CI time — war stories wanted',
       topic: 'ci-performance',
-      conf: jsnationId, session: 'js-chunking',
+      conf: jsnationId,
+      session: 'js-chunking',
       createdBy: 'priya',
       posts: [
-        { author: 'priya', body: "Goal: halve our CI. After Tobias's chunking talk I'm rethinking our build config. What else moved the needle for you?", replies: [
-          { author: 'sven', body: 'Bundling is usually not the CI bottleneck — test sharding and a remote cache win bigger. But smarter chunking helps cold builds and cache hit-rate.' },
-          { author: 'aisha', body: 'Parallelise your e2e suite and kill flaky retries. A flaky test that retries 3x is 3x the CI cost.' },
-          { author: 'lukas', body: 'Profile the runner itself. We found 40% of our “CI time” was just installing dependencies.' },
-        ] },
+        {
+          author: 'priya',
+          body: "Goal: halve our CI. After Tobias's chunking talk I'm rethinking our build config. What else moved the needle for you?",
+          replies: [
+            {
+              author: 'sven',
+              body: 'Bundling is usually not the CI bottleneck — test sharding and a remote cache win bigger. But smarter chunking helps cold builds and cache hit-rate.',
+            },
+            {
+              author: 'aisha',
+              body: 'Parallelise your e2e suite and kill flaky retries. A flaky test that retries 3x is 3x the CI cost.',
+            },
+            {
+              author: 'lukas',
+              body: 'Profile the runner itself. We found 40% of our “CI time” was just installing dependencies.',
+            },
+          ],
+        },
       ],
     },
     {
       title: 'Coffee: RSC data-fetching patterns',
       topic: 'react-server-components',
-      conf: reactSummitId, session: 'rs-rsc', question: 'q-rsc-tanstack-query',
+      conf: reactSummitId,
+      session: 'rs-rsc',
+      question: 'q-rsc-tanstack-query',
       createdBy: 'devin',
       posts: [
-        { author: 'devin', body: "After Manuel's talk I want to nail down when to reach for RSC vs TanStack Query for data. Anyone settled on a pattern they're happy with?", replies: [
-          { author: 'manuel', body: 'Rule of thumb I use: if the data is only needed for the initial render and does not change while the user is on the page, RSC. If it can be invalidated, refetched, or mutated by the client, TanStack Query. Most pages need both.' },
-          { author: 'noa', body: 'We went further and wrote a decision tree for our team. RSC for page-level queries that depend on URL params, Query for everything inside interactive components. Has basically eliminated the "which one do I use" conversation.', replies: [
-            { author: 'devin', body: 'Would love a link to that decision tree if you are open to sharing it.' },
-            { author: 'noa', body: "I'll clean it up and drop it in the Tidereel repo — will post here when it's up." },
-          ] },
-          { author: 'sasha', body: 'The other thing nobody talks about: prefetching. RSC lets you start the DB query before the component tree renders. With Query you are always one tick late. For above-the-fold content that latency matters.' },
-        ] },
-        { author: 'theo', body: 'Going to cover this in a video this week. The streaming angle is underrated — RSC + Suspense means your shell renders instantly and slots fill in. Query can not do that without a separate skeleton state.', replies: [
-          { author: 'imani', body: 'The skeleton state thing is real. We had a whole pattern for it before RSC. Now it is just Suspense and a fallback.' },
-        ] },
+        {
+          author: 'devin',
+          body: "After Manuel's talk I want to nail down when to reach for RSC vs TanStack Query for data. Anyone settled on a pattern they're happy with?",
+          replies: [
+            {
+              author: 'manuel',
+              body: 'Rule of thumb I use: if the data is only needed for the initial render and does not change while the user is on the page, RSC. If it can be invalidated, refetched, or mutated by the client, TanStack Query. Most pages need both.',
+            },
+            {
+              author: 'noa',
+              body: 'We went further and wrote a decision tree for our team. RSC for page-level queries that depend on URL params, Query for everything inside interactive components. Has basically eliminated the "which one do I use" conversation.',
+              replies: [
+                {
+                  author: 'devin',
+                  body: 'Would love a link to that decision tree if you are open to sharing it.',
+                },
+                {
+                  author: 'noa',
+                  body: "I'll clean it up and drop it in the Tidereel repo — will post here when it's up.",
+                },
+              ],
+            },
+            {
+              author: 'sasha',
+              body: 'The other thing nobody talks about: prefetching. RSC lets you start the DB query before the component tree renders. With Query you are always one tick late. For above-the-fold content that latency matters.',
+            },
+          ],
+        },
+        {
+          author: 'theo',
+          body: 'Going to cover this in a video this week. The streaming angle is underrated — RSC + Suspense means your shell renders instantly and slots fill in. Query can not do that without a separate skeleton state.',
+          replies: [
+            {
+              author: 'imani',
+              body: 'The skeleton state thing is real. We had a whole pattern for it before RSC. Now it is just Suspense and a fallback.',
+            },
+          ],
+        },
       ],
     },
     {
@@ -1603,10 +2126,20 @@ async function seed() {
       conf: reactSummitId,
       createdBy: 'tom',
       posts: [
-        { author: 'tom', body: 'I’ve got 6 senior frontend roles open (remote-EU + Amsterdam hybrid). React, TS, design-systems experience valued. DM me or drop a note here.', replies: [
-          { author: 'devin', body: 'Not senior yet but following for when I am 👀' },
-          { author: 'imani', body: 'Tom, do any of them involve design-system work specifically? Happy to refer people.' },
-        ] },
+        {
+          author: 'tom',
+          body: 'I’ve got 6 senior frontend roles open (remote-EU + Amsterdam hybrid). React, TS, design-systems experience valued. DM me or drop a note here.',
+          replies: [
+            {
+              author: 'devin',
+              body: 'Not senior yet but following for when I am 👀',
+            },
+            {
+              author: 'imani',
+              body: 'Tom, do any of them involve design-system work specifically? Happy to refer people.',
+            },
+          ],
+        },
       ],
     },
   ]
@@ -1642,15 +2175,51 @@ async function seed() {
   console.log(`  ✓ ${discussions.length} discussions, ${postCount} posts`)
 
   /* --- direct messages --- */
-  const dms: Array<{ from: string; to: string; body: string; read?: boolean }> = [
-    { from: 'noa', to: 'sasha', body: 'Hey! Loved your take on local-first in the thread. Could I grab 15 min about using Glasswire for Tidereel?', read: true },
-    { from: 'sasha', to: 'noa', body: 'Absolutely — I’m at the OSS booth till 4, or coffee tomorrow morning?', read: true },
-    { from: 'noa', to: 'sasha', body: 'Coffee tomorrow is perfect. 9am at the Atrium café?', read: false },
-    { from: 'tom', to: 'devin', body: 'Saw you asking great questions in the compiler talk. Not recruiting you (yet!) but let’s stay in touch.', read: true },
-    { from: 'priya', to: 'mara', body: 'Your take on the server/client boundary finally made it click for my team. Any chance you’d do an internal talk?', read: false },
-    { from: 'jonas', to: 'yuki', body: 'That edge SSR / data-locality problem you mentioned hit home. We have the exact issue at DeepL. Mind if I follow up over email?', read: false },
-    { from: 'imani', to: 'tom', body: 'Re: your roles — I know two strong design-system engineers looking. Sending intros.', read: true },
-  ]
+  const dms: Array<{ from: string; to: string; body: string; read?: boolean }> =
+    [
+      {
+        from: 'noa',
+        to: 'sasha',
+        body: 'Hey! Loved your take on local-first in the thread. Could I grab 15 min about using Glasswire for Tidereel?',
+        read: true,
+      },
+      {
+        from: 'sasha',
+        to: 'noa',
+        body: 'Absolutely — I’m at the OSS booth till 4, or coffee tomorrow morning?',
+        read: true,
+      },
+      {
+        from: 'noa',
+        to: 'sasha',
+        body: 'Coffee tomorrow is perfect. 9am at the Atrium café?',
+        read: false,
+      },
+      {
+        from: 'tom',
+        to: 'devin',
+        body: 'Saw you asking great questions in the compiler talk. Not recruiting you (yet!) but let’s stay in touch.',
+        read: true,
+      },
+      {
+        from: 'priya',
+        to: 'mara',
+        body: 'Your take on the server/client boundary finally made it click for my team. Any chance you’d do an internal talk?',
+        read: false,
+      },
+      {
+        from: 'jonas',
+        to: 'yuki',
+        body: 'That edge SSR / data-locality problem you mentioned hit home. We have the exact issue at DeepL. Mind if I follow up over email?',
+        read: false,
+      },
+      {
+        from: 'imani',
+        to: 'tom',
+        body: 'Re: your roles — I know two strong design-system engineers looking. Sending intros.',
+        read: true,
+      },
+    ]
   for (const m of dms) {
     await db.insert(message).values({
       fromUserId: U(m.from),
@@ -1662,37 +2231,130 @@ async function seed() {
   console.log(`  ✓ ${dms.length} messages`)
 
   /* --- connections (the lasting network) --- */
-  const connections: Array<{ a: string; b: string; status?: string; note?: string }> = [
-    { a: 'noa', b: 'sasha', status: 'accepted', note: 'Met at React Summit — exploring Glasswire for Tidereel.' },
-    { a: 'devin', b: 'priya', status: 'accepted', note: 'Same company, finally met in person at the conf.' },
-    { a: 'devin', b: 'tom', status: 'accepted', note: 'Recruiter, keep warm for ~1 year.' },
-    { a: 'priya', b: 'mara', status: 'pending', note: 'Asked about an internal talk.' },
-    { a: 'jonas', b: 'yuki', status: 'pending', note: 'Edge SSR / data locality follow-up.' },
+  const connections: Array<{
+    a: string
+    b: string
+    status?: string
+    note?: string
+  }> = [
+    {
+      a: 'noa',
+      b: 'sasha',
+      status: 'accepted',
+      note: 'Met at React Summit — exploring Glasswire for Tidereel.',
+    },
+    {
+      a: 'devin',
+      b: 'priya',
+      status: 'accepted',
+      note: 'Same company, finally met in person at the conf.',
+    },
+    {
+      a: 'devin',
+      b: 'tom',
+      status: 'accepted',
+      note: 'Recruiter, keep warm for ~1 year.',
+    },
+    {
+      a: 'priya',
+      b: 'mara',
+      status: 'pending',
+      note: 'Asked about an internal talk.',
+    },
+    {
+      a: 'jonas',
+      b: 'yuki',
+      status: 'pending',
+      note: 'Edge SSR / data locality follow-up.',
+    },
     { a: 'imani', b: 'tom', status: 'accepted' },
-    { a: 'theo', b: 'mara', status: 'accepted', note: 'Recording a video about the compiler together.' },
-    { a: 'finn', b: 'yuki', status: 'accepted', note: 'WebGPU + edge rendering nerds unite.' },
+    {
+      a: 'theo',
+      b: 'mara',
+      status: 'accepted',
+      note: 'Recording a video about the compiler together.',
+    },
+    {
+      a: 'finn',
+      b: 'yuki',
+      status: 'accepted',
+      note: 'WebGPU + edge rendering nerds unite.',
+    },
   ]
   for (const c of connections) {
-    await db.insert(connection).values({ userId: U(c.a), contactId: U(c.b), status: c.status ?? 'pending', note: c.note ?? null }).onConflictDoNothing()
+    await db
+      .insert(connection)
+      .values({
+        userId: U(c.a),
+        contactId: U(c.b),
+        status: c.status ?? 'pending',
+        note: c.note ?? null,
+      })
+      .onConflictDoNothing()
     // mirror accepted connections so both sides see them
     if ((c.status ?? 'pending') === 'accepted') {
-      await db.insert(connection).values({ userId: U(c.b), contactId: U(c.a), status: 'accepted', note: c.note ?? null }).onConflictDoNothing()
+      await db
+        .insert(connection)
+        .values({
+          userId: U(c.b),
+          contactId: U(c.a),
+          status: 'accepted',
+          note: c.note ?? null,
+        })
+        .onConflictDoNothing()
     }
   }
   console.log(`  ✓ ${connections.length} connections`)
 
   /* --- personal tasks (agent-managed surface) --- */
-  const tasks: Array<{ user: string; title: string; done?: boolean; due?: string }> = [
-    { user: 'devin', title: 'Audit checkout page for manual memoization after React upgrade', due: `${REACT_SUMMIT_DAY}T20:00` },
-    { user: 'devin', title: 'Follow up with Tom (recruiter) in Q4', due: '2026-10-01T09:00' },
-    { user: 'devin', title: 'Watch the recording of the testing talk', done: false },
-    { user: 'priya', title: 'Audit chunking on the design-system repo', due: `${REACT_SUMMIT_DAY}T18:00` },
+  const tasks: Array<{
+    user: string
+    title: string
+    done?: boolean
+    due?: string
+  }> = [
+    {
+      user: 'devin',
+      title: 'Audit checkout page for manual memoization after React upgrade',
+      due: `${REACT_SUMMIT_DAY}T20:00`,
+    },
+    {
+      user: 'devin',
+      title: 'Follow up with Tom (recruiter) in Q4',
+      due: '2026-10-01T09:00',
+    },
+    {
+      user: 'devin',
+      title: 'Watch the recording of the testing talk',
+      done: false,
+    },
+    {
+      user: 'priya',
+      title: 'Audit chunking on the design-system repo',
+      due: `${REACT_SUMMIT_DAY}T18:00`,
+    },
     { user: 'priya', title: 'Send Mara an internal-talk invite', done: false },
-    { user: 'priya', title: 'Share CI war-stories thread with the platform team', done: true },
-    { user: 'noa', title: 'Coffee with Sasha — Atrium café 9am', due: `${REACT_SUMMIT_DAY}T09:00` },
-    { user: 'noa', title: 'Prototype Tidereel offline mode on Glasswire', done: false },
+    {
+      user: 'priya',
+      title: 'Share CI war-stories thread with the platform team',
+      done: true,
+    },
+    {
+      user: 'noa',
+      title: 'Coffee with Sasha — Atrium café 9am',
+      due: `${REACT_SUMMIT_DAY}T09:00`,
+    },
+    {
+      user: 'noa',
+      title: 'Prototype Tidereel offline mode on Glasswire',
+      done: false,
+    },
     { user: 'jonas', title: 'Email Yuki re: edge data locality', done: false },
-    { user: 'imani', title: 'Send Tom two design-system engineer intros', done: true },
+    {
+      user: 'imani',
+      title: 'Send Tom two design-system engineer intros',
+      done: true,
+    },
   ]
   for (const t of tasks) {
     await db.insert(task).values({

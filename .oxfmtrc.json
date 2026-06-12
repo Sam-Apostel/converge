@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "semi": false,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "printWidth": 80,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "bun.lock",
+    "src/routeTree.gen.ts",
+    "src/db/auth-schema.ts",
+    "drizzle/**",
+    "skills-lock.json",
+    "**/*.md",
+    "**/*.html",
+    ".claude/**",
+    "design/**"
+  ]
+}

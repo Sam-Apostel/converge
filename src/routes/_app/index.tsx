@@ -75,7 +75,7 @@ function Home() {
         {firstName && (
           <Mono
             tone="ghost"
-            className="block text-center !text-[11.5px] !tracking-[0.14em]"
+            className="block text-center !text-tiny !tracking-[0.14em]"
           >
             Good morning, {firstName}
           </Mono>
@@ -106,7 +106,7 @@ function Home() {
         )}
 
         {error && (
-          <div className="w-full max-w-2xl rounded-xl border border-line bg-white/60 px-3.5 py-2.5 text-[12.5px] text-slate">
+          <div className="w-full max-w-2xl rounded-xl border border-line bg-white/60 px-3.5 py-2.5 text-caption text-slate">
             Something went wrong: {error.message}.{' '}
             <Link to="/settings" className="font-medium text-ink underline">
               Check your model settings
@@ -116,20 +116,22 @@ function Home() {
         )}
 
         {/* glass frame → white inner input */}
-        <div className="w-full max-w-2xl rounded-[26px] border border-white/60 bg-white/32 p-2 [backdrop-filter:blur(22px)_saturate(1.7)] [box-shadow:0_1px_3px_rgba(40,50,110,.05),0_16px_40px_rgba(40,50,110,.12)] mb-8">
+        <div className="w-full max-w-2xl rounded-[26px] border border-white/60 bg-white/32 p-2 [backdrop-filter:blur(22px)_saturate(1.7)] shadow-card-hover mb-8">
           <div className="flex items-center gap-3.5 rounded-[18px] bg-white px-[18px] py-[11px] shadow-[0_1px_2px_rgba(40,50,110,.05)]">
-            <Search size={18} className="text-[#7b809a]" />
+            <Search size={18} className="text-mist" />
             <TextArea
               value={input}
               onChange={(e) => setInput(e.target.value ?? '')}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
-                  submit();
+                  submit()
                 }
               }}
-              placeholder={empty ? 'Find people working on AI' : 'Ask anything…'}
-              className="*:h-unset  flex-1 *:text-[16px] *:text-slate *:outline-none *:placeholder:text-slate/60"
+              placeholder={
+                empty ? 'Find people working on AI' : 'Ask anything…'
+              }
+              className="*:h-unset  flex-1 *:text-base *:text-slate *:outline-none *:placeholder:text-slate/60"
               autoSize={true}
               rows={1}
               size="large"
@@ -146,9 +148,13 @@ function Home() {
             ) : (
               <>
                 {input.trim() && (
-                  <span className="hidden items-center gap-1 font-mono text-[12px] text-muted sm:flex">
-                    <kbd className="rounded-[7px] bg-pillow px-2 py-[3px]">↵</kbd>
-                    <kbd className="rounded-[7px] bg-pillow px-[7px] py-[3px]">⌘</kbd>
+                  <span className="hidden items-center gap-1 font-mono text-caption text-muted sm:flex">
+                    <kbd className="rounded-[7px] bg-pillow px-2 py-[3px]">
+                      ↵
+                    </kbd>
+                    <kbd className="rounded-[7px] bg-pillow px-[7px] py-[3px]">
+                      ⌘
+                    </kbd>
                   </span>
                 )}
                 <button
@@ -168,47 +174,42 @@ function Home() {
         {/* suggestion chips — only in empty state when concierge is ready */}
         {empty && conciergeStatus.ready && (
           <>
-          <div className="flex w-fit flex-wrap justify-center gap-2">
-            {SUGGESTIONS.slice(0, 3).map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => sendMessage(s)}
-                className="rounded-full border border-[rgba(120,130,180,.18)] bg-white px-[15px] py-2 text-[13.5px] font-medium text-[#2a2e48] shadow-soft transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-px hover:border-[rgba(120,130,180,.4)] hover:[box-shadow:0_4px_12px_rgba(40,50,110,.14)] active:scale-[0.97]"
+            {[SUGGESTIONS.slice(0, 3), SUGGESTIONS.slice(3)].map((row, i) => (
+              <div
+                key={i}
+                className="flex w-fit flex-wrap justify-center gap-2"
               >
-                {s}
-              </button>
+                {row.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => sendMessage(s)}
+                    className="rounded-full border border-edge/18 bg-white px-[15px] py-2 text-note font-medium text-ink-soft shadow-soft transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-px hover:border-edge/40 hover:shadow-pop active:scale-[0.97]"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
             ))}
-          </div>
-          <div className="flex w-fit flex-wrap justify-center gap-2">
-        {SUGGESTIONS.slice(3).map((s) => (
-          <button
-          key={s}
-        type="button"
-        onClick={() => sendMessage(s)}
-        className="rounded-full border border-[rgba(120,130,180,.18)] bg-white px-[15px] py-2 text-[13.5px] font-medium text-[#2a2e48] shadow-soft transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-px hover:border-[rgba(120,130,180,.4)] hover:[box-shadow:0_4px_12px_rgba(40,50,110,.14)] active:scale-[0.97]"
-      >
-        {s}
-      </button>
-      ))}
-    </div>
-    </>
+          </>
         )}
 
         {/* deep-link Converge's MCP server into Claude */}
         {empty && (
           <div className="mt-6 flex flex-col items-center gap-4">
-            <Mono tone="faint" className="!text-[11px] !tracking-[0.06em]">
-              Or use your own mcp enabled agent by adding <pre className="bg-gray-900 text-white inline px-1">{window.location.origin}/mcp</pre>
+            <Mono tone="faint" className="!text-tiny !tracking-[0.06em]">
+              Or use your own mcp enabled agent by adding{' '}
+              <pre className="bg-gray-900 text-white inline px-1">
+                {window.location.origin}/mcp
+              </pre>
             </Mono>
             <AddToClaudeButton />
-
           </div>
         )}
 
         {/* no model configured — nudge to settings */}
         {empty && !conciergeStatus.ready && (
-          <div className="w-full max-w-2xl rounded-2xl border border-line bg-white/70 px-5 py-4 text-[13.5px] text-slate [backdrop-filter:blur(12px)]">
+          <div className="w-full max-w-2xl rounded-2xl border border-line bg-white/70 px-5 py-4 text-note text-slate [backdrop-filter:blur(12px)]">
             Configure your AI provider in{' '}
             <Link to="/settings" className="font-medium text-ink underline">
               Settings
@@ -224,16 +225,21 @@ function Home() {
         <div className="grid gap-6">
           {/* next session */}
           {nextSession ? (
-            <BorderBeam size="md" colorVariant="sunset" strength={1} className="flex flex-col p-6 rounded-[22px] text-white" style={{ background: 'linear-gradient(135deg,#13141d,#1c1e2e)' }}>
+            <BorderBeam
+              size="md"
+              colorVariant="sunset"
+              strength={1}
+              className="bg-ink-gradient flex flex-col rounded-[22px] p-6 text-white"
+            >
               <div className="mb-3.5 flex items-center justify-between">
-                <Mono tone="lime" className="!tracking-[0.08em] !text-[11.5px]">
+                <Mono tone="lime" className="!tracking-[0.08em] !text-tiny">
                   Next · {formatClock(nextSession.startsAt)}
                 </Mono>
                 {nextSession.track && (
                   <Badge tone="ghost">{nextSession.track}</Badge>
                 )}
               </div>
-              <div className="mb-3.5 text-[22px] font-semibold leading-[1.15] tracking-[-0.02em]">
+              <div className="mb-3.5 text-title font-semibold leading-[1.15] tracking-[-0.02em]">
                 {nextSession.title}
               </div>
               {nextSession.speakerName && (
@@ -244,14 +250,19 @@ function Home() {
                     bg="#3a3f5c"
                     ink="#fff"
                   />
-                  <span className="text-[13.5px] text-[#d6d8e6]">
+                  <span className="text-note text-frost">
                     {nextSession.speakerName}
                     {nextSession.roomName ? ` · ${nextSession.roomName}` : ''}
                   </span>
                 </div>
               )}
               <div className="mt-auto flex gap-2.5">
-                <BorderBeam size="pulse-outside" colorVariant="sunset" strength={1.5} className="rounded-[13px]">
+                <BorderBeam
+                  size="pulse-outside"
+                  colorVariant="sunset"
+                  strength={1.5}
+                  className="rounded-[13px]"
+                >
                   <Button variant="lime" className="flex-1">
                     Save my seat
                   </Button>
@@ -259,7 +270,10 @@ function Home() {
               </div>
             </BorderBeam>
           ) : (
-            <Card surface="white" className="grid place-items-center p-8 text-mist">
+            <Card
+              surface="white"
+              className="grid place-items-center p-8 text-mist"
+            >
               No sessions scheduled yet.
             </Card>
           )}
@@ -267,12 +281,12 @@ function Home() {
           {/* right column */}
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
             <GlassCard innerClassName="flex flex-col p-[17px_20px]">
-              <div className="mb-3 text-[12.5px] text-muted">People to meet</div>
+              <div className="mb-3 text-caption text-muted">People to meet</div>
               <AvatarStack
                 size={36}
                 people={peopleToMeet.map((p) => ({ name: p.name }))}
               />
-              <div className="mt-3 text-[13px] font-medium leading-[1.3]">
+              <div className="mt-3 text-note font-medium leading-[1.3]">
                 {peopleToMeet.length} here share your intent ·{' '}
                 <span className="text-slate">co-founders</span>
               </div>
@@ -285,16 +299,16 @@ function Home() {
                   params={{ slug: trendingProject.slug }}
                   className="flex flex-col rounded-[18px] p-[17px_20px] transition-opacity hover:opacity-80"
                 >
-                  <div className="mb-2 text-[12.5px] text-muted">
+                  <div className="mb-2 text-caption text-muted">
                     Trending project
                   </div>
-                  <div className="text-[16px] font-semibold tracking-[-0.01em]">
+                  <div className="text-base font-semibold tracking-[-0.01em]">
                     {trendingProject.name}
                   </div>
-                  <div className="mt-1 line-clamp-2 flex-1 text-[12.5px] leading-[1.35] text-mist">
+                  <div className="mt-1 line-clamp-2 flex-1 text-caption leading-[1.35] text-mist">
                     {trendingProject.tagline}
                   </div>
-                  <div className="mt-2.5 flex items-center gap-1.5 font-mono text-[12px] text-muted">
+                  <div className="mt-2.5 flex items-center gap-1.5 font-mono text-caption text-muted">
                     <Star size={13} className="fill-slate text-slate" />{' '}
                     {formatCount(trendingProject.trendingScore)} watching
                   </div>
@@ -309,7 +323,7 @@ function Home() {
       {peopleToMeet.length > 0 && (
         <div>
           <div className="mb-3 flex items-center gap-2 mt-8">
-            <Mono className="!text-[13px] !tracking-[0.1em]">People to meet</Mono>
+            <Mono className="!text-note !tracking-[0.1em]">People to meet</Mono>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4">
             {peopleToMeet.map((person) => (
@@ -318,16 +332,13 @@ function Home() {
                 params={{ userId: person.id }}
                 key={person.id}
               >
-                <GlassCard
-
-                  innerClassName="flex items-center flex-col gap-3 p-4"
-                >
+                <GlassCard innerClassName="flex items-center flex-col gap-3 p-4">
                   <Avatar name={person.name} src={person.image} size={44} />
                   <div className="min-w-0 flex-1">
-                    <div className="block truncate text-[14px] font-semibold tracking-[-0.01em] transition-colors hover:text-ink-2">
+                    <div className="block truncate text-body font-semibold tracking-[-0.01em] transition-colors hover:text-ink-2">
                       {person.name}
                     </div>
-                    <div className="truncate text-[12px] text-muted text-wrap">
+                    <div className="truncate text-caption text-wrap text-muted">
                       {person.reason ?? person.headline ?? 'At the conference'}
                     </div>
                   </div>

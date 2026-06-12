@@ -57,7 +57,7 @@ export function register(server: McpServer, userId: string) {
     {
       title: 'Get my moments',
       description:
-        'Get the current user\'s saved moments — key highlights bookmarked during talks.',
+        "Get the current user's saved moments — key highlights bookmarked during talks.",
       inputSchema: {},
     },
     async () => text(await listMoments(userId)),
@@ -107,7 +107,7 @@ export function register(server: McpServer, userId: string) {
     {
       title: 'My schedule',
       description:
-        'The sessions on the current user\'s radar — talks they speak at, bookmarked a moment in, or took a note on — ordered by start time.',
+        "The sessions on the current user's radar — talks they speak at, bookmarked a moment in, or took a note on — ordered by start time.",
       inputSchema: {},
     },
     async () => {

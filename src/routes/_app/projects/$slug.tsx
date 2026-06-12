@@ -37,7 +37,7 @@ function ProjectDetail() {
     <div className="max-w-3xl">
       <Link
         to="/projects"
-        className="mb-5 inline-flex items-center gap-1 text-[13px] text-mist transition-colors hover:text-slate"
+        className="mb-5 inline-flex items-center gap-1 text-note text-mist transition-colors hover:text-slate"
       >
         <ChevronLeft size={15} /> Projects
       </Link>
@@ -54,12 +54,12 @@ function ProjectDetail() {
           <h1 className="text-2xl font-semibold tracking-[-0.02em]">
             {project.name}
           </h1>
-          <div className="mt-1 text-[14px] text-muted">
+          <div className="mt-1 text-body text-muted">
             by {ownerName ?? 'unknown'}
             {project.category ? ` · ${project.category}` : ''}
           </div>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-lime/[0.22] px-3 py-1.5 font-mono text-[13px] font-medium text-slate">
+        <span className="inline-flex items-center gap-1 rounded-full bg-lime/[0.22] px-3 py-1.5 font-mono text-note font-medium text-slate">
           <Star size={13} className="fill-current" />{' '}
           {formatCount(project.trendingScore)}
         </span>
@@ -68,20 +68,20 @@ function ProjectDetail() {
       <Thumb
         tint="#eef0f8"
         height={200}
-        className="mb-5 flex items-end p-3.5 [box-shadow:inset_0_0_0_1px_rgba(120,130,180,.12)]"
+        className="mb-5 flex items-end p-3.5 shadow-hairline"
       >
-        <span className="rounded-md bg-white/[0.86] px-2.5 py-1 font-mono text-[11px] text-muted">
+        <span className="rounded-md bg-white/[0.86] px-2.5 py-1 font-mono text-tiny text-muted">
           project screenshot
         </span>
       </Thumb>
 
-      <p className="mb-5 text-[15px] leading-[1.55] text-slate">
+      <p className="mb-5 text-reading leading-[1.55] text-slate">
         {project.description ?? project.tagline}
       </p>
 
       {project.techStack?.length ? (
         <>
-          <Mono className="mb-2 block !text-[12px]">Tech stack</Mono>
+          <Mono className="mb-2 block !text-caption">Tech stack</Mono>
           <div className="mb-5 flex flex-wrap gap-1.5">
             {project.techStack.map((t) => (
               <Tag key={t}>{t}</Tag>
@@ -92,8 +92,8 @@ function ProjectDetail() {
 
       <div className="mb-5 flex items-center justify-between rounded-2xl bg-inner px-4 py-3.5">
         <div>
-          <Mono className="!text-[11px]">Looking for</Mono>
-          <div className="mt-0.5 text-[14px] font-semibold">
+          <Mono className="!text-tiny">Looking for</Mono>
+          <div className="mt-0.5 text-body font-semibold">
             {project.lookingFor?.join(' & ') ?? 'Collaborators'}
           </div>
         </div>
@@ -101,9 +101,9 @@ function ProjectDetail() {
       </div>
 
       {relatedTalk && (
-        <div className="mb-6 flex items-center gap-2 text-[13px] text-slate">
-          <CornerDownRight size={14} className="text-slate" /> Related session · “
-          {relatedTalk.title}” · {formatTime(relatedTalk.startsAt)}
+        <div className="mb-6 flex items-center gap-2 text-note text-slate">
+          <CornerDownRight size={14} className="text-slate" /> Related session ·
+          “{relatedTalk.title}” · {formatTime(relatedTalk.startsAt)}
         </div>
       )}
 
@@ -111,7 +111,7 @@ function ProjectDetail() {
         <Button variant="dark">Message {ownerFirst}</Button>
         <Badge
           tone="lime-soft"
-          className="!rounded-[13px] !px-4 !py-3 !text-[13.5px]"
+          className="!rounded-[13px] !px-4 !py-3 !text-note"
         >
           <Star size={15} /> Star
         </Badge>
@@ -123,10 +123,10 @@ function ProjectDetail() {
 function NotFound() {
   return (
     <div className="py-20 text-center">
-      <Mono tone="ghost" className="!text-[12px] !tracking-[0.04em]">
+      <Mono tone="ghost" className="!text-caption !tracking-[0.04em]">
         No such project
       </Mono>
-      <p className="mt-3 text-[14px] text-mist">
+      <p className="mt-3 text-body text-mist">
         That project isn't here.{' '}
         <Link to="/projects" className="text-slate underline">
           Back to projects

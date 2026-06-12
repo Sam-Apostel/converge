@@ -27,9 +27,13 @@ function AuthorLine({
   return (
     <div className="mb-2 flex items-center gap-2.5">
       <Avatar name={author.name} src={author.image} size={30} />
-      <span className="text-[13.5px] font-semibold">{author.name}</span>
+      <span className="text-note font-semibold">{author.name}</span>
       {badge}
-      {meta && <Mono tone="ghost" className="!text-[12px]">{meta}</Mono>}
+      {meta && (
+        <Mono tone="ghost" className="!text-caption">
+          {meta}
+        </Mono>
+      )}
     </div>
   )
 }
@@ -44,7 +48,8 @@ function Post({
   const badge = post.author.isSpeaker ? (
     <Badge tone="lime-soft">SPEAKER</Badge>
   ) : undefined
-  const meta = !post.author.isSpeaker && post.isFollowUp ? 'follow-up' : undefined
+  const meta =
+    !post.author.isSpeaker && post.isFollowUp ? 'follow-up' : undefined
 
   // Everyone but this post's author, as the "more voices in here" stack.
   const others = participants.filter((p) => p.id !== post.author.id)
@@ -52,7 +57,7 @@ function Post({
   return (
     <div>
       <AuthorLine author={post.author} meta={meta} badge={badge} />
-      <p className="m-0 text-[14.5px] leading-[1.5] text-[#3a3e54]">{post.body}</p>
+      <p className="m-0 text-body leading-[1.5] text-ink-soft">{post.body}</p>
       {post.replyCount > 0 && others.length > 0 && (
         <div className="mt-3 flex items-center gap-2">
           <AvatarStack
@@ -60,9 +65,9 @@ function Post({
             size={26}
             max={3}
           />
-          <span className="text-[13px] text-[#8186a0]">
-            +{post.replyCount} {post.replyCount === 1 ? 'reply' : 'replies'} in this
-            thread
+          <span className="text-note text-muted">
+            +{post.replyCount} {post.replyCount === 1 ? 'reply' : 'replies'} in
+            this thread
           </span>
         </div>
       )}
@@ -100,7 +105,7 @@ export function Thread({
   return (
     <Card surface="white" className="p-6">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <Mono tone="ghost" className="!text-[11.5px]">
+        <Mono tone="ghost" className="!text-tiny">
           {eyebrow}
         </Mono>
         {headerRight}
@@ -128,7 +133,7 @@ export function Thread({
                 }
               />
             )}
-            <p className="m-0 text-[16px] leading-[1.45] tracking-[-0.01em]">
+            <p className="m-0 text-base leading-[1.45] tracking-[-0.01em]">
               {opener.body}
             </p>
           </div>
@@ -138,7 +143,11 @@ export function Thread({
       {spine.length > 0 && (
         <div className="ml-[11px] mt-3.5 flex flex-col gap-[18px] border-l-2 border-inner pl-[25px]">
           {spine.map((post) => (
-            <Post key={post.id} post={post} participants={thread.participants} />
+            <Post
+              key={post.id}
+              post={post}
+              participants={thread.participants}
+            />
           ))}
         </div>
       )}

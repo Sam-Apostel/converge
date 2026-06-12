@@ -90,7 +90,7 @@ function MessagesPage() {
   return (
     <div>
       <h1 className="text-2xl font-semibold tracking-[-0.02em]">Messages</h1>
-      <p className="mb-5 mt-1 max-w-2xl text-[14.5px] text-mist">
+      <p className="mb-5 mt-1 max-w-2xl text-body text-mist">
         Direct messages and the connection graph that outlives the event. The
         conference ends. The network remains.
       </p>
@@ -124,7 +124,7 @@ function MessagesPage() {
             />
           ) : (
             <div className="grid h-full place-items-center">
-              <Mono tone="ghost" className="!text-[12px] !tracking-[0.06em]">
+              <Mono tone="ghost" className="!text-caption !tracking-[0.06em]">
                 Select a conversation
               </Mono>
             </div>

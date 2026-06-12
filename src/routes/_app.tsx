@@ -22,7 +22,16 @@ const BOTTOM_NAV = [
     label: 'Home',
     exact: true,
     icon: (
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M3 12L12 3l9 9M5 10v9a1 1 0 0 0 1 1h4v-5h4v5h4a1 1 0 0 0 1-1v-9" />
       </svg>
     ),
@@ -37,7 +46,16 @@ const BOTTOM_NAV = [
     label: 'Sessions',
     exact: false,
     icon: (
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <polygon points="5 3 19 12 5 21 5 3" />
       </svg>
     ),
@@ -52,7 +70,16 @@ const BOTTOM_NAV = [
     label: 'Discuss',
     exact: false,
     icon: (
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
       </svg>
     ),
@@ -67,13 +94,28 @@ const BOTTOM_NAV = [
     label: 'Projects',
     exact: false,
     icon: (
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+      <svg
+        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
       </svg>
     ),
     iconActive: (
       <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-        <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
       </svg>
     ),
   },
@@ -82,13 +124,24 @@ const BOTTOM_NAV = [
     label: 'People',
     exact: false,
     icon: (
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" />
+      <svg
+        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" />
       </svg>
     ),
     iconActive: (
       <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-        <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" />
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" />
       </svg>
     ),
   },
@@ -102,47 +155,45 @@ function AppLayout() {
     <NotificationProvider>
       <div className="min-h-screen pb-[72px] lg:pb-0">
         <header className="hidden lg:block sticky top-0 z-50 px-0 lg:top-4 lg:px-5 pb-8">
-          <div
-            className="justify-center mx-0 flex max-w-[1320px] items-center gap-6"
-          >
+          <div className="justify-center mx-0 flex max-w-[1320px] items-center gap-6">
             <Link to="/" className="flex shrink-0 items-center gap-4">
               <ConvergeLogo size={64} rounded="10px" background={false} />
-          </Link>
-          <div className="flex items-center py-[11px] pr-3 [backdrop-filter:blur(28px)_saturate(1.7)] gap-4 rounded-[22px] border border-white/60 bg-white/34 pl-[15px] [box-shadow:0_14px_44px_rgba(40,50,110,.16),inset_0_1px_0_rgba(255,255,255,.75)]">
-            <Link to="/" className="flex shrink-0 items-center gap-4">
-              <span className="text-[19px] font-semibold tracking-[-0.03em]">
-                converge
-              </span>
             </Link>
+            <div className="flex items-center py-[11px] pr-3 [backdrop-filter:blur(28px)_saturate(1.7)] gap-4 rounded-[22px] border border-white/60 bg-white/34 pl-[15px] shadow-glass">
+              <Link to="/" className="flex shrink-0 items-center gap-4">
+                <span className="text-[19px] font-semibold tracking-[-0.03em]">
+                  converge
+                </span>
+              </Link>
 
-            <nav className="ml-auto items-center gap-0.5 flex">
-              {NAV.map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  activeOptions={{ exact: item.exact }}
-                  className="rounded-full px-[14px] py-[9px] text-[13.5px] font-medium text-slate transition-colors hover:text-ink"
-                  activeProps={{
-                    className:
-                      'rounded-full px-[14px] py-[9px] text-[13.5px] font-semibold text-ink bg-white [box-shadow:0_2px_8px_rgba(40,50,110,.12)]',
-                  }}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+              <nav className="ml-auto items-center gap-0.5 flex">
+                {NAV.map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    activeOptions={{ exact: item.exact }}
+                    className="rounded-full px-[14px] py-[9px] text-note font-medium text-slate transition-colors hover:text-ink"
+                    activeProps={{
+                      className:
+                        'rounded-full px-[14px] py-[9px] text-note font-semibold text-ink bg-white shadow-soft',
+                    }}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
 
-            <Link to="/profile" className="ml-auto shrink-0 lg:ml-1">
-              <Avatar name={userName} size={36} />
-            </Link>
-          </div>
+              <Link to="/profile" className="ml-auto shrink-0 lg:ml-1">
+                <Avatar name={userName} size={36} />
+              </Link>
+            </div>
           </div>
         </header>
         <header className="lg:hidden sticky top-4 z-50 px-8 flex gap-2">
           <Link to="/" className="flex shrink-0 items-center gap-4">
             <ConvergeLogo size={32} rounded="5px" background={false} />
           </Link>
-          <div className="flex items-center gap-3 py-1 pl-4 pr-3 [backdrop-filter:blur(12px)_saturate(1.7)] rounded-[22px] border border-white/60 bg-white/34 lg:pl-[15px] [box-shadow:0_14px_44px_rgba(40,50,110,.16),inset_0_1px_0_rgba(255,255,255,.75)]">
+          <div className="flex items-center gap-3 py-1 pl-4 pr-3 [backdrop-filter:blur(12px)_saturate(1.7)] rounded-[22px] border border-white/60 bg-white/34 lg:pl-[15px] shadow-glass">
             <Link to="/" className="flex shrink-0 items-center gap-4">
               <span className="text-[19px] font-semibold tracking-[-0.03em]">
                 converge
@@ -156,14 +207,17 @@ function AppLayout() {
         </main>
 
         {/* Mobile bottom tab bar */}
-        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-[rgba(180,185,220,.22)] bg-[#FFF9] pb-safe [backdrop-filter:blur(12px)_saturate(1.6)] lg:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-edge/22 bg-white/60 pb-safe [backdrop-filter:blur(12px)_saturate(1.6)] lg:hidden">
           {BOTTOM_NAV.map((item) => (
             <Link
               key={item.to}
               to={item.to}
               activeOptions={{ exact: item.exact }}
-              className="flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-gray-800 transition-colors"
-              activeProps={{ className: 'flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold text-ink transition-colors' }}
+              className="flex flex-1 flex-col items-center gap-1 py-2.5 text-tiny font-medium text-gray-800 transition-colors"
+              activeProps={{
+                className:
+                  'flex flex-1 flex-col items-center gap-1 py-2.5 text-tiny font-semibold text-ink transition-colors',
+              }}
             >
               {({ isActive }: { isActive: boolean }) => (
                 <>

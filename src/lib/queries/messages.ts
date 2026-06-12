@@ -63,7 +63,9 @@ function serialize(m: typeof message.$inferSelect): MessageRow {
 }
 
 /** Every message involving the viewer, oldest first. */
-export async function messagesForViewer(me: string): Promise<Array<MessageRow>> {
+export async function messagesForViewer(
+  me: string,
+): Promise<Array<MessageRow>> {
   const rows = await db
     .select()
     .from(message)
@@ -91,7 +93,10 @@ export async function conversationBetween(
 }
 
 /** Mark every message from `other` to `me` as read. Returns rows touched. */
-export async function markThreadRead(me: string, other: string): Promise<number> {
+export async function markThreadRead(
+  me: string,
+  other: string,
+): Promise<number> {
   const rows = await db
     .update(message)
     .set({ readAt: new Date() })
@@ -141,17 +146,16 @@ export const getMessagesData = createServerFn({ method: 'GET' })
         from: peopleById.get(r.fromId),
         note: r.note,
       }))
-      .filter((p): p is { id: string; from: DirectoryPerson; note: string | null } =>
-        Boolean(p.from),
+      .filter(
+        (p): p is { id: string; from: DirectoryPerson; note: string | null } =>
+          Boolean(p.from),
       )
 
     // The contacts I've already connected with.
     const acceptedRows = await db
       .select({ contactId: connection.contactId })
       .from(connection)
-      .where(
-        and(eq(connection.userId, me), eq(connection.status, 'accepted')),
-      )
+      .where(and(eq(connection.userId, me), eq(connection.status, 'accepted')))
     const accepted = acceptedRows
       .map((r) => peopleById.get(r.contactId))
       .filter((p): p is DirectoryPerson => Boolean(p))

@@ -66,7 +66,7 @@ export function QuestionList({
 
   return (
     <div className="mt-[22px]">
-      <div className="mb-4 flex gap-[22px] border-b border-[rgba(120,130,180,.16)]">
+      <div className="mb-4 flex gap-[22px] border-b border-edge/16">
         <TabButton active={tab === 'qa'} onClick={() => setTab('qa')}>
           Live questions
         </TabButton>
@@ -76,9 +76,11 @@ export function QuestionList({
         >
           Discussion
         </TabButton>
-        <span className="pb-[11px] text-sm font-medium text-faint">Notes</span>
+        <span className="pb-[11px] text-body font-medium text-faint">
+          Notes
+        </span>
         {tab === 'qa' && (
-          <span className="ml-auto self-center text-[12.5px] text-[#8186a0]">
+          <span className="ml-auto self-center text-caption text-muted">
             sorted by votes
           </span>
         )}
@@ -114,7 +116,7 @@ function TabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`pb-[11px] text-sm transition-colors ${
+      className={`pb-[11px] text-body transition-colors ${
         active
           ? 'border-b-2 border-ink font-semibold text-ink'
           : 'font-medium text-faint hover:text-ink'
@@ -133,7 +135,7 @@ function StaticQuestions({
 }) {
   if (questions.length === 0) {
     return (
-      <p className="text-[13.5px] text-mist">
+      <p className="text-note text-mist">
         No questions yet — be the first to ask.
       </p>
     )
@@ -144,8 +146,8 @@ function StaticQuestions({
         <div key={q.id} className="flex items-start gap-[13px]">
           <VoteControl count={q.upvotes} />
           <div className="flex-1">
-            <p className="text-[14.5px] leading-[1.4]">{q.body}</p>
-            <div className="mt-1 font-mono text-[12px] text-faint">
+            <p className="text-body leading-[1.4]">{q.body}</p>
+            <div className="mt-1 font-mono text-caption text-faint">
               {q.authorName}
               {q.authorCompany ? ` · ${q.authorCompany}` : ''} ·{' '}
               {timeAgo(q.createdAt)}
@@ -227,7 +229,7 @@ function LiveQuestions({
       <AskBox value={draft} onChange={setDraft} onSubmit={ask} />
 
       {questions.length === 0 ? (
-        <p className="mt-3.5 text-[13.5px] text-mist">
+        <p className="mt-3.5 text-note text-mist">
           No questions yet — be the first to ask.
         </p>
       ) : (
@@ -271,7 +273,7 @@ function AskBox({
         onChange={(e) => onChange(e.target.value)}
         placeholder="Ask a question…"
         aria-label="Ask a question"
-        className="flex-1 rounded-[11px] border border-[rgba(120,130,180,.22)] bg-white px-3.5 py-2 text-[14px] outline-none transition-colors placeholder:text-faint focus:border-ink/40"
+        className="flex-1 rounded-[11px] border border-edge/22 bg-white px-3.5 py-2 text-body outline-none transition-colors placeholder:text-faint focus:border-ink/40"
       />
       <Button type="submit" size="sm" variant="dark" disabled={!value.trim()}>
         Ask
@@ -332,8 +334,8 @@ function QuestionRow({
     <div className="flex items-start gap-[13px]">
       <VoteControl count={q.upvotes} onUpvote={onVote} active={q.hasVoted} />
       <div className="flex-1">
-        <p className="text-[14.5px] leading-[1.4]">{q.body}</p>
-        <div className="mt-1 font-mono text-[12px] text-faint">
+        <p className="text-body leading-[1.4]">{q.body}</p>
+        <div className="mt-1 font-mono text-caption text-faint">
           {q.authorName}
           {q.authorCompany ? ` · ${q.authorCompany}` : ''} ·{' '}
           {timeAgo(q.createdAt)}
@@ -369,7 +371,7 @@ function QuestionRow({
             type="button"
             onClick={promote}
             disabled={promoting}
-            className="mt-2 inline-flex items-center gap-1 text-[13px] font-semibold text-ink/75 transition-colors hover:text-ink disabled:opacity-50"
+            className="mt-2 inline-flex items-center gap-1 text-note font-semibold text-ink/75 transition-colors hover:text-ink disabled:opacity-50"
           >
             Keep this conversation going <ArrowRight size={14} />
           </button>
@@ -383,21 +385,17 @@ function AnswerRow({ answer }: { answer: QuestionAnswer }) {
   return (
     <div
       className={`rounded-[11px] px-3 py-2 ${
-        answer.fromSpeaker
-          ? 'border border-lime/40 bg-lime/15'
-          : 'bg-inner'
+        answer.fromSpeaker ? 'border border-lime/40 bg-lime/15' : 'bg-inner'
       }`}
     >
       <div className="mb-0.5 flex items-center gap-2">
-        <span className="text-[13px] font-semibold">{answer.authorName}</span>
+        <span className="text-note font-semibold">{answer.authorName}</span>
         {answer.fromSpeaker && <Badge tone="lime-soft">SPEAKER</Badge>}
-        <span className="font-mono text-[11px] text-faint">
+        <span className="font-mono text-tiny text-faint">
           {timeAgo(answer.createdAt)}
         </span>
       </div>
-      <p className="text-[13.5px] leading-[1.45] text-[#3a3e54]">
-        {answer.body}
-      </p>
+      <p className="text-note leading-[1.45] text-ink-soft">{answer.body}</p>
     </div>
   )
 }
@@ -426,7 +424,7 @@ function ReplyBox({
         onChange={(e) => onChange(e.target.value)}
         placeholder={isSpeaker ? 'Answer as speaker…' : 'Reply…'}
         aria-label="Reply to question"
-        className="flex-1 rounded-[10px] border border-[rgba(120,130,180,.22)] bg-white px-3 py-1.5 text-[13.5px] outline-none transition-colors placeholder:text-faint focus:border-ink/40"
+        className="flex-1 rounded-[10px] border border-edge/22 bg-white px-3 py-1.5 text-note outline-none transition-colors placeholder:text-faint focus:border-ink/40"
       />
       <Button type="submit" size="sm" variant="soft" disabled={!value.trim()}>
         {isSpeaker ? 'Answer' : 'Reply'}
@@ -443,7 +441,7 @@ function DiscussionTab({
 }) {
   if (!discussion) {
     return (
-      <p className="text-[13.5px] text-mist">
+      <p className="text-note text-mist">
         No discussion yet — promote a question with enough upvotes to start one.
       </p>
     )
@@ -455,7 +453,7 @@ function DiscussionTab({
         <Link
           to="/discussions/$id"
           params={{ id: discussion.id }}
-          className="inline-flex items-center gap-1 text-[13px] font-semibold text-mist transition-colors hover:text-ink"
+          className="inline-flex items-center gap-1 text-note font-semibold text-mist transition-colors hover:text-ink"
         >
           Open full thread <ArrowRight size={14} />
         </Link>

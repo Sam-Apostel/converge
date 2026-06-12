@@ -24,25 +24,25 @@ export function ProjectCard({ project }: { project: ProjectWithOwner }) {
           size={34}
           className="absolute left-2.5 top-2.5 shadow-[0_2px_6px_rgba(40,50,110,.14)]"
         />
-        <span className="absolute bottom-2.5 right-2.5 rounded-md bg-white/[0.86] px-2 py-0.5 font-mono text-[10px] text-slate">
+        <span className="absolute bottom-2.5 right-2.5 rounded-md bg-white/[0.86] px-2 py-0.5 font-mono text-micro text-slate">
           {project.category}
         </span>
       </Thumb>
 
       <div className="flex flex-1 flex-col p-[15px]">
-        <div className="mb-1.5 text-[16px] font-semibold tracking-[-0.01em]">
+        <div className="mb-1.5 text-base font-semibold tracking-[-0.01em]">
           {project.name}
         </div>
-        <p className="mb-3.5 flex-1 text-[13px] leading-[1.45] text-slate">
+        <p className="mb-3.5 flex-1 text-note leading-[1.45] text-slate">
           {project.tagline}
         </p>
-        <div className="flex items-center justify-between border-t border-dashed border-[rgba(120,130,180,.2)] pt-2.5">
+        <div className="flex items-center justify-between border-t border-dashed border-edge/20 pt-2.5">
           {project.lookingFor?.[0] && (
-            <Tag variant="soft" className="!rounded-full !text-[11.5px]">
+            <Tag variant="soft" className="!rounded-full !text-tiny">
               seeks {project.lookingFor[0]}
             </Tag>
           )}
-          <span className="flex items-center gap-1 font-mono text-[12px] text-muted">
+          <span className="flex items-center gap-1 font-mono text-caption text-muted">
             <Star size={13} className="fill-slate text-slate" />
             {formatCount(project.trendingScore)}
           </span>

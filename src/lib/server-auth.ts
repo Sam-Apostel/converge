@@ -1,7 +1,7 @@
 import { auth } from '#/lib/auth'
 
 /** Resolve the session for an incoming server-route `Request` (or `null`). */
-export async function getSessionFromRequest(request: Request) {
+async function getSessionFromRequest(request: Request) {
   return auth.api.getSession({ headers: request.headers })
 }
 

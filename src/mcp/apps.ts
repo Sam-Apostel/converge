@@ -273,7 +273,9 @@ export function sessionResource(
 <body>
   <h1 class="title">${escapeHtml(session.title)}</h1>
   <div class="meta">${
-    session.track ? `<span class="track">${escapeHtml(session.track)}</span> · ` : ''
+    session.track
+      ? `<span class="track">${escapeHtml(session.track)}</span> · `
+      : ''
   }${session.startsAt ? escapeHtml(new Date(session.startsAt).toUTCString()) : 'Time TBA'}</div>
   ${session.abstract ? `<p class="abstract">${escapeHtml(session.abstract)}</p>` : ''}
   ${speakers.length ? `<div class="speakers">${speakerChips}</div>` : ''}

@@ -26,18 +26,18 @@ export function CaptureDock({
       <div className="relative min-w-0 flex-1">
         <div className="mb-1.5 flex items-center gap-2">
           <LiveDot size={7} />
-          <Mono tone="lime" className="!text-[11px] !tracking-[0.1em]">
+          <Mono tone="lime" className="!text-tiny !tracking-[0.1em]">
             Capture · {time}
           </Mono>
         </div>
-        <div className="text-[16px] font-semibold tracking-[-0.01em]">
+        <div className="text-base font-semibold tracking-[-0.01em]">
           {label}
         </div>
       </div>
       <Button
         variant="lime"
         onClick={onCapture}
-        className="relative shrink-0 !rounded-[14px] !px-[22px] !py-3.5 !text-[15px]"
+        className="relative shrink-0 !rounded-[14px] !px-[22px] !py-3.5 !text-reading"
       >
         <Star size={17} className="fill-current" /> {buttonLabel}
       </Button>

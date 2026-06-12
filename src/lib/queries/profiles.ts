@@ -62,9 +62,7 @@ export const getPersonById = createServerFn({ method: 'GET' })
       const [link] = await db
         .select({ status: connection.status })
         .from(connection)
-        .where(
-          and(eq(connection.userId, me), eq(connection.contactId, userId)),
-        )
+        .where(and(eq(connection.userId, me), eq(connection.contactId, userId)))
         .limit(1)
       if (link?.status === 'accepted') connectionState = 'accepted'
       else if (link) connectionState = 'pending'
@@ -99,7 +97,7 @@ export const getPersonById = createServerFn({ method: 'GET' })
   })
 
 /** A project member, surfaced in the "looking for" avatar stack. */
-export type ProjectMemberRow = {
+type ProjectMemberRow = {
   id: string
   name: string
   image: string | null

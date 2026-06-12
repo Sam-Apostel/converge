@@ -16,7 +16,7 @@ function DiscussionDetail() {
     <div className="mx-auto max-w-[860px]">
       <Link
         to="/discussions"
-        className="inline-flex items-center gap-1 text-[13px] font-medium text-mist transition-colors hover:text-ink"
+        className="inline-flex items-center gap-1 text-note font-medium text-mist transition-colors hover:text-ink"
       >
         <ArrowLeft size={15} /> Discussions
       </Link>
@@ -26,7 +26,7 @@ function DiscussionDetail() {
           <h1 className="mb-1 mt-3 text-2xl font-semibold tracking-[-0.02em]">
             {thread.title}
           </h1>
-          <p className="mb-6 text-[14.5px] text-mist">
+          <p className="mb-6 text-body text-mist">
             {thread.sessionTitle
               ? `Grew out of "${thread.sessionTitle}"`
               : 'A persistent conference thread.'}
@@ -36,7 +36,7 @@ function DiscussionDetail() {
           <Thread thread={thread} />
         </>
       ) : (
-        <p className="mt-6 rounded-2xl border border-dashed border-black/10 bg-white/60 p-6 text-sm text-muted">
+        <p className="mt-6 rounded-2xl border border-dashed border-black/10 bg-white/60 p-6 text-body text-muted">
           This discussion doesn't exist or has been archived.
         </p>
       )}

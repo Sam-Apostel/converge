@@ -19,10 +19,6 @@ import {
  * the live Q&A, and the people/project woven around the talk — that lives here.
  */
 
-export type SessionDetail = NonNullable<
-  Awaited<ReturnType<typeof getSessionDetail>>
->
-
 /** Everything the talk OS renders for a single session. */
 export const getSessionDetail = createServerFn({ method: 'GET' })
   .validator((sessionId: string) => sessionId)

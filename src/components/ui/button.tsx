@@ -6,17 +6,17 @@ export type ButtonSize = 'sm' | 'md'
 const VARIANT: Record<ButtonVariant, string> = {
   dark: 'bg-ink text-white hover:bg-ink-2',
   lime: 'bg-lime text-ink ',
-  soft: 'bg-pillow text-slate hover:bg-[#e3e7f2]',
+  soft: 'bg-pillow text-slate hover:bg-pillow-deep',
   glass: 'bg-white/10 text-white hover:bg-white/15',
 }
 
 const SIZE: Record<ButtonSize, string> = {
-  sm: 'h-9 px-3.5 text-[13px] rounded-[11px] gap-1.5',
-  md: 'px-5 py-3 text-sm rounded-[13px] gap-2',
+  sm: 'h-9 px-3.5 text-note rounded-[11px] gap-1.5',
+  md: 'px-5 py-3 text-body rounded-[13px] gap-2',
 }
 
 /** Shared class string so links can look like buttons without wrapping. */
-export function buttonClass(
+function buttonClass(
   variant: ButtonVariant = 'dark',
   size: ButtonSize = 'md',
   className = '',

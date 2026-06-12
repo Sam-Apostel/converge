@@ -25,9 +25,7 @@ export const Route = createFileRoute('/api/messages')({
     handlers: {
       GET: async ({ request }) => {
         const url = new URL(request.url)
-        const me = await resolveViewer(
-          url.searchParams.get('me') ?? undefined,
-        )
+        const me = await resolveViewer(url.searchParams.get('me') ?? undefined)
         const withUser = url.searchParams.get('with')
         const rows = withUser
           ? await conversationBetween(me, withUser)
@@ -60,7 +58,11 @@ export const Route = createFileRoute('/api/messages')({
           createdAt: row.createdAt.toISOString(),
         }
         // Notify both ends so open inboxes update live.
-        publish({ type: 'message.created', data, channel: `user:${row.toUserId}` })
+        publish({
+          type: 'message.created',
+          data,
+          channel: `user:${row.toUserId}`,
+        })
         publish({
           type: 'message.created',
           data,

@@ -83,34 +83,6 @@ export function Thumb({
   )
 }
 
-/** Numbered section header: "01" chip · title · optional trailing node. */
-export function SectionHeader({
-  index,
-  title,
-  trailing,
-  subtitle,
-}: {
-  index: string
-  title: string
-  trailing?: ReactNode
-  subtitle?: string
-}) {
-  return (
-    <div className="mb-2">
-      <div className="flex items-baseline gap-3.5">
-        <span className="rounded-lg bg-white px-2.5 py-1 font-mono text-[13px] font-semibold text-ink shadow-soft">
-          {index}
-        </span>
-        <h2 className="text-2xl font-semibold tracking-[-0.02em]">{title}</h2>
-        {trailing}
-      </div>
-      {subtitle && (
-        <p className="mt-2 max-w-2xl text-[14.5px] text-mist">{subtitle}</p>
-      )}
-    </div>
-  )
-}
-
 /**
  * Up/down vote control for questions. Static by default (used in read-only
  * thread views); pass `onUpvote` to make the ▲ a real toggle button, and
@@ -148,9 +120,9 @@ export function VoteControl({
       ) : (
         <ChevronUp size={15} strokeWidth={2.5} className="text-slate" />
       )}
-      <span className="text-[13px] font-semibold tabular-nums">{count}</span>
+      <span className="text-note font-semibold tabular-nums">{count}</span>
       {downvote && (
-        <ChevronDown size={15} strokeWidth={2.5} className="text-[#c2c6d8]" />
+        <ChevronDown size={15} strokeWidth={2.5} className="text-frost" />
       )}
     </div>
   )

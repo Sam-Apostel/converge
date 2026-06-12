@@ -15,7 +15,7 @@ export function ThreadList({
 }) {
   if (threads.length === 0) {
     return (
-      <div className="px-4 py-10 text-center text-[13.5px] text-mist">
+      <div className="px-4 py-10 text-center text-note text-mist">
         No conversations yet. Say hello to a connection to start one.
       </div>
     )
@@ -43,16 +43,16 @@ export function ThreadList({
               />
               <div className="min-w-0 flex-1">
                 <div className="flex items-baseline gap-2">
-                  <span className="truncate text-[14px] font-semibold text-ink">
+                  <span className="truncate text-body font-semibold text-ink">
                     {thread.other.name}
                   </span>
-                  <span className="ml-auto shrink-0 font-mono text-[11px] tabular-nums text-faint">
+                  <span className="ml-auto shrink-0 font-mono text-tiny tabular-nums text-faint">
                     {relativeTime(thread.lastMessage.createdAt)}
                   </span>
                 </div>
                 <div className="mt-0.5 flex items-center gap-2">
                   <span
-                    className={`truncate text-[13px] ${
+                    className={`truncate text-note ${
                       thread.unread > 0 ? 'font-medium text-slate' : 'text-mist'
                     }`}
                   >
@@ -60,7 +60,10 @@ export function ThreadList({
                     {thread.lastMessage.body}
                   </span>
                   {thread.unread > 0 && (
-                    <Badge tone="lime" className="ml-auto shrink-0 tabular-nums">
+                    <Badge
+                      tone="lime"
+                      className="ml-auto shrink-0 tabular-nums"
+                    >
                       {thread.unread}
                     </Badge>
                   )}

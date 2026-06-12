@@ -8,7 +8,7 @@ const VARIANT: Record<TagVariant, string> = {
   // "talk to me about" — lime fill, dark text
   lime: 'bg-lime/28 text-ink-2',
   // "please don't" — faded + struck through
-  strike: 'bg-[#f4f5f9] text-[#a8acbd] line-through',
+  strike: 'bg-inner text-faint line-through',
   // pillow tags (e.g. "seeks contributors")
   soft: 'bg-pillow text-ink/80',
 }
@@ -24,7 +24,7 @@ export function Tag({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[12.5px] font-medium ${VARIANT[variant]} ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-caption font-medium ${VARIANT[variant]} ${className}`}
     >
       {children}
     </span>

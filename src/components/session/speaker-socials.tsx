@@ -61,7 +61,7 @@ export function SpeakerSocials({
           target="_blank"
           rel="noreferrer"
           title="Website"
-          className="flex h-[34px] items-center gap-1.5 rounded-[10px] bg-pillow px-[13px] text-[12.5px] font-medium text-slate transition-colors hover:bg-[#e3e7f2]"
+          className="flex h-[34px] items-center gap-1.5 rounded-[10px] bg-pillow px-[13px] text-caption font-medium text-slate transition-colors hover:bg-pillow-deep"
         >
           <svg
             viewBox="0 0 24 24"

@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 
 /** The moodboard avatar palette — soft tints with a matching ink. */
-export const AVATAR_PALETTE: Array<{ bg: string; ink: string }> = [
+const AVATAR_PALETTE: Array<{ bg: string; ink: string }> = [
   { bg: '#dfe2f6', ink: '#4b5170' },
   { bg: '#dcebf3', ink: '#3f6173' },
   { bg: '#d8f0bf', ink: '#3a3e54' },
@@ -26,7 +26,7 @@ export function paletteFor(seed: string) {
   return AVATAR_PALETTE[hash(seed) % AVATAR_PALETTE.length]
 }
 
-export function initialsOf(name: string): string {
+function initialsOf(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean)
   if (parts.length === 0) return '?'
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
@@ -100,7 +100,9 @@ export function Avatar({
         fontWeight: 600,
         fontSize: Math.max(10, Math.round(size * 0.36)),
         letterSpacing: '-0.01em',
-        border: border ? `${Math.max(2, size * 0.06)}px solid ${border}` : undefined,
+        border: border
+          ? `${Math.max(2, size * 0.06)}px solid ${border}`
+          : undefined,
         ...style,
       }}
     >
@@ -201,7 +203,10 @@ export function AvatarStack({
           {...p}
           size={size}
           border={border}
-          style={{ marginLeft: i === 0 ? 0 : -overlap, zIndex: shown.length - i }}
+          style={{
+            marginLeft: i === 0 ? 0 : -overlap,
+            zIndex: shown.length - i,
+          }}
         />
       ))}
       {overflow > 0 && (

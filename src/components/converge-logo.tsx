@@ -62,7 +62,7 @@ export function ConvergeLogo({
         overflow: 'hidden',
         isolation: 'isolate',
         background: '#1A1B29',
-    }}
+      }}
     >
       {/* 1 — Textured backdrop (gives the glass something to blur). */}
       {background ? (
@@ -78,7 +78,12 @@ export function ConvergeLogo({
           <svg
             viewBox="0 0 64 64"
             preserveAspectRatio="xMidYMid slice"
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+            }}
           >
             {/* faint radar rings + grid */}
             <g
@@ -138,7 +143,12 @@ export function ConvergeLogo({
       {/* 3 — Glass lighting: top sheen + inner glow + crisp edge, kept inside the arc. */}
       <svg
         viewBox="0 0 64 64"
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+        }}
       >
         <defs>
           <clipPath id={id('arc')}>
@@ -179,16 +189,15 @@ export function ConvergeLogo({
       {/* 4 — The person, solid brand yellow, with a faint bloom. */}
       <svg
         viewBox="0 0 64 64"
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+        }}
       >
         <defs>
-          <filter
-            id={id('bloom')}
-            x="-20%"
-            y="-20%"
-            width="140%"
-            height="140%"
-          >
+          <filter id={id('bloom')} x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="0.6" result="b" />
             <feMerge>
               <feMergeNode in="b" />

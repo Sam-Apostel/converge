@@ -38,7 +38,9 @@ function SearchPage() {
     setLoading(true)
     const handle = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}`)
+        const res = await fetch(
+          `/api/search?q=${encodeURIComponent(query.trim())}`,
+        )
         const data = (await res.json()) as SearchResult[]
         if (ignore) return
         lastFetched.current = query
@@ -72,9 +74,7 @@ function SearchPage() {
       ) : loading ? (
         <SearchSkeleton />
       ) : (
-        <p className="px-1 text-[14px] text-mist">
-          No matches for “{trimmed}”.
-        </p>
+        <p className="px-1 text-body text-mist">No matches for “{trimmed}”.</p>
       )}
     </div>
   )
@@ -88,7 +88,10 @@ function SearchSkeleton() {
           key={i}
           className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-soft"
         >
-          <Skeleton shape="circle" style={{ width: 40, height: 40, flexShrink: 0 }} />
+          <Skeleton
+            shape="circle"
+            style={{ width: 40, height: 40, flexShrink: 0 }}
+          />
           <div className="flex flex-1 flex-col gap-2">
             <Skeleton shape="text" style={{ width: '60%', height: 14 }} />
             <Skeleton shape="text" style={{ width: '38%', height: 12 }} />
@@ -102,7 +105,7 @@ function SearchSkeleton() {
 function EmptyState({ onPick }: { onPick: (q: string) => void }) {
   return (
     <div className="flex flex-col items-center gap-4 py-6 text-center">
-      <p className="text-[14px] text-mist">
+      <p className="text-body text-mist">
         Start typing to search the whole conference — or try one of these:
       </p>
       <div className="flex flex-wrap justify-center gap-2">
@@ -111,7 +114,7 @@ function EmptyState({ onPick }: { onPick: (q: string) => void }) {
             key={s}
             type="button"
             onClick={() => onPick(s)}
-            className="rounded-full border border-[rgba(120,130,180,.16)] bg-white px-3.5 py-2 text-[13px] font-medium text-ink-2 shadow-soft transition-transform hover:scale-[0.98]"
+            className="rounded-full border border-edge/16 bg-white px-3.5 py-2 text-note font-medium text-ink-2 shadow-soft transition-transform hover:scale-[0.98]"
           >
             {s}
           </button>

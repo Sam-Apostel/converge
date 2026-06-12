@@ -90,7 +90,7 @@ function SessionScreen() {
         icon: <Star size={15} className="fill-current" />,
       })
     },
-    [collection, sessionId],
+    [collection, sessionId, authSession?.user.id, notify],
   )
 
   // Live stream: record the exact stream timecode + a resumable deep link.
@@ -135,7 +135,7 @@ function SessionScreen() {
 
   if (!detail) {
     return (
-      <div className="rounded-2xl border border-dashed border-black/10 bg-white/60 p-8 text-center text-sm text-muted">
+      <div className="rounded-2xl border border-dashed border-black/10 bg-white/60 p-8 text-center text-body text-muted">
         Session not found.{' '}
         <Link to="/sessions" className="text-ink underline">
           Back to the schedule
@@ -169,7 +169,7 @@ function SessionScreen() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr]">
         {/* Left — the talk */}
-        <div className="border-r border-[rgba(120,130,180,.12)] px-[26px] pb-[30px] pt-[26px]">
+        <div className="border-r border-edge/12 px-[26px] pb-[30px] pt-[26px]">
           <h1 className="mb-3.5 text-[28px] font-semibold leading-[1.08] tracking-[-0.03em]">
             {session.title}
           </h1>
@@ -178,10 +178,8 @@ function SessionScreen() {
             <div className="mb-[22px] flex items-center gap-[11px]">
               <Avatar name={speaker.name} src={speaker.image} size={38} />
               <div>
-                <div className="text-[14.5px] font-semibold">
-                  {speaker.name}
-                </div>
-                <div className="text-[12.5px] text-[#8186a0]">
+                <div className="text-body font-semibold">{speaker.name}</div>
+                <div className="text-caption text-muted">
                   {[speaker.title, speaker.company]
                     .filter(Boolean)
                     .join(' · ') || 'Speaker'}
@@ -210,7 +208,9 @@ function SessionScreen() {
             sessionId={sessionId}
             questions={questions}
             discussion={discussion}
-            me={me ? { id: me.id, name: me.name, image: me.image ?? null } : null}
+            me={
+              me ? { id: me.id, name: me.name, image: me.image ?? null } : null
+            }
             viewerIsSpeaker={viewerIsSpeaker}
           />
         </div>
@@ -245,7 +245,6 @@ function SessionScreen() {
           </div>
         )}
       </div>
-
     </div>
   )
 }
