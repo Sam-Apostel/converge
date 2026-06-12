@@ -1,4 +1,4 @@
-import { Button, LiveDot, Mono } from '#/components/ui'
+import { BorderBeam, Button, LiveDot, Mono } from '#/components/ui'
 
 /**
  * The dark "capture dock" beneath the live slide / player (design update): a
@@ -19,6 +19,7 @@ export function CaptureDock({
 }) {
   return (
     <div className="relative mt-3.5 flex items-center gap-4 overflow-hidden rounded-[18px] bg-ink px-[18px] py-4 text-white">
+      <BorderBeam speed={4} />
       <div className="pointer-events-none absolute -bottom-[54px] -right-10 h-[180px] w-[180px] rounded-full [background:radial-gradient(circle,rgba(153,255,0,.22),transparent_70%)]" />
       <div className="relative min-w-0 flex-1">
         <div className="mb-1.5 flex items-center gap-2">
