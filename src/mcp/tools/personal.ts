@@ -53,6 +53,17 @@ export function register(server: McpServer, userId: string) {
   )
 
   server.registerTool(
+    'get_my_moments',
+    {
+      title: 'Get my moments',
+      description:
+        'Get the current user\'s saved moments — key highlights bookmarked during talks.',
+      inputSchema: {},
+    },
+    async () => text(await listMoments(userId)),
+  )
+
+  server.registerTool(
     'my_notes',
     {
       title: 'My notes',

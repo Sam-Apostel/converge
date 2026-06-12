@@ -1,5 +1,5 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { and, asc, eq, gte, lte } from 'drizzle-orm'
+import { and, asc, desc, eq, gte, lte } from 'drizzle-orm'
 import { z } from 'zod'
 
 import { db } from '#/db'
@@ -153,6 +153,40 @@ export function register(server: McpServer, _userId: string) {
         .innerJoin(user, eq(user.id, sessionSpeaker.userId))
         .where(eq(conferenceSession.conferenceId, conferenceId))
       return text(rows)
+    },
+  )
+
+  server.registerTool(
+    'get_session_summary',
+    {
+      title: 'Get session summary',
+      description:
+        'Get full details for a session (talk) — abstract, speakers, and the Q&A thread from the audience.',
+      inputSchema: { sessionId: z.string().describe('Session id') },
+    },
+    async ({ sessionId }) => {
+      const loaded = await loadSession(sessionId)
+      if (!loaded) return text(null)
+
+      const questions = await db
+        .select()
+        .from(question)
+        .where(eq(question.sessionId, sessionId))
+        .orderBy(desc(question.upvotes), asc(question.createdAt))
+        .limit(20)
+
+      return text({
+        session: loaded.session,
+        room: loaded.room,
+        speakers: loaded.speakers,
+        questionCount: questions.length,
+        questions: questions.map((q) => ({
+          id: q.id,
+          body: q.body,
+          status: q.status,
+          upvotes: q.upvotes,
+        })),
+      })
     },
   )
 

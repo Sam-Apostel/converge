@@ -14,23 +14,32 @@ import {
   Spotlight,
 } from '#/components/ui'
 import { getHomeSummary } from '#/lib/queries'
+import { getConciergeStatus } from '#/lib/concierge/settings'
 import { ConciergeMessage } from '#/components/concierge/message'
 import { formatClock, formatCount } from '#/lib/format'
 
 export const Route = createFileRoute('/_app/')({
-  loader: () => getHomeSummary(),
+  loader: async () => {
+    const [summary, conciergeStatus] = await Promise.all([
+      getHomeSummary(),
+      getConciergeStatus(),
+    ])
+    return { ...summary, conciergeStatus }
+  },
   component: Home,
 })
 
 const SUGGESTIONS = [
   'Find my next talk',
   'What did I miss?',
-  'Find people on AI',
-  'Where is Hall B?',
+  'Find people into AI',
+  'Who should I meet?',
+  'Show trending projects',
+  "What's on right now?",
 ]
 
 function Home() {
-  const { counts, nextSession, peopleToMeet, trendingProject } =
+  const { counts, nextSession, peopleToMeet, trendingProject, conciergeStatus } =
     Route.useLoaderData()
 
   const { messages, sendMessage, isLoading, error, stop } = useChat({
@@ -61,7 +70,7 @@ function Home() {
           tone="ghost"
           className="block text-center !text-[11.5px] !tracking-[0.14em]"
         >
-          Good morning, Sam
+          Your AI guide to the conference. Ask anything.
         </Mono>
 
         {empty ? (
@@ -106,7 +115,7 @@ function Home() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
+                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
                   e.preventDefault()
                   submit()
                 }
@@ -125,10 +134,10 @@ function Home() {
               </button>
             ) : (
               <>
-                {!input.trim() && (
+                {input.trim() && (
                   <span className="hidden items-center gap-1 font-mono text-[12px] text-muted sm:flex">
                     <kbd className="rounded-[7px] bg-pillow px-[7px] py-[3px]">⌘</kbd>
-                    <kbd className="rounded-[7px] bg-pillow px-2 py-[3px]">K</kbd>
+                    <kbd className="rounded-[7px] bg-pillow px-2 py-[3px]">↵</kbd>
                   </span>
                 )}
                 <button
@@ -145,8 +154,8 @@ function Home() {
           </div>
         </div>
 
-        {/* suggestion chips — only in empty state */}
-        {empty && (
+        {/* suggestion chips — only in empty state when concierge is ready */}
+        {empty && conciergeStatus.ready && (
           <div className="flex w-fit flex-wrap justify-center gap-2 rounded-[40px] border border-white/60 bg-white/34 px-2 py-2 [backdrop-filter:blur(18px)_saturate(1.5)] [box-shadow:inset_0_1px_0_rgba(255,255,255,.6)]">
             {SUGGESTIONS.map((s) => (
               <button
@@ -158,6 +167,18 @@ function Home() {
                 {s}
               </button>
             ))}
+          </div>
+        )}
+
+        {/* no model configured — nudge to settings */}
+        {empty && !conciergeStatus.ready && (
+          <div className="w-full max-w-2xl rounded-2xl border border-line bg-white/70 px-5 py-4 text-[13.5px] text-slate [backdrop-filter:blur(12px)]">
+            Configure your AI provider in{' '}
+            <Link to="/settings" className="font-medium text-ink underline">
+              Settings
+            </Link>{' '}
+            to start chatting. You can use a local Ollama server or bring your
+            own Anthropic / OpenAI key.
           </div>
         )}
       </div>

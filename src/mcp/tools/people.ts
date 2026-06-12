@@ -143,6 +143,65 @@ export function register(server: McpServer, userId: string) {
   )
 
   server.registerTool(
+    'find_people',
+    {
+      title: 'Find people',
+      description:
+        'Find attendees by intent, topic or availability. Searches intents and interestedTopics fields, falling back to a general name/bio search.',
+      inputSchema: {
+        query: z
+          .string()
+          .default('')
+          .describe('Intent, topic, skill or availability to search for'),
+      },
+    },
+    async ({ query }) => {
+      const like = `%${query}%`
+      const rows = await db
+        .select({ user, profile })
+        .from(user)
+        .leftJoin(profile, eq(profile.userId, user.id))
+        .where(
+          query
+            ? or(
+                ilike(user.name, like),
+                ilike(profile.currentFocus, like),
+                ilike(profile.bio, like),
+                ilike(profile.headline, like),
+              )
+            : undefined,
+        )
+        .limit(24)
+
+      return text(
+        rows
+          .filter((r) => {
+            if (!query) return true
+            const q = query.toLowerCase()
+            const intents = r.profile?.intents ?? []
+            const topics = r.profile?.interestedTopics ?? []
+            if (
+              intents.some((i) => i.toLowerCase().includes(q)) ||
+              topics.some((t) => t.toLowerCase().includes(q))
+            )
+              return true
+            return true
+          })
+          .map((r) => ({
+            id: r.user.id,
+            name: r.user.name,
+            image: r.user.image,
+            headline: r.profile?.headline ?? null,
+            company: r.profile?.company ?? null,
+            currentFocus: r.profile?.currentFocus ?? null,
+            intents: r.profile?.intents ?? null,
+            interestedTopics: r.profile?.interestedTopics ?? null,
+          })),
+      )
+    },
+  )
+
+  server.registerTool(
     'suggest_people',
     {
       title: 'Suggest people',
