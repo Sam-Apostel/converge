@@ -39,7 +39,7 @@ export type ThreadPost = {
   replyCount: number
 }
 
-export type ThreadQuestion = {
+type ThreadQuestion = {
   id: string
   body: string
   upvotes: number

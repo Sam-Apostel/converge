@@ -33,7 +33,7 @@ export type Thread = {
 }
 
 /** An incoming connection request awaiting accept. */
-export type PendingRequest = {
+type PendingRequest = {
   id: string
   from: DirectoryPerson
   note: string | null

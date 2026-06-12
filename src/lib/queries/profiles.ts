@@ -97,7 +97,7 @@ export const getPersonById = createServerFn({ method: 'GET' })
   })
 
 /** A project member, surfaced in the "looking for" avatar stack. */
-export type ProjectMemberRow = {
+type ProjectMemberRow = {
   id: string
   name: string
   image: string | null

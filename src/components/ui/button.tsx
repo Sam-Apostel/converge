@@ -16,7 +16,7 @@ const SIZE: Record<ButtonSize, string> = {
 }
 
 /** Shared class string so links can look like buttons without wrapping. */
-export function buttonClass(
+function buttonClass(
   variant: ButtonVariant = 'dark',
   size: ButtonSize = 'md',
   className = '',

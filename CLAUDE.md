@@ -19,8 +19,7 @@ issues** — pick one up there.
     via `useEventStream` (`src/hooks/use-event-stream.ts`).
 - **Never import `#/db` (node-postgres) into client components.** Use a server
   function or an API route. The drizzle schema *types* (`#/db/types`) are safe.
-- **Auth:** server session via `getSessionFromRequest`/`requireUser`
-  (`src/lib/server-auth.ts`) or `getSession` (`src/lib/auth-functions.ts`);
+- **Auth:** server session via `requireUser` (`src/lib/server-auth.ts`);
   client via `useSession`/`authClient` (`src/lib/auth-client.ts`).
 - **Schema changes:** edit `src/db/domain-schema.ts`, then
   `bun run db:generate && bun run db:migrate`. For auth changes, edit
