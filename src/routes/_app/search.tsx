@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
+import { Skeleton } from '@progress/kendo-react-indicators'
 
 import { PageHeader } from '#/components/page-header'
 import { SearchInput } from '#/components/search/search-input'
@@ -69,12 +70,31 @@ function SearchPage() {
       ) : hasResults ? (
         <SearchResults results={results} />
       ) : loading ? (
-        <p className="px-1 text-[14px] text-mist">Searching…</p>
+        <SearchSkeleton />
       ) : (
         <p className="px-1 text-[14px] text-mist">
           No matches for “{trimmed}”.
         </p>
       )}
+    </div>
+  )
+}
+
+function SearchSkeleton() {
+  return (
+    <div className="flex flex-col gap-3">
+      {[...Array(4)].map((_, i) => (
+        <div
+          key={i}
+          className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-soft"
+        >
+          <Skeleton shape="circle" style={{ width: 40, height: 40, flexShrink: 0 }} />
+          <div className="flex flex-1 flex-col gap-2">
+            <Skeleton shape="text" style={{ width: '60%', height: 14 }} />
+            <Skeleton shape="text" style={{ width: '38%', height: 12 }} />
+          </div>
+        </div>
+      ))}
     </div>
   )
 }

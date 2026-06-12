@@ -1,10 +1,11 @@
+import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { ChipList, type ChipListChangeEvent } from '@progress/kendo-react-buttons'
 
 import {
   Avatar,
   Button,
   Mono,
-  Pill,
   Spotlight,
   Tag,
 } from '#/components/ui'
@@ -19,19 +20,30 @@ export const Route = createFileRoute('/_app/people/')({
 })
 
 const INTENTS = [
-  'Co-founders',
-  'Hiring',
-  'Open to work',
-  'Learning AI',
-  'Meeting makers',
+  { text: 'All', value: 'all' },
+  { text: 'Co-founders', value: 'co-founder' },
+  { text: 'Hiring', value: 'hiring' },
+  { text: 'Open to work', value: 'open-to-work' },
+  { text: 'Learning AI', value: 'learning' },
+  { text: 'Meeting makers', value: 'meeting' },
 ]
 
 function PeoplePage() {
   const people = Route.useLoaderData()
+  const [selectedIntent, setSelectedIntent] = useState('all')
+
   const ranked = [...people].sort((a, b) => demoMatch(b.id) - demoMatch(a.id))
-  const top = ranked[0]
+  const filtered =
+    selectedIntent === 'all'
+      ? ranked
+      : ranked.filter((p) =>
+          p.profile?.intents?.some((i) =>
+            i.toLowerCase().includes(selectedIntent),
+          ),
+        )
+  const top = filtered[0] ?? ranked[0]
   const featured =
-    people.find((p) => p.profile?.handle === 'kitze') ?? ranked[1] ?? top
+    people.find((p) => p.profile?.handle === 'kitze') ?? filtered[1] ?? top
 
   return (
     <div>
@@ -47,18 +59,22 @@ function PeoplePage() {
         <Mono className="mr-1 !tracking-[0.04em] !text-[12px]">
           Filter by intent
         </Mono>
-        {INTENTS.map((intent, i) => (
-          <Pill key={intent} active={i === 0} tone="lime" elevated>
-            {intent}
-          </Pill>
-        ))}
+        <ChipList
+          data={INTENTS}
+          selection="single"
+          value={selectedIntent}
+          onChange={(e: ChipListChangeEvent) =>
+            setSelectedIntent((e.value as string) ?? 'all')
+          }
+          className="converge-chips"
+        />
       </div>
 
       {top && <TopMatch person={top} />}
 
       <div className="grid grid-cols-1 items-start gap-[22px] lg:grid-cols-[1.3fr_1fr]">
         <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-          {ranked.map((person) => (
+          {filtered.map((person) => (
             <PersonCard key={person.id} person={person} />
           ))}
         </div>
