@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { useChat, fetchServerSentEvents } from '@tanstack/ai-react'
 
 import {
   Avatar,
@@ -12,6 +14,7 @@ import {
   Spotlight,
 } from '#/components/ui'
 import { getHomeSummary } from '#/lib/queries'
+import { ConciergeMessage } from '#/components/concierge/message'
 import { formatClock, formatCount } from '#/lib/format'
 
 export const Route = createFileRoute('/_app/')({
@@ -30,9 +33,29 @@ function Home() {
   const { counts, nextSession, peopleToMeet, trendingProject } =
     Route.useLoaderData()
 
+  const { messages, sendMessage, isLoading, error, stop } = useChat({
+    connection: fetchServerSentEvents('/api/concierge'),
+  })
+
+  const [input, setInput] = useState('')
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
+  }, [messages, isLoading])
+
+  const empty = messages.length === 0
+
+  const submit = () => {
+    const text = input.trim()
+    if (!text || isLoading) return
+    sendMessage(text)
+    setInput('')
+  }
+
   return (
     <div className="flex flex-col gap-7">
-      {/* ── Command bar ───────────────────────────────────────────── */}
+      {/* ── Command bar / Concierge ───────────────────────────────── */}
       <div className="flex flex-col items-center gap-4 pb-2 pt-8 sm:pt-12">
         <Mono
           tone="ghost"
@@ -40,39 +63,103 @@ function Home() {
         >
           Good morning, Sam
         </Mono>
-        <h1 className="mx-auto max-w-xl text-balance text-center text-[30px] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[38px]">
-          What do you want to do right now?
-        </h1>
+
+        {empty ? (
+          <h1 className="mx-auto max-w-xl text-balance text-center text-[30px] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[38px]">
+            What do you want to do right now?
+          </h1>
+        ) : (
+          <div
+            ref={scrollRef}
+            className="w-full max-w-2xl max-h-[420px] overflow-y-auto"
+            style={{ scrollbarWidth: 'thin' }}
+          >
+            <div className="flex flex-col gap-3 pb-1">
+              {messages.map((m) => (
+                <ConciergeMessage key={m.id} message={m} />
+              ))}
+              {isLoading && (
+                <div className="flex items-center gap-1.5 px-1">
+                  <LiveDot size={6} />
+                  <Mono tone="faint">thinking…</Mono>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="w-full max-w-2xl rounded-xl border border-line bg-white/60 px-3.5 py-2.5 text-[12.5px] text-slate">
+            Something went wrong: {error.message}.{' '}
+            <Link to="/settings" className="font-medium text-ink underline">
+              Check your model settings
+            </Link>
+            .
+          </div>
+        )}
 
         {/* glass frame → white inner input */}
         <div className="w-full max-w-2xl rounded-[26px] border border-white/60 bg-white/32 p-2 [backdrop-filter:blur(22px)_saturate(1.7)] [box-shadow:0_1px_3px_rgba(40,50,110,.05),0_16px_40px_rgba(40,50,110,.12)]">
           <div className="flex items-center gap-3.5 rounded-[18px] bg-white px-[18px] py-[11px] shadow-[0_1px_2px_rgba(40,50,110,.05)]">
             <span className="text-[18px] text-[#7b809a]">⌕</span>
             <input
-              placeholder="Find people working on AI"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  submit()
+                }
+              }}
+              placeholder={empty ? 'Find people working on AI' : 'Ask anything…'}
               className="flex-1 bg-transparent text-[16px] text-slate outline-none placeholder:text-slate/60"
             />
-            <span className="hidden items-center gap-1 font-mono text-[12px] text-muted sm:flex">
-              <kbd className="rounded-[7px] bg-pillow px-[7px] py-[3px]">⌘</kbd>
-              <kbd className="rounded-[7px] bg-pillow px-2 py-[3px]">K</kbd>
-            </span>
-            <button className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[13px] bg-ink text-[17px] text-lime">
-              ↑
-            </button>
+            {isLoading ? (
+              <button
+                type="button"
+                onClick={stop}
+                aria-label="Stop"
+                className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[13px] bg-pillow text-slate transition-transform active:scale-95"
+              >
+                <span className="size-3 rounded-[3px] bg-ink" />
+              </button>
+            ) : (
+              <>
+                {!input.trim() && (
+                  <span className="hidden items-center gap-1 font-mono text-[12px] text-muted sm:flex">
+                    <kbd className="rounded-[7px] bg-pillow px-[7px] py-[3px]">⌘</kbd>
+                    <kbd className="rounded-[7px] bg-pillow px-2 py-[3px]">K</kbd>
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={submit}
+                  disabled={!input.trim()}
+                  aria-label="Send"
+                  className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[13px] bg-ink text-[17px] text-lime transition-transform active:scale-95 disabled:opacity-40"
+                >
+                  ↑
+                </button>
+              </>
+            )}
           </div>
         </div>
 
-        {/* chips in glass pill */}
-        <div className="flex w-fit flex-wrap justify-center gap-2 rounded-[40px] border border-white/60 bg-white/34 px-2 py-2 [backdrop-filter:blur(18px)_saturate(1.5)] [box-shadow:inset_0_1px_0_rgba(255,255,255,.6)]">
-          {SUGGESTIONS.map((s) => (
-            <button
-              key={s}
-              className="rounded-full border border-[rgba(120,130,180,.18)] bg-white px-[15px] py-2 text-[13.5px] font-medium text-[#2a2e48] shadow-soft transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-px hover:border-[rgba(120,130,180,.4)] hover:[box-shadow:0_4px_12px_rgba(40,50,110,.14)] active:scale-[0.97]"
-            >
-              {s}
-            </button>
-          ))}
-        </div>
+        {/* suggestion chips — only in empty state */}
+        {empty && (
+          <div className="flex w-fit flex-wrap justify-center gap-2 rounded-[40px] border border-white/60 bg-white/34 px-2 py-2 [backdrop-filter:blur(18px)_saturate(1.5)] [box-shadow:inset_0_1px_0_rgba(255,255,255,.6)]">
+            {SUGGESTIONS.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => sendMessage(s)}
+                className="rounded-full border border-[rgba(120,130,180,.18)] bg-white px-[15px] py-2 text-[13.5px] font-medium text-[#2a2e48] shadow-soft transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-px hover:border-[rgba(120,130,180,.4)] hover:[box-shadow:0_4px_12px_rgba(40,50,110,.14)] active:scale-[0.97]"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ── Right now ─────────────────────────────────────────────── */}
