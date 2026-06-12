@@ -136,6 +136,14 @@ body {
     opacity: 0.25;
   }
 }
+@keyframes beamRot {
+  from {
+    transform: translate(-50%, -50%) rotate(0turn);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(1turn);
+  }
+}
 
 .animate-live-pulse {
   animation: livePulse 1.8s ease-out infinite;
