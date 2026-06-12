@@ -30,6 +30,7 @@ import {
 import { Toast } from '#/components/session/toast'
 import { momentsCollection } from '#/db-collections/moments'
 import { useEventStream } from '#/hooks/use-event-stream'
+import { useSession } from '#/lib/auth-client'
 import { getSessionDetail } from '#/lib/queries/sessions'
 
 export const Route = createFileRoute('/_app/sessions/$sessionId')({
@@ -40,9 +41,10 @@ export const Route = createFileRoute('/_app/sessions/$sessionId')({
 function SessionScreen() {
   const { sessionId } = Route.useParams()
   const detail = Route.useLoaderData()
+  const { data: session } = useSession()
 
   const collection = useMemo(() => momentsCollection(sessionId), [sessionId])
-  const videoId = livestreamFor(sessionId)
+  const videoId = detail ? livestreamFor(detail.livestreamUrl) : null
 
   // Livestream is the model: the talk progress bar follows the stream position.
   // The slide playhead only drives the no-stream fallback (some talks are demos
@@ -71,7 +73,7 @@ function SessionScreen() {
       collection.insert({
         id: crypto.randomUUID(),
         sessionId,
-        userId: 'me', // TODO(auth): the server assigns the real viewer
+        userId: session?.user.id ?? '',
         timestampMs: fields.timestampMs,
         slideRef: fields.slideRef,
         transcriptSnippet: fields.transcriptSnippet,

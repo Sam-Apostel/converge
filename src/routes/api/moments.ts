@@ -2,29 +2,15 @@ import { createFileRoute } from '@tanstack/react-router'
 import { and, asc, eq } from 'drizzle-orm'
 
 import { db } from '#/db'
-import { moment, user } from '#/db/schema'
+import { moment } from '#/db/schema'
 import { publish } from '#/lib/events'
-import { getSessionFromRequest } from '#/lib/server-auth'
+import { requireUser } from '#/lib/server-auth'
 
 /**
  * Moments API — backs the `momentsCollection` TanStack DB collection.
  * GET lists the viewer's moments for a session; POST bookmarks the current
- * slide; DELETE removes one. Each moment is scoped to the viewer.
+ * slide; DELETE removes one. Each moment is scoped to the authenticated viewer.
  */
-
-// TODO(auth): there's no signed-in user in the UI yet. Resolve the session when
-// present, otherwise stand in with a stable demo user so "Your moments" has an
-// owner. Swap this for `requireUser` once sign-in is wired up.
-async function viewerId(request: Request): Promise<string | null> {
-  const session = await getSessionFromRequest(request)
-  if (session) return session.user.id
-  const [first] = await db
-    .select({ id: user.id })
-    .from(user)
-    .orderBy(asc(user.name))
-    .limit(1)
-  return first?.id ?? null
-}
 
 export const Route = createFileRoute('/api/moments')({
   server: {
@@ -32,8 +18,7 @@ export const Route = createFileRoute('/api/moments')({
       GET: async ({ request }) => {
         const sessionId = new URL(request.url).searchParams.get('sessionId')
         if (!sessionId) return Response.json([], { status: 400 })
-        const userId = await viewerId(request)
-        if (!userId) return Response.json([])
+        const { id: userId } = await requireUser(request)
         const rows = await db
           .select()
           .from(moment)
@@ -45,8 +30,7 @@ export const Route = createFileRoute('/api/moments')({
       },
 
       POST: async ({ request }) => {
-        const userId = await viewerId(request)
-        if (!userId) return new Response('No viewer', { status: 401 })
+        const { id: userId } = await requireUser(request)
         const body = (await request.json()) as {
           sessionId: string
           timestampMs: number
@@ -78,8 +62,7 @@ export const Route = createFileRoute('/api/moments')({
       DELETE: async ({ request }) => {
         const id = new URL(request.url).searchParams.get('id')
         if (!id) return new Response('Missing id', { status: 400 })
-        const userId = await viewerId(request)
-        if (!userId) return new Response('No viewer', { status: 401 })
+        const { id: userId } = await requireUser(request)
         await db
           .delete(moment)
           .where(and(eq(moment.id, id), eq(moment.userId, userId)))

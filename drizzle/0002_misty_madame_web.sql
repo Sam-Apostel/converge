@@ -1,0 +1,1 @@
+ALTER TABLE "conference_session" ADD COLUMN "livestream_url" text;

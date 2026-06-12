@@ -175,6 +175,7 @@ export const conferenceSession = pgTable(
     track: text('track'),
     startsAt: timestamp('starts_at'),
     endsAt: timestamp('ends_at'),
+    livestreamUrl: text('livestream_url'),
     // Live transcript / AI summary populated during & after the talk.
     transcriptUrl: text('transcript_url'),
     aiSummary: text('ai_summary'),

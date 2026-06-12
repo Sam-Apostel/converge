@@ -1,18 +1,10 @@
 /**
  * Livestream config + YouTube URL helpers.
- *
- * There's no livestream column on `conferenceSession` yet, so for this first
- * iteration the live video is a single client-side constant used for every
- * session. TODO(schema): add `conferenceSession.livestreamUrl` and key the
- * stream off the row instead of this default.
  */
 
-/** React Summit's live broadcast — the demo stream. */
-export const DEFAULT_LIVESTREAM_ID = 'C0dnfm48K4Q'
-
-/** The livestream video id for a session, or `null` to fall back to slides. */
-export function livestreamFor(_sessionId: string): string | null {
-  return DEFAULT_LIVESTREAM_ID
+/** The YouTube video id for a session's livestream URL, or `null` to fall back to slides. */
+export function livestreamFor(url: string | null | undefined): string | null {
+  return url ? youtubeId(url) : null
 }
 
 /** Extract a YouTube video id from a watch/share/embed URL (or pass an id). */
