@@ -84,7 +84,7 @@ export const room = pgTable(
     name: text('name').notNull(),
     floor: text('floor'),
     capacity: integer('capacity'),
-    // {lat,lng} or relative venue coords for walking-time estimates
+    // {lat,lng} or relative venue coords
     location: jsonb('location').$type<{ lat: number; lng: number }>(),
   },
   (t) => [index('room_conference_idx').on(t.conferenceId)],

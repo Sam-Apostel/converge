@@ -1,6 +1,8 @@
 import { Card, Mono } from '#/components/ui'
 import type { TopicChannel, TrendingQuestion } from '#/lib/queries/discussions'
 
+import { useQuestionVote } from './question-vote'
+
 /** Right-rail list of topic channels — the active one sits on the inner surface. */
 export function TopicChannels({ channels }: { channels: Array<TopicChannel> }) {
   return (
@@ -45,6 +47,14 @@ export function TrendingQuestionCard({
   trending: TrendingQuestion | null
 }) {
   if (!trending) return null
+  return <TrendingQuestionInner key={trending.id} trending={trending} />
+}
+
+function TrendingQuestionInner({ trending }: { trending: TrendingQuestion }) {
+  const vote = useQuestionVote(trending.id, {
+    count: trending.upvotes,
+    hasVoted: trending.hasVoted,
+  })
   return (
     <Card surface="white" className="p-5">
       <Mono tone="ghost" className="mb-2.5 block !text-[11px]">
@@ -54,9 +64,19 @@ export function TrendingQuestionCard({
         {trending.body}
       </p>
       <div className="flex flex-wrap items-center gap-2 text-[12.5px] text-[#8186a0]">
-        <span className="font-medium text-[#3a3e54] tabular-nums">
-          ▲ {trending.upvotes}
-        </span>
+        <button
+          type="button"
+          onClick={vote.toggle}
+          aria-pressed={vote.hasVoted}
+          aria-label={vote.hasVoted ? 'Remove upvote' : 'Upvote'}
+          className={`rounded-md px-1.5 py-0.5 font-medium tabular-nums transition-colors ${
+            vote.hasVoted
+              ? 'bg-lime/25 text-ink'
+              : 'text-[#3a3e54] hover:bg-pillow'
+          }`}
+        >
+          ▲ {vote.count}
+        </button>
         {trending.sessionTitle && <span>· from "{trending.sessionTitle}"</span>}
         {trending.followUps > 0 && (
           <span>

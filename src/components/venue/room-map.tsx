@@ -1,6 +1,5 @@
 import { LiveDot, Mono } from '#/components/ui'
 import type { VenueRoom } from '#/lib/queries/venue'
-import { walkLabel } from './walk'
 
 /** Ground = 0, "1" = 1 … so we can stack floors bottom-up on the schematic. */
 function floorLevel(floor: string | null): number {
@@ -62,10 +61,11 @@ export function RoomMap({ rooms }: { rooms: Array<VenueRoom> }) {
                           {room.name}
                         </span>
                       </div>
-                      <span className="font-mono text-[10px] text-muted">
-                        {walkLabel(room)}
-                        {room.capacity ? ` · ${room.capacity.toLocaleString()}` : ''}
-                      </span>
+                      {room.capacity && (
+                        <span className="font-mono text-[10px] text-muted">
+                          seats {room.capacity.toLocaleString()}
+                        </span>
+                      )}
                     </div>
                   )
                 })}

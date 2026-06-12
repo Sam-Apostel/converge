@@ -1,13 +1,6 @@
 import type { ReactNode } from 'react'
 
-import {
-  Avatar,
-  AvatarStack,
-  Badge,
-  Card,
-  Mono,
-  VoteControl,
-} from '#/components/ui'
+import { Avatar, AvatarStack, Badge, Card, Mono } from '#/components/ui'
 import type {
   DiscussionAuthor,
   DiscussionThread,
@@ -15,6 +8,7 @@ import type {
 } from '#/lib/queries/discussions'
 
 import { MeetupCard } from './meetup-card'
+import { QuestionVote } from './question-vote'
 
 /** A thread is "live" enough to have spun out a meetup once a few people join. */
 function becameMeetup(thread: DiscussionThread) {
@@ -93,9 +87,9 @@ export function Thread({
 
   // With a real question row it's the headline; otherwise the opening post is.
   const opener = question
-    ? { author: question.author, body: question.body, upvotes: question.upvotes }
+    ? { author: question.author, body: question.body }
     : posts[0]
-      ? { author: posts[0].author, body: posts[0].body, upvotes: null }
+      ? { author: posts[0].author, body: posts[0].body }
       : null
   const spine = question ? posts : posts.slice(1)
 
@@ -114,8 +108,14 @@ export function Thread({
 
       {opener && (
         <div className="mb-2 flex gap-3.5">
-          {opener.upvotes != null && (
-            <VoteControl count={opener.upvotes} downvote />
+          {question && (
+            <QuestionVote
+              key={question.id}
+              questionId={question.id}
+              count={question.upvotes}
+              hasVoted={question.hasVoted}
+              downvote
+            />
           )}
           <div className="flex-1">
             {opener.author && (
