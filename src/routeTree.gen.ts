@@ -26,7 +26,6 @@ import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiConnectionsRouteImport } from './routes/api/connections'
 import { Route as ApiConciergeRouteImport } from './routes/api/concierge'
 import { Route as ApiAnswersRouteImport } from './routes/api/answers'
-import { Route as AppVenueRouteImport } from './routes/_app/venue'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppSearchRouteImport } from './routes/_app/search'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
@@ -129,11 +128,6 @@ const ApiAnswersRoute = ApiAnswersRouteImport.update({
   id: '/api/answers',
   path: '/api/answers',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AppVenueRoute = AppVenueRouteImport.update({
-  id: '/venue',
-  path: '/venue',
-  getParentRoute: () => AppRoute,
 } as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
@@ -239,7 +233,6 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AppProfileRoute
   '/search': typeof AppSearchRoute
   '/settings': typeof AppSettingsRoute
-  '/venue': typeof AppVenueRoute
   '/api/answers': typeof ApiAnswersRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
@@ -275,7 +268,6 @@ export interface FileRoutesByTo {
   '/profile': typeof AppProfileRoute
   '/search': typeof AppSearchRoute
   '/settings': typeof AppSettingsRoute
-  '/venue': typeof AppVenueRoute
   '/api/answers': typeof ApiAnswersRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
@@ -314,7 +306,6 @@ export interface FileRoutesById {
   '/_app/profile': typeof AppProfileRoute
   '/_app/search': typeof AppSearchRoute
   '/_app/settings': typeof AppSettingsRoute
-  '/_app/venue': typeof AppVenueRoute
   '/api/answers': typeof ApiAnswersRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
@@ -354,7 +345,6 @@ export interface FileRouteTypes {
     | '/profile'
     | '/search'
     | '/settings'
-    | '/venue'
     | '/api/answers'
     | '/api/concierge'
     | '/api/connections'
@@ -390,7 +380,6 @@ export interface FileRouteTypes {
     | '/profile'
     | '/search'
     | '/settings'
-    | '/venue'
     | '/api/answers'
     | '/api/concierge'
     | '/api/connections'
@@ -428,7 +417,6 @@ export interface FileRouteTypes {
     | '/_app/profile'
     | '/_app/search'
     | '/_app/settings'
-    | '/_app/venue'
     | '/api/answers'
     | '/api/concierge'
     | '/api/connections'
@@ -599,13 +587,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAnswersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/venue': {
-      id: '/_app/venue'
-      path: '/venue'
-      fullPath: '/venue'
-      preLoaderRoute: typeof AppVenueRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/settings': {
       id: '/_app/settings'
       path: '/settings'
@@ -753,7 +734,6 @@ interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRoute
   AppSearchRoute: typeof AppSearchRoute
   AppSettingsRoute: typeof AppSettingsRoute
-  AppVenueRoute: typeof AppVenueRoute
   AppIndexRoute: typeof AppIndexRoute
   AppPeopleUserIdRoute: typeof AppPeopleUserIdRoute
   AppProjectsSlugRoute: typeof AppProjectsSlugRoute
@@ -769,7 +749,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRoute,
   AppSearchRoute: AppSearchRoute,
   AppSettingsRoute: AppSettingsRoute,
-  AppVenueRoute: AppVenueRoute,
   AppIndexRoute: AppIndexRoute,
   AppPeopleUserIdRoute: AppPeopleUserIdRoute,
   AppProjectsSlugRoute: AppProjectsSlugRoute,

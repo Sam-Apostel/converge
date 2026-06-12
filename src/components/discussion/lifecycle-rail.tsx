@@ -1,14 +1,21 @@
 import { Fragment } from 'react'
+import {
+  CornerDownRight,
+  HelpCircle,
+  MessageSquare,
+  Coffee,
+  Users,
+} from 'lucide-react'
 
 import { Card } from '#/components/ui'
 
 /** The five stages a question travels through, with the connectors between them. */
 const STAGES = [
-  { glyph: 'Q', label: 'Question', chip: 'bg-ink text-white', strong: true },
-  { glyph: 'A', label: 'Answer', chip: 'bg-[#3a3e54] text-white', strong: true },
-  { glyph: '↳', label: 'Follow-up', chip: 'bg-inner text-[#52566c]', strong: false },
-  { glyph: '···', label: 'Community', chip: 'bg-inner text-[#52566c]', strong: false },
-  { glyph: '◎', label: 'Meetup', chip: 'bg-lime text-ink', strong: true },
+  { Icon: HelpCircle, label: 'Question', chip: 'bg-ink text-white', strong: true },
+  { Icon: MessageSquare, label: 'Answer', chip: 'bg-[#3a3e54] text-white', strong: true },
+  { Icon: CornerDownRight, label: 'Follow-up', chip: 'bg-inner text-[#52566c]', strong: false },
+  { Icon: Users, label: 'Community', chip: 'bg-inner text-[#52566c]', strong: false },
+  { Icon: Coffee, label: 'Meetup', chip: 'bg-lime text-ink', strong: true },
 ] as const
 
 // Connector fills, left→right. The run into Meetup fades to lime.
@@ -36,9 +43,9 @@ export function LifecycleRail() {
           )}
           <span className="flex shrink-0 items-center gap-2">
             <span
-              className={`grid size-6 place-items-center rounded-lg text-[12px] font-semibold ${stage.chip}`}
+              className={`grid size-6 place-items-center rounded-lg ${stage.chip}`}
             >
-              {stage.glyph}
+              <stage.Icon size={14} strokeWidth={2.25} />
             </span>
             <span
               className={`text-[13.5px] ${

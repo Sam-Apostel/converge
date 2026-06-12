@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 
-import { Avatar, Badge, LiveDot, Mono, Tag } from '#/components/ui'
+import { Avatar, Mono, Tag } from '#/components/ui'
 import { formatClock } from '#/lib/format'
 import { listSessions } from '#/lib/queries'
 
@@ -30,7 +30,11 @@ function isLiveNow(row: SessionRow): boolean {
 }
 
 function SessionsPage() {
-  const sessions = Route.useLoaderData()
+
+  const now = new Date()
+  const sessions = Route.useLoaderData().filter(
+    (session) => session.endsAt != null && new Date(session.endsAt) > now,
+  )
 
   // Preserve the start-time order while grouping into day sections.
   const groups: Array<{ label: string; rows: Array<SessionRow> }> = []
@@ -70,25 +74,36 @@ function SessionsPage() {
                       <Link
                         to="/sessions/$sessionId"
                         params={{ sessionId: row.id }}
-                        className="group flex items-center gap-4 rounded-2xl bg-white px-4 py-3.5 shadow-card transition-[transform,box-shadow] duration-150 hover:-translate-y-px hover:shadow-card-hover"
+                        className={
+                          live
+                            ? 'group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-white shadow-card transition-[transform,box-shadow] duration-150 hover:-translate-y-px hover:shadow-card-hover'
+                            : 'group flex items-center gap-4 rounded-2xl bg-white px-4 py-3.5 shadow-card transition-[transform,box-shadow] duration-150 hover:-translate-y-px hover:shadow-card-hover'
+                        }
+                        style={
+                          live
+                            ? { background: 'linear-gradient(135deg,#13141d,#1c1e2e)' }
+                            : undefined
+                        }
                       >
                         <div className="flex w-[68px] shrink-0 flex-col items-start gap-1">
-                          <span className="font-mono text-[13px] font-semibold tabular-nums text-ink">
+                          <span
+                            className={`font-mono text-[13px] font-semibold tabular-nums ${live ? 'text-white' : 'text-ink'}`}
+                          >
                             {formatClock(row.startsAt)}
                           </span>
-                          {live ? (
-                            <Badge tone="lime-soft" mono className="gap-1 px-2">
-                              <LiveDot size={6} /> Live
-                            </Badge>
-                          ) : row.endsAt ? (
-                            <span className="font-mono text-[11px] tabular-nums text-faint">
+                          {row.endsAt ? (
+                            <span
+                              className={`font-mono text-[11px] tabular-nums ${live ? 'text-[#d6d8e6]' : 'text-faint'}`}
+                            >
                               {formatClock(row.endsAt)}
                             </span>
                           ) : null}
                         </div>
 
                         <div className="min-w-0 flex-1">
-                          <p className="truncate font-semibold tracking-[-0.01em] text-ink">
+                          <p
+                            className={`truncate font-semibold tracking-[-0.01em] ${live ? 'text-white' : 'text-ink'}`}
+                          >
                             {row.title}
                           </p>
                           <div className="mt-1 flex flex-wrap items-center gap-2">
@@ -96,7 +111,9 @@ function SessionsPage() {
                               <Tag variant="soft">{row.track}</Tag>
                             ) : null}
                             {row.roomName ? (
-                              <span className="text-[12.5px] text-mist">
+                              <span
+                                className={`text-[12.5px] ${live ? 'text-[#d6d8e6]' : 'text-mist'}`}
+                              >
                                 {row.roomName}
                               </span>
                             ) : null}
@@ -106,11 +123,17 @@ function SessionsPage() {
                         {row.speakerName ? (
                           <div className="hidden shrink-0 items-center gap-2.5 sm:flex">
                             <div className="text-right">
-                              <div className="text-[13px] font-medium text-slate">
+                              <div
+                                className={`text-[13px] font-medium ${live ? 'text-[#d6d8e6]' : 'text-slate'}`}
+                              >
                                 {row.speakerName}
                               </div>
                             </div>
-                            <Avatar name={row.speakerName} size={34} />
+                            <Avatar
+                              name={row.speakerName}
+                              size={34}
+                              {...(live ? { bg: '#3a3f5c', ink: '#fff' } : {})}
+                            />
                           </div>
                         ) : null}
                       </Link>

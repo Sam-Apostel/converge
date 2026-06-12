@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { TextArea, type TextAreaChangeEvent } from '@progress/kendo-react-inputs'
+import { ArrowUp, Sparkles } from 'lucide-react'
 
 /**
  * The concierge input dock (silo 7) — opaque neumorphic card inside the glass
@@ -29,9 +30,7 @@ export function Composer({
 
   return (
     <div className="mt-3 flex items-end gap-2.5 rounded-2xl bg-surface py-2.5 pl-4 pr-2.5 shadow-card [box-shadow:0_1px_3px_rgba(40,50,110,.08),inset_0_1px_0_rgba(255,255,255,.9)]">
-      <span className="mb-[9px] text-[16px] text-slate" aria-hidden>
-        ✦
-      </span>
+      <Sparkles className="mb-[9px] text-slate" size={16} aria-hidden />
       <TextArea
         value={value}
         onChange={(e: TextAreaChangeEvent) => setValue(e.value)}
@@ -63,9 +62,9 @@ export function Composer({
           onClick={submit}
           disabled={disabled || !value.trim()}
           aria-label="Send"
-          className="grid size-[38px] place-items-center rounded-xl bg-ink text-[16px] text-lime transition-transform active:scale-95 disabled:opacity-40"
+          className="grid size-[38px] place-items-center rounded-xl bg-ink text-lime transition-transform active:scale-95 disabled:opacity-40"
         >
-          ↑
+          <ArrowUp size={18} strokeWidth={2.5} />
         </button>
       )}
     </div>

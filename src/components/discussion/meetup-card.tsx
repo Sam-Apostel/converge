@@ -1,4 +1,8 @@
+import { Check, Coffee } from 'lucide-react'
+import { useState } from 'react'
+
 import { AvatarStack, Button, Mono, Spotlight } from '#/components/ui'
+import { useSession } from '#/lib/auth-client'
 import type { DiscussionThread } from '#/lib/queries/discussions'
 
 function humanizeTopic(topic: string): string {
@@ -13,14 +17,26 @@ function humanizeTopic(topic: string): string {
  * bottom of an active thread. Attendees are the thread's real participants.
  */
 export function MeetupCard({ thread }: { thread: DiscussionThread }) {
+  const { data: session } = useSession()
+  const [joined, setJoined] = useState(false)
+
   const title = thread.topic
     ? `Coffee: ${humanizeTopic(thread.topic)}`
     : `Coffee: ${thread.title}`
 
+  // Attendees are the thread's participants; once you join, you slot in too —
+  // unless you're already in the thread (then Join just confirms your spot).
+  const me = session?.user
+  const alreadyIn = me ? thread.participants.some((p) => p.id === me.id) : false
+  const attendees = thread.participants.map((p) => ({ name: p.name, src: p.image }))
+  if (joined && me && !alreadyIn) {
+    attendees.push({ name: me.name, src: me.image ?? null })
+  }
+
   return (
     <Spotlight className="mt-5 px-5 py-[18px]">
       <div className="mb-2.5 flex items-center gap-2">
-        <span className="text-[15px] text-lime">◎</span>
+        <Coffee size={15} className="text-lime" />
         <Mono tone="lime" className="!text-[11px] !tracking-[0.08em]">
           This thread became a meetup
         </Mono>
@@ -34,16 +50,25 @@ export function MeetupCard({ thread }: { thread: DiscussionThread }) {
         </div>
         <div className="flex items-center gap-3">
           <AvatarStack
-            people={thread.participants.map((p) => ({
-              name: p.name,
-              src: p.image,
-            }))}
+            people={attendees}
             size={32}
             max={5}
             border="#15172a"
             overflowBg="#2a2d40"
           />
-          <Button variant="lime">Join</Button>
+          <Button
+            variant="lime"
+            onClick={() => setJoined((v) => !v)}
+            aria-pressed={joined}
+          >
+            {joined ? (
+              <>
+                <Check size={15} /> Joined
+              </>
+            ) : (
+              'Join'
+            )}
+          </Button>
         </div>
       </div>
     </Spotlight>

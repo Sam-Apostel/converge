@@ -1,12 +1,16 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import {
   Notification,
   NotificationGroup,
 } from '@progress/kendo-react-notification'
 
-type NotifyFn = (message: string, opts?: { icon?: string; duration?: number }) => void
+type NotifyFn = (
+  message: string,
+  opts?: { icon?: ReactNode; duration?: number },
+) => void
 
-type Item = { id: string; message: string; icon?: string }
+type Item = { id: string; message: string; icon?: ReactNode }
 
 const NotifyContext = createContext<NotifyFn>(() => {})
 
@@ -52,7 +56,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             >
               <div className="converge-toast">
                 {n.icon && (
-                  <span className="text-[15px] text-lime">{n.icon}</span>
+                  <span className="flex items-center text-lime">{n.icon}</span>
                 )}
                 {n.message}
               </div>

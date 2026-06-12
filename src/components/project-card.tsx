@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { Star } from 'lucide-react'
 
 import { Avatar, Tag, Thumb, paletteFor } from '#/components/ui'
 import type { ProjectWithOwner } from '#/lib/queries'
@@ -42,7 +43,7 @@ export function ProjectCard({ project }: { project: ProjectWithOwner }) {
             </Tag>
           )}
           <span className="flex items-center gap-1 font-mono text-[12px] text-muted">
-            <span className="text-slate">★</span>
+            <Star size={13} className="fill-slate text-slate" />
             {formatCount(project.trendingScore)}
           </span>
         </div>

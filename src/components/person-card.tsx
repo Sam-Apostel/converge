@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
+import { MapPin } from 'lucide-react'
 
-import { Avatar, Tag, paletteFor } from '#/components/ui'
+import { Avatar, Tag, paletteFor, GlassCard } from '#/components/ui'
 import type { Person } from '#/db/types'
 
 /** Directory card: cover strip · overlapping avatar · intent chip · tags. */
@@ -12,12 +13,10 @@ export function PersonCard({ person }: { person: Person }) {
     <Link
       to="/people/$userId"
       params={{ userId: person.id }}
-      className="group flex flex-col overflow-hidden rounded-[18px] bg-white shadow-card transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-card-hover"
     >
-      <div
-        className="relative h-12"
-        style={{ background: `linear-gradient(110deg, ${pal.bg}, #eef0f8)` }}
-      />
+    <GlassCard className="pt-12"
+               innerClassName='overflow-visible group flex flex-col overflow-hidden rounded-[18px] bg-white shadow-card transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-card-hover '>
+
 
       <div className="flex flex-1 flex-col px-[15px] pb-[15px]">
         <Avatar
@@ -40,7 +39,7 @@ export function PersonCard({ person }: { person: Person }) {
 
         {p?.location && (
           <div className="mb-2.5 flex items-center gap-1.5 text-[11.5px] text-slate">
-            <span className="text-[12px] text-muted">◎</span> {p.location}
+            <MapPin size={12} className="text-muted" /> {p.location}
           </div>
         )}
 
@@ -63,6 +62,7 @@ export function PersonCard({ person }: { person: Person }) {
           Connect
         </span>
       </div>
+    </GlassCard>
     </Link>
   )
 }

@@ -1,3 +1,5 @@
+import { Star } from 'lucide-react'
+
 import { BorderBeam, Button, LiveDot, Mono } from '#/components/ui'
 
 /**
@@ -37,7 +39,7 @@ export function CaptureDock({
         onClick={onCapture}
         className="relative shrink-0 !rounded-[14px] !px-[22px] !py-3.5 !text-[15px]"
       >
-        <span className="text-[17px] leading-none">★</span> {buttonLabel}
+        <Star size={17} className="fill-current" /> {buttonLabel}
       </Button>
     </div>
   )

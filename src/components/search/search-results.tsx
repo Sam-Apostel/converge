@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { ArrowRight, Clock, MessagesSquare } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 import { Avatar, Mono } from '#/components/ui'
@@ -49,9 +50,10 @@ function ResultRow({ result }: { result: SearchResult }) {
           <div className="truncate text-[13px] text-mist">{result.subtitle}</div>
         ) : null}
       </div>
-      <span className="text-[15px] text-muted transition-transform group-hover:translate-x-0.5">
-        →
-      </span>
+      <ArrowRight
+        size={16}
+        className="text-muted transition-transform group-hover:translate-x-0.5"
+      />
     </ResultLink>
   )
 }
@@ -119,8 +121,12 @@ function Leading({ result }: { result: SearchResult }) {
     )
   }
   return (
-    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-pillow font-mono text-[14px] text-slate shadow-soft">
-      {result.type === 'session' ? '◷' : '✦'}
+    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-pillow text-slate shadow-soft">
+      {result.type === 'session' ? (
+        <Clock size={16} />
+      ) : (
+        <MessagesSquare size={16} />
+      )}
     </span>
   )
 }

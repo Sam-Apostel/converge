@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { Search } from 'lucide-react'
 
 /**
  * The command-palette search field — reuses the Home command-bar styling
@@ -23,7 +24,7 @@ export function SearchInput({
 
   return (
     <div className="flex items-center gap-3.5 rounded-[20px] bg-pillow px-[18px] py-[17px] [box-shadow:inset_2px_3px_7px_rgba(40,50,110,.1),inset_-2px_-2px_6px_rgba(255,255,255,.95)]">
-      <span className="text-[19px] text-[#7b809a]">⌕</span>
+      <Search size={19} className="text-[#7b809a]" />
       <input
         ref={ref}
         type="search"

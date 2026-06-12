@@ -1,3 +1,4 @@
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
 
 export type MonoTone = 'faint' | 'slate' | 'lime' | 'mute' | 'ghost'
@@ -138,17 +139,19 @@ export function VoteControl({
           onClick={onUpvote}
           aria-pressed={active}
           aria-label={active ? 'Remove upvote' : 'Upvote'}
-          className={`text-[12px] leading-none transition-colors ${
+          className={`leading-none transition-colors ${
             active ? 'text-ink' : 'text-slate hover:text-ink'
           }`}
         >
-          ▲
+          <ChevronUp size={15} strokeWidth={2.5} />
         </button>
       ) : (
-        <span className="text-[12px] text-slate">▲</span>
+        <ChevronUp size={15} strokeWidth={2.5} className="text-slate" />
       )}
       <span className="text-[13px] font-semibold tabular-nums">{count}</span>
-      {downvote && <span className="text-[12px] text-[#c2c6d8]">▼</span>}
+      {downvote && (
+        <ChevronDown size={15} strokeWidth={2.5} className="text-[#c2c6d8]" />
+      )}
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { Check, X } from 'lucide-react'
 
 import { PageHeader } from '#/components/page-header'
 import { Button } from '#/components/ui'
@@ -145,8 +146,8 @@ function SettingsPage() {
               <span className="flex items-center justify-between text-[13px] font-medium text-slate">
                 API key
                 {hasKey ? (
-                  <span className="font-mono text-[11px] text-lime-deep">
-                    ✓ key set
+                  <span className="inline-flex items-center gap-1 font-mono text-[11px] text-lime-deep">
+                    <Check size={12} strokeWidth={2.5} /> key set
                   </span>
                 ) : null}
               </span>
@@ -212,12 +213,14 @@ function SettingsPage() {
               </span>
             ) : null}
             {test.kind === 'ok' ? (
-              <span className="text-[13px] font-medium text-lime-deep">
-                ✓ Connected
+              <span className="inline-flex items-center gap-1 text-[13px] font-medium text-lime-deep">
+                <Check size={14} strokeWidth={2.5} /> Connected
               </span>
             ) : null}
             {test.kind === 'error' ? (
-              <span className="text-[13px] text-slate">✕ {test.message}</span>
+              <span className="inline-flex items-center gap-1 text-[13px] text-slate">
+                <X size={14} strokeWidth={2.5} /> {test.message}
+              </span>
             ) : null}
           </div>
         </form>

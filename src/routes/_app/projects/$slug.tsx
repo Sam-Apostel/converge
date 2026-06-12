@@ -1,4 +1,5 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { ChevronLeft, CornerDownRight, Star } from 'lucide-react'
 
 import {
   Avatar,
@@ -36,9 +37,9 @@ function ProjectDetail() {
     <div className="max-w-3xl">
       <Link
         to="/projects"
-        className="mb-5 inline-flex items-center gap-1.5 text-[13px] text-mist transition-colors hover:text-slate"
+        className="mb-5 inline-flex items-center gap-1 text-[13px] text-mist transition-colors hover:text-slate"
       >
-        ‹ Projects
+        <ChevronLeft size={15} /> Projects
       </Link>
 
       {/* identity */}
@@ -59,7 +60,8 @@ function ProjectDetail() {
           </div>
         </div>
         <span className="inline-flex items-center gap-1 rounded-full bg-lime/[0.22] px-3 py-1.5 font-mono text-[13px] font-medium text-slate">
-          ★ {formatCount(project.trendingScore)}
+          <Star size={13} className="fill-current" />{' '}
+          {formatCount(project.trendingScore)}
         </span>
       </div>
 
@@ -100,7 +102,7 @@ function ProjectDetail() {
 
       {relatedTalk && (
         <div className="mb-6 flex items-center gap-2 text-[13px] text-slate">
-          <span className="text-slate">↳</span> Related session · “
+          <CornerDownRight size={14} className="text-slate" /> Related session · “
           {relatedTalk.title}” · {formatTime(relatedTalk.startsAt)}
         </div>
       )}
@@ -111,7 +113,7 @@ function ProjectDetail() {
           tone="lime-soft"
           className="!rounded-[13px] !px-4 !py-3 !text-[13.5px]"
         >
-          ★ Star
+          <Star size={15} /> Star
         </Badge>
       </div>
     </div>

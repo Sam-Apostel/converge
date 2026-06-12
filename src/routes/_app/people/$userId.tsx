@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { ArrowUpRight, Check, ChevronLeft, MapPin } from 'lucide-react'
 
 import { Avatar, Button, Mono, Tag } from '#/components/ui'
 import { getPersonById } from '#/lib/queries/profiles'
@@ -22,9 +23,9 @@ function PersonDetail() {
     <div className="max-w-3xl">
       <Link
         to="/people"
-        className="mb-5 inline-flex items-center gap-1.5 text-[13px] text-mist transition-colors hover:text-slate"
+        className="mb-5 inline-flex items-center gap-1 text-[13px] text-mist transition-colors hover:text-slate"
       >
-        ‹ People
+        <ChevronLeft size={15} /> People
       </Link>
 
       {/* identity */}
@@ -40,7 +41,7 @@ function PersonDetail() {
           </div>
           {p?.location && (
             <div className="mt-2 flex items-center gap-1.5 text-[12.5px] text-slate">
-              <span className="text-[13px] text-muted">◎</span> {p.location}
+              <MapPin size={13} className="text-muted" /> {p.location}
             </div>
           )}
         </div>
@@ -128,7 +129,7 @@ function ConnectButton({
   if (state === 'accepted') {
     return (
       <Button variant="soft" disabled>
-        ✓ Connected
+        <Check size={15} strokeWidth={2.5} /> Connected
       </Button>
     )
   }
@@ -183,9 +184,10 @@ function ProjectRow({ project }: { project: ProfileProject }) {
           {project.tagline ?? project.category}
         </div>
       </div>
-      <span className="font-mono text-[12px] text-muted transition-colors group-hover:text-slate">
-        ↗
-      </span>
+      <ArrowUpRight
+        size={16}
+        className="text-muted transition-colors group-hover:text-slate"
+      />
     </Link>
   )
 }

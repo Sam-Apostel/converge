@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useLiveQuery } from '@tanstack/react-db'
+import { ArrowRight } from 'lucide-react'
 
 import { Badge, Button, VoteControl } from '#/components/ui'
 import { Thread } from '#/components/discussion'
@@ -359,16 +360,18 @@ function QuestionRow({
             params={{ id: q.promotedDiscussionId }}
             className="mt-2 inline-flex"
           >
-            <Badge tone="lime-soft">Continued in discussion →</Badge>
+            <Badge tone="lime-soft">
+              Continued in discussion <ArrowRight size={13} />
+            </Badge>
           </Link>
         ) : q.upvotes >= PROMOTE_THRESHOLD ? (
           <button
             type="button"
             onClick={promote}
             disabled={promoting}
-            className="mt-2 text-[13px] font-semibold text-ink/75 transition-colors hover:text-ink disabled:opacity-50"
+            className="mt-2 inline-flex items-center gap-1 text-[13px] font-semibold text-ink/75 transition-colors hover:text-ink disabled:opacity-50"
           >
-            Keep this conversation going →
+            Keep this conversation going <ArrowRight size={14} />
           </button>
         ) : null}
       </div>
@@ -452,9 +455,9 @@ function DiscussionTab({
         <Link
           to="/discussions/$id"
           params={{ id: discussion.id }}
-          className="text-[13px] font-semibold text-mist transition-colors hover:text-ink"
+          className="inline-flex items-center gap-1 text-[13px] font-semibold text-mist transition-colors hover:text-ink"
         >
-          Open full thread →
+          Open full thread <ArrowRight size={14} />
         </Link>
       }
     />

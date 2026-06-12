@@ -46,7 +46,6 @@ const SURFACE: Record<Surface, string> = {
  */
 export function Spotlight({
   className = '',
-  glow = 'top-right',
   beam = false,
   children,
   style,
@@ -63,14 +62,6 @@ export function Spotlight({
       style={{ background: 'linear-gradient(135deg,#13141d,#1c1e2e)', ...style }}
     >
       {beam && <BorderBeam speed={4.8} />}
-      <div
-        className="pointer-events-none absolute h-36 w-36 rounded-full [background:radial-gradient(circle,rgba(153,255,0,.35),transparent_70%)]"
-        style={
-          glow === 'right'
-            ? { right: '9%', top: -46, width: 210, height: 210 }
-            : { right: -30, top: -30 }
-        }
-      />
       <div className="relative">{children}</div>
     </div>
   )

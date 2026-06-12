@@ -4,6 +4,10 @@
 
 > *People before sessions. Projects before companies. Moments instead of photos. Questions become conversations.*
 
+**▶ [Live demo: converge.sams.land](https://converge.sams.land)** · best viewed on a phone (or a narrow ~390px window)
+
+![Converge home — natural-language search, next session, people to meet, trending projects](docs/home.png)
+
 ---
 
 ## The problem
@@ -52,23 +56,127 @@ You're at a conference surrounded by exactly the right people — but you'll nev
 
 ---
 
-## Getting started
+## Run it locally (for judges)
+
+A full walkthrough from a clean machine to a seeded app with a working AI
+concierge. Should take about 5 minutes; the only required external piece is
+PostgreSQL. **No API keys are needed** — the concierge falls back to a local
+Ollama model, and you can sign in with email + password.
+
+### 1. Prerequisites
+
+| Tool | Why | Install |
+| ---- | --- | ------- |
+| **[Bun](https://bun.com)** ≥ 1.1 | Runtime + package manager (this project does **not** use npm) | `curl -fsSL https://bun.sh/install \| bash` |
+| **PostgreSQL** 14+ | The database | Docker (below) or a local install |
+| **[Ollama](https://ollama.com)** | Powers the AI concierge with **no API key** | `brew install ollama` / [download](https://ollama.com/download) — *optional but recommended* |
+
+### 2. Install dependencies
 
 ```bash
 bun install
-cp .env.example .env.local        # then fill in the values
-
-# generate the better-auth tables, create a migration, and apply it
-bun run auth:generate             # regenerates src/db/auth-schema.ts
-bun run db:generate               # drizzle migration from the schema
-bun run db:migrate                # apply to Postgres
-bun run db:seed                   # seed with React Summit + JSNation demo data
-
-bun run dev                       # http://localhost:3000
 ```
 
-You need a Postgres database. Locally:
-`docker run -p 5432:5432 -e POSTGRES_PASSWORD=password -e POSTGRES_DB=converge postgres`.
+### 3. Start PostgreSQL
+
+The fastest path is Docker — this matches the default connection string in
+`.env.example`:
+
+```bash
+docker run --name converge-pg -d \
+  -p 5432:5432 \
+  -e POSTGRES_USER=username \
+  -e POSTGRES_PASSWORD=password \
+  -e POSTGRES_DB=converge \
+  postgres:16
+```
+
+Already have Postgres? Just create a `converge` database and note the
+connection string for the next step.
+
+### 4. Configure the environment
+
+```bash
+cp .env.example .env.local
+```
+
+Open `.env.local`. The only variables you **must** set:
+
+| Variable | What to put |
+| -------- | ----------- |
+| `DATABASE_URL` | Connection string. The Docker command above ⇒ `postgresql://username:password@localhost:5432/converge` |
+| `BETTER_AUTH_SECRET` | Any random string. Generate one: `bunx @better-auth/cli@1.6.16 secret` |
+
+Everything else is **optional** and has sensible defaults:
+
+| Variable | Default | When you'd change it |
+| -------- | ------- | -------------------- |
+| `BETTER_AUTH_URL` | `http://localhost:3000` | Only if you run on a different host/port |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | *(empty → GitHub sign-in disabled)* | Only if you want the "Sign in with GitHub" button. Email + password and passkeys work without it |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | If Ollama runs elsewhere |
+| `CONCIERGE_DEV_MODEL` | `llama3.1` | To use a different local model |
+| `CONCIERGE_KEY_SECRET` | falls back to `BETTER_AUTH_SECRET` | Separate key for encrypting per-user provider keys at rest |
+
+### 5. Create the schema and migrate
+
+```bash
+bun run auth:generate   # regenerate the better-auth tables (src/db/auth-schema.ts)
+bun run db:generate     # build a Drizzle migration from the schema
+bun run db:migrate      # apply it to Postgres
+```
+
+### 6. Seed the demo data
+
+```bash
+bun run db:seed
+```
+
+This loads the **React Summit + JSNation 2026** demo set: 17 attendees with
+intent profiles, two co-located Amsterdam conferences, rooms, ~15 talks with
+speakers/abstracts/Q&A/moments, projects with tech stacks, discussion threads,
+and connections. It's **idempotent** — re-running truncates and reseeds, so you
+always get a clean, deterministic dataset to demo against.
+
+### 7. (Optional) Set up the AI concierge with Ollama
+
+The concierge works with **zero API keys** by talking to a local Ollama server.
+In a separate terminal:
+
+```bash
+ollama serve              # start the local server (often already running)
+ollama pull llama3.1      # pull the default model (~4.7 GB)
+```
+
+The app pings `{OLLAMA_BASE_URL}/api/tags` to confirm Ollama is reachable; if it
+isn't, the rest of the app still works — only the concierge chat is affected.
+
+> Prefer a hosted model? Sign in, open **Settings → AI**, and paste an
+> Anthropic / OpenAI / OpenRouter key. Keys are encrypted (AES-256-GCM) at rest
+> and scoped per user.
+
+### 8. Run it
+
+```bash
+bun run dev               # http://localhost:3000
+```
+
+Open [http://localhost:3000](http://localhost:3000), sign up with any email +
+password (no verification needed locally), and you're in. The live venue
+display lives at [/billboard](http://localhost:3000/billboard).
+
+> **Converge is designed mobile-first.** For the intended experience, narrow
+> your browser to a phone-width viewport (~390px) or use the device toolbar in
+> your browser's dev tools.
+
+### Troubleshooting
+
+| Symptom | Fix |
+| ------- | --- |
+| Concierge chat errors, rest of the app is fine | Ollama isn't reachable. Run `ollama serve` and `ollama pull llama3.1`, or add a hosted key in **Settings → AI**. |
+| `db:migrate` / `db:seed` can't connect | Postgres isn't up or `DATABASE_URL` is wrong. Check `docker ps` and that the string matches the container credentials. |
+| `port 5432 already in use` | Another Postgres is running. Stop it, or map a different host port (`-p 5433:5432`) and update `DATABASE_URL`. |
+| `command not found: bun` | Bun isn't on your `PATH`. Restart the shell or `source ~/.bashrc` / `~/.zshrc` after install. |
+| Seed data looks stale | `bun run db:seed` is idempotent — re-run it to truncate and reload a clean dataset. |
 
 ### Scripts
 
@@ -126,3 +234,9 @@ Every major object is exposed over MCP at `/mcp` (Streamable HTTP). The server i
 ## Agent tooling
 
 This repo ships two installed skills under `.claude/skills/` (`make-interfaces-feel-better`, `transitions-dev`) and uses [`border-beam`](https://beam.jakubantalik.com) sparingly for special states. `AGENTS.md` carries the TanStack Intent skill mappings.
+
+---
+
+## License
+
+[MIT](LICENSE) © Sam Apostel

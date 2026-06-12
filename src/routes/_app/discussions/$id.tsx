@@ -1,4 +1,5 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { ArrowLeft } from 'lucide-react'
 
 import { LifecycleRail, Thread } from '#/components/discussion'
 import { getDiscussion } from '#/lib/queries/discussions'
@@ -15,9 +16,9 @@ function DiscussionDetail() {
     <div className="mx-auto max-w-[860px]">
       <Link
         to="/discussions"
-        className="text-[13px] font-medium text-mist transition-colors hover:text-ink"
+        className="inline-flex items-center gap-1 text-[13px] font-medium text-mist transition-colors hover:text-ink"
       >
-        ← Discussions
+        <ArrowLeft size={15} /> Discussions
       </Link>
 
       {thread ? (

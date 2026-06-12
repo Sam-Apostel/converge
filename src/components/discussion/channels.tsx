@@ -1,3 +1,5 @@
+import { ChevronUp } from 'lucide-react'
+
 import { Card, Mono } from '#/components/ui'
 import type { TopicChannel, TrendingQuestion } from '#/lib/queries/discussions'
 
@@ -69,13 +71,13 @@ function TrendingQuestionInner({ trending }: { trending: TrendingQuestion }) {
           onClick={vote.toggle}
           aria-pressed={vote.hasVoted}
           aria-label={vote.hasVoted ? 'Remove upvote' : 'Upvote'}
-          className={`rounded-md px-1.5 py-0.5 font-medium tabular-nums transition-colors ${
+          className={`inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 font-medium tabular-nums transition-colors ${
             vote.hasVoted
               ? 'bg-lime/25 text-ink'
               : 'text-[#3a3e54] hover:bg-pillow'
           }`}
         >
-          ▲ {vote.count}
+          <ChevronUp size={14} strokeWidth={2.5} /> {vote.count}
         </button>
         {trending.sessionTitle && <span>· from "{trending.sessionTitle}"</span>}
         {trending.followUps > 0 && (

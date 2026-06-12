@@ -56,11 +56,7 @@ body {
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  background:
-    radial-gradient(1200px 700px at 78% -8%, #f0e9ff 0%, rgba(240, 233, 255, 0) 55%),
-    radial-gradient(1000px 620px at 6% 4%, #e4f7d6 0%, rgba(228, 247, 214, 0) 48%),
-    linear-gradient(168deg, #edeef9 0%, #e7e9f6 46%, #eef0fb 100%);
-  background-attachment: fixed;
+  background: #E9EBF7;
 }
 
 ::selection {

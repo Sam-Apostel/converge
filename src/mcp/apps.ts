@@ -230,7 +230,7 @@ export function sessionResource(
     .map(
       (q) => `
       <li class="q">
-        <span class="up">▲ ${q.upvotes}</span>
+        <span class="up"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>${q.upvotes}</span>
         <span class="body">${escapeHtml(q.body)}</span>
         <span class="status status-${escapeHtml(q.status)}">${escapeHtml(q.status)}</span>
       </li>`,
@@ -262,7 +262,8 @@ export function sessionResource(
   .ai { font-size: 10px; padding: 0 6px; border-radius: 999px; flex: none; font-weight: 700;
     background: color-mix(in oklab, #99ff00 60%, transparent); color: #13141d; }
   .moment .body, .q .body { flex: 1; }
-  .up { font-variant-numeric: tabular-nums; opacity: 0.6; flex: none; }
+  .up { font-variant-numeric: tabular-nums; opacity: 0.6; flex: none;
+    display: inline-flex; align-items: center; gap: 2px; }
   .status { font-size: 10px; padding: 0 6px; border-radius: 999px; flex: none;
     background: color-mix(in oklab, currentColor 10%, transparent); }
   .status-answered { background: color-mix(in oklab, #99ff00 50%, transparent); color: #13141d; }

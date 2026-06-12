@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
 import { Link } from '@tanstack/react-router'
+import { Play, Plus, Star, X } from 'lucide-react'
 
 import { Avatar, Thumb } from '#/components/ui'
 import type { SharedMomentPerson } from '#/routes/api/moments/shared'
@@ -103,25 +104,25 @@ export function MomentCard({
               className="absolute inset-0"
             />
           )}
-          <span className="absolute left-[7px] top-[7px] rounded-md bg-lime/70 px-[7px] py-0.5 font-mono text-[10px] font-semibold text-[#21261a]">
-            ★ {time}
+          <span className="absolute left-[7px] top-[7px] inline-flex items-center gap-1 rounded-md bg-lime/70 px-[7px] py-0.5 font-mono text-[10px] font-semibold text-[#21261a]">
+            <Star size={11} className="fill-current" /> {time}
           </span>
           <button
             type="button"
             onClick={remove}
             aria-label="Remove moment"
-            className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-md bg-white/[.92] text-[13px] leading-none text-faint transition-colors hover:text-[#ff4d3d]"
+            className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-md bg-white/[.92] leading-none text-faint transition-colors hover:text-[#ff4d3d]"
           >
-            ×
+            <X size={13} strokeWidth={2.5} />
           </button>
           {href ? (
             <a
               href={href}
               target="_blank"
               rel="noreferrer"
-              className="absolute bottom-[7px] left-[7px] rounded-md bg-white/[.86] px-[7px] py-0.5 font-mono text-[10px] text-[#5b6080] transition-colors hover:bg-white"
+              className="absolute bottom-[7px] left-[7px] inline-flex items-center gap-1 rounded-md bg-white/[.86] px-[7px] py-0.5 font-mono text-[10px] text-[#5b6080] transition-colors hover:bg-white"
             >
-              ▶ Jump
+              <Play size={10} className="fill-current" /> Jump
             </a>
           ) : slideRef ? (
             <span className="absolute bottom-[7px] left-[7px] rounded-md bg-white/[.86] px-[7px] py-0.5 font-mono text-[10px] text-[#5b6080]">
@@ -145,7 +146,9 @@ export function MomentCard({
                 {preview}
               </div>
             ) : (
-              <div className="mt-1 text-[11.5px] text-faint">＋ Add a thought…</div>
+              <div className="mt-1 inline-flex items-center gap-1 text-[11.5px] text-faint">
+                <Plus size={11} /> Add a thought…
+              </div>
             ))}
         </button>
 

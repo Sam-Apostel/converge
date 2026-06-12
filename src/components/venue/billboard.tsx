@@ -1,3 +1,5 @@
+import { Star } from 'lucide-react'
+
 import { AvatarStack, Badge, Mono, Spotlight, Tag } from '#/components/ui'
 import { PersonCard } from '#/components/person-card'
 import { ProjectCard } from '#/components/project-card'
@@ -65,7 +67,8 @@ function Hero({
             </div>
           )}
           <Badge tone="lime-soft" mono className="!text-[11px] text-white">
-            ★ {formatCount(trendingTotal)} stars across the floor
+            <Star size={12} className="fill-current" />{' '}
+            {formatCount(trendingTotal)} stars across the floor
           </Badge>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { ChipList, type ChipListChangeEvent } from '@progress/kendo-react-button
 
 import {
   Avatar,
-  Button,
+  Button, GlassCard,
   Mono,
   Spotlight,
   Tag,
@@ -54,9 +54,7 @@ function PeoplePage() {
       </p>
 
       <div className="mb-5 flex flex-wrap items-center gap-2">
-        <Mono className="mr-1 !tracking-[0.04em] !text-[12px]">
-          Filter by intent
-        </Mono>
+
         <ChipList
           data={INTENTS}
           selection="single"
@@ -95,7 +93,7 @@ function TopMatch({ person }: { person: Person }) {
   return (
     <Spotlight
       glow="right"
-      className="mb-5 flex flex-wrap items-center gap-6 px-[26px] py-6"
+      className="mb-5 flex items-center gap-6 px-[26px] py-6"
       style={{
         background:
           'linear-gradient(115deg,#13141d 0%,#1b1e30 55%,#24330f 125%)',
@@ -109,7 +107,7 @@ function TopMatch({ person }: { person: Person }) {
         />
         <div>
           <Mono tone="lime" className="mb-1.5 block !text-[11px]">
-            People you should meet
+            You should meet
           </Mono>
           <div className="text-[22px] font-semibold tracking-[-0.02em]">
             {person.name}
@@ -133,7 +131,7 @@ function TopMatch({ person }: { person: Person }) {
           </div>
         </div>
       </div>
-      <div className="flex gap-2.5">
+      <div className="flex gap-2.5 mt-4">
         <Button
           variant="lime"
           onClick={() =>
@@ -194,7 +192,7 @@ function QuickConnect({ toUserId }: { toUserId: string }) {
 function ProfilePanel({ person }: { person: Person }) {
   const p = person.profile
   return (
-    <div className="rounded-3xl bg-white p-[26px] shadow-card-lg">
+    <GlassCard innerClassName="p-[26px]">
       <div className="mb-5 flex items-start gap-[15px]">
         <Avatar name={person.name} src={person.image} size={62} />
         <div className="flex-1">
@@ -253,6 +251,6 @@ function ProfilePanel({ person }: { person: Person }) {
           </div>
         </div>
       </div>
-    </div>
+    </GlassCard>
   )
 }

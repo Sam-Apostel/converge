@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { useLiveQuery } from '@tanstack/react-db'
+import { Star } from 'lucide-react'
 
 import { Skeleton } from '@progress/kendo-react-indicators'
 
@@ -85,7 +86,9 @@ function SessionScreen() {
         createdAt: new Date(),
       })
       setPlayhead((n) => Math.min(SLIDES.length, n + 1))
-      notify('Moment saved to your rail', { icon: '★' })
+      notify('Moment saved to your rail', {
+        icon: <Star size={15} className="fill-current" />,
+      })
     },
     [collection, sessionId],
   )

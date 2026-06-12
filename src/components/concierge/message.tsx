@@ -1,4 +1,5 @@
 import type { UIMessage } from '@tanstack/ai-react'
+import { Sparkles } from 'lucide-react'
 
 import { Mono } from '#/components/ui'
 
@@ -103,7 +104,9 @@ export function ConciergeMessage({ message }: { message: UIMessage }) {
           return (
             <div key={part.id} className="max-w-[90%]">
               <div className="flex items-center gap-1.5 px-1">
-                <Mono tone="lime">✦ {humanizeTool(part.name)}</Mono>
+                <Mono tone="lime" className="inline-flex items-center gap-1">
+                  <Sparkles size={12} /> {humanizeTool(part.name)}
+                </Mono>
                 {part.state !== 'complete' ? (
                   <span className="text-[11.5px] text-faint">running…</span>
                 ) : null}

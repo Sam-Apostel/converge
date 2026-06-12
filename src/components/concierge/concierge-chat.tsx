@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useChat, fetchServerSentEvents } from '@tanstack/ai-react'
+import { Sparkles } from 'lucide-react'
 
 import { LiveDot, Mono } from '#/components/ui'
 import type { ConciergeStatus } from '#/lib/concierge/settings'
@@ -73,7 +74,7 @@ export function ConciergeChat({
         <div className="flex flex-1 flex-col rounded-[20px] bg-inner p-4 sm:p-5 [box-shadow:0_2px_6px_rgba(40,50,110,.07),inset_0_1px_0_rgba(255,255,255,.9)]">
           <div className="mb-3 flex items-center justify-between">
             <span className="flex items-center gap-2 text-[13px] font-medium text-slate">
-              <span className="text-[15px] text-slate">✦</span> Converge
+              <Sparkles size={15} className="text-slate" /> Converge
               concierge
             </span>
             <span className="flex items-center gap-1.5 rounded-full bg-white/60 px-2.5 py-1 font-mono text-[11px] text-slate">

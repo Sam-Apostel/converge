@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { ChevronLeft, ChevronRight, CornerDownRight, Star } from 'lucide-react'
 
 import {
   Avatar,
@@ -69,8 +70,8 @@ function ProjectsPage() {
               </span>
             </div>
             <div className="flex gap-1.5">
-              <CarouselArrow dir="‹" onClick={() => scroll(-1)} />
-              <CarouselArrow dir="›" onClick={() => scroll(1)} />
+              <CarouselArrow dir="left" onClick={() => scroll(-1)} />
+              <CarouselArrow dir="right" onClick={() => scroll(1)} />
             </div>
           </div>
           <div
@@ -91,13 +92,20 @@ function ProjectsPage() {
   )
 }
 
-function CarouselArrow({ dir, onClick }: { dir: string; onClick: () => void }) {
+function CarouselArrow({
+  dir,
+  onClick,
+}: {
+  dir: 'left' | 'right'
+  onClick: () => void
+}) {
   return (
     <button
       onClick={onClick}
-      className="grid h-[34px] w-[34px] place-items-center rounded-[10px] bg-white text-[17px] text-slate shadow-soft transition-colors hover:bg-ink hover:text-white"
+      aria-label={dir === 'left' ? 'Previous' : 'Next'}
+      className="grid h-[34px] w-[34px] place-items-center rounded-[10px] bg-white text-slate shadow-soft transition-colors hover:bg-ink hover:text-white"
     >
-      {dir}
+      {dir === 'left' ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
     </button>
   )
 }
@@ -129,7 +137,8 @@ function ProjectProfile({
           </div>
         </div>
         <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-lime/[0.22] px-[11px] py-1.5 font-mono text-[13px] font-medium text-slate">
-          ★ {formatCount(project.trendingScore)}
+          <Star size={13} className="fill-current" />{' '}
+          {formatCount(project.trendingScore)}
         </span>
       </div>
 
@@ -169,8 +178,8 @@ function ProjectProfile({
 
       {relatedTalk && (
         <div className="mb-[18px] flex items-center gap-2 text-[13px] text-slate">
-          <span className="text-slate">↳</span> Related session · “{relatedTalk.title}
-          ” · {formatClock(relatedTalk.startsAt)}
+          <CornerDownRight size={14} className="text-slate" /> Related session · “
+          {relatedTalk.title}” · {formatClock(relatedTalk.startsAt)}
         </div>
       )}
 
@@ -179,7 +188,7 @@ function ProjectProfile({
           Message {project.ownerName?.split(' ')[0] ?? 'creator'}
         </Button>
         <Badge tone="lime-soft" className="!rounded-[13px] !px-4 !py-3 !text-[13.5px]">
-          ★ Star
+          <Star size={15} /> Star
         </Badge>
       </div>
     </div>

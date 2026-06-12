@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { Star } from 'lucide-react'
 
 import { Avatar, Badge, Mono, Thumb } from '#/components/ui'
 
@@ -66,8 +67,8 @@ export function MomentsRail({
 
       {ready && moments.length === 0 ? (
         <div className="rounded-[18px] border-[1.5px] border-dashed border-[rgba(120,130,180,.3)] bg-white/50 px-[18px] py-[26px] text-center">
-          <div className="mx-auto mb-3 grid h-[46px] w-[46px] place-items-center rounded-[14px] bg-white text-xl text-[#c9cee0] shadow-soft">
-            ★
+          <div className="mx-auto mb-3 grid h-[46px] w-[46px] place-items-center rounded-[14px] bg-white text-[#c9cee0] shadow-soft">
+            <Star size={22} />
           </div>
           <div className="mb-1 text-sm font-semibold">No moments yet</div>
           <div className="text-[13px] leading-[1.45] text-[#8186a0]">

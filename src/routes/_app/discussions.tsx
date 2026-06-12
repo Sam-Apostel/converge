@@ -4,6 +4,7 @@ import {
   createFileRoute,
   useChildMatches,
 } from '@tanstack/react-router'
+import { ArrowRight } from 'lucide-react'
 
 import {
   LifecycleRail,
@@ -52,9 +53,9 @@ function DiscussionsIndex() {
               <Link
                 to="/discussions/$id"
                 params={{ id: featured.id }}
-                className="text-[12.5px] font-medium text-[#8186a0] transition-colors hover:text-ink"
+                className="inline-flex items-center gap-1 text-[12.5px] font-medium text-[#8186a0] transition-colors hover:text-ink"
               >
-                Open thread →
+                Open thread <ArrowRight size={13} />
               </Link>
             }
           />

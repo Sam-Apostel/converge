@@ -5,7 +5,7 @@ export type ButtonSize = 'sm' | 'md'
 
 const VARIANT: Record<ButtonVariant, string> = {
   dark: 'bg-ink text-white hover:bg-ink-2',
-  lime: 'bg-lime text-ink shadow-lime hover:-translate-y-px',
+  lime: 'bg-lime text-ink ',
   soft: 'bg-pillow text-slate hover:bg-[#e3e7f2]',
   glass: 'bg-white/10 text-white hover:bg-white/15',
 }

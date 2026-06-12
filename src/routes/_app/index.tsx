@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { useChat, fetchServerSentEvents } from '@tanstack/ai-react'
+import { ArrowUp, Search, Star } from 'lucide-react'
 
 import {
   Avatar,
@@ -11,13 +12,15 @@ import {
   GlassCard,
   LiveDot,
   Mono,
-  Spotlight,
 } from '#/components/ui'
 import { getHomeSummary } from '#/lib/queries'
 import { getConciergeStatus } from '#/lib/concierge/settings'
 import { ConciergeMessage } from '#/components/concierge/message'
+import { AddToClaudeButton } from '#/components/add-to-claude-button'
 import { formatClock, formatCount } from '#/lib/format'
 import { useSession } from '#/lib/auth-client'
+import BorderBeam from 'border-beam'
+import { TextArea } from '@progress/kendo-react-inputs'
 
 export const Route = createFileRoute('/_app/')({
   loader: async () => {
@@ -40,7 +43,7 @@ const SUGGESTIONS = [
 ]
 
 function Home() {
-  const { counts, nextSession, peopleToMeet, trendingProject, conciergeStatus } =
+  const { nextSession, peopleToMeet, trendingProject, conciergeStatus } =
     Route.useLoaderData()
   const { data: session } = useSession()
   const firstName = session?.user?.name?.split(' ')[0] ?? null
@@ -68,7 +71,7 @@ function Home() {
   return (
     <div className="flex flex-col gap-7">
       {/* ── Command bar / Concierge ───────────────────────────────── */}
-      <div className="flex flex-col items-center gap-4 pb-2 pt-8 sm:pt-12">
+      <div className="flex flex-col items-center gap-4 pb-2 pt-8 sm:pt-12 mb-10">
         {firstName && (
           <Mono
             tone="ghost"
@@ -79,7 +82,7 @@ function Home() {
         )}
 
         {empty ? (
-          <h1 className="mx-auto max-w-xl text-balance text-center text-[30px] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[38px]">
+          <h1 className="mx-auto max-w-xl text-balance text-center text-[30px] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[38px] mb-10">
             What do you want to do right now?
           </h1>
         ) : (
@@ -113,20 +116,22 @@ function Home() {
         )}
 
         {/* glass frame → white inner input */}
-        <div className="w-full max-w-2xl rounded-[26px] border border-white/60 bg-white/32 p-2 [backdrop-filter:blur(22px)_saturate(1.7)] [box-shadow:0_1px_3px_rgba(40,50,110,.05),0_16px_40px_rgba(40,50,110,.12)]">
+        <div className="w-full max-w-2xl rounded-[26px] border border-white/60 bg-white/32 p-2 [backdrop-filter:blur(22px)_saturate(1.7)] [box-shadow:0_1px_3px_rgba(40,50,110,.05),0_16px_40px_rgba(40,50,110,.12)] mb-8">
           <div className="flex items-center gap-3.5 rounded-[18px] bg-white px-[18px] py-[11px] shadow-[0_1px_2px_rgba(40,50,110,.05)]">
-            <span className="text-[18px] text-[#7b809a]">⌕</span>
-            <input
+            <Search size={18} className="text-[#7b809a]" />
+            <TextArea
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => setInput(e.target.value ?? '')}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                if (e.key === 'Enter' && (e.shiftKey)) {
                   e.preventDefault()
-                  submit()
                 }
               }}
               placeholder={empty ? 'Find people working on AI' : 'Ask anything…'}
-              className="flex-1 bg-transparent text-[16px] text-slate outline-none placeholder:text-slate/60"
+              className="*:h-unset  flex-1 *:text-[16px] *:text-slate *:outline-none *:placeholder:text-slate/60"
+              autoSize={true}
+              rows={1}
+              size="large"
             />
             {isLoading ? (
               <button
@@ -141,8 +146,8 @@ function Home() {
               <>
                 {input.trim() && (
                   <span className="hidden items-center gap-1 font-mono text-[12px] text-muted sm:flex">
-                    <kbd className="rounded-[7px] bg-pillow px-[7px] py-[3px]">⌘</kbd>
                     <kbd className="rounded-[7px] bg-pillow px-2 py-[3px]">↵</kbd>
+                    <kbd className="rounded-[7px] bg-pillow px-[7px] py-[3px]">⌘</kbd>
                   </span>
                 )}
                 <button
@@ -150,9 +155,9 @@ function Home() {
                   onClick={submit}
                   disabled={!input.trim()}
                   aria-label="Send"
-                  className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[13px] bg-ink text-[17px] text-lime transition-transform active:scale-95 disabled:opacity-40"
+                  className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[13px] bg-ink text-lime transition-all active:scale-95 disabled:opacity-0 disabled:scale-50 disabled:blur-md"
                 >
-                  ↑
+                  <ArrowUp size={19} strokeWidth={2.5} />
                 </button>
               </>
             )}
@@ -161,8 +166,9 @@ function Home() {
 
         {/* suggestion chips — only in empty state when concierge is ready */}
         {empty && conciergeStatus.ready && (
-          <div className="flex w-fit flex-wrap justify-center gap-2 rounded-[40px] border border-white/60 bg-white/34 px-2 py-2 [backdrop-filter:blur(18px)_saturate(1.5)] [box-shadow:inset_0_1px_0_rgba(255,255,255,.6)]">
-            {SUGGESTIONS.map((s) => (
+          <>
+          <div className="flex w-fit flex-wrap justify-center gap-2">
+            {SUGGESTIONS.slice(0, 3).map((s) => (
               <button
                 key={s}
                 type="button"
@@ -172,6 +178,30 @@ function Home() {
                 {s}
               </button>
             ))}
+          </div>
+          <div className="flex w-fit flex-wrap justify-center gap-2">
+        {SUGGESTIONS.slice(3).map((s) => (
+          <button
+          key={s}
+        type="button"
+        onClick={() => sendMessage(s)}
+        className="rounded-full border border-[rgba(120,130,180,.18)] bg-white px-[15px] py-2 text-[13.5px] font-medium text-[#2a2e48] shadow-soft transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-px hover:border-[rgba(120,130,180,.4)] hover:[box-shadow:0_4px_12px_rgba(40,50,110,.14)] active:scale-[0.97]"
+      >
+        {s}
+      </button>
+      ))}
+    </div>
+    </>
+        )}
+
+        {/* deep-link Converge's MCP server into Claude */}
+        {empty && (
+          <div className="mt-6 flex flex-col items-center gap-4">
+            <Mono tone="faint" className="!text-[11px] !tracking-[0.06em]">
+              Or use your own mcp enabled agent by adding <pre className="bg-gray-900 text-white inline px-1">{window.location.origin}/mcp</pre>
+            </Mono>
+            <AddToClaudeButton />
+
           </div>
         )}
 
@@ -190,15 +220,10 @@ function Home() {
 
       {/* ── Right now ─────────────────────────────────────────────── */}
       <div>
-        <div className="mb-3 flex items-center gap-2">
-          <Mono className="!text-[13px] !tracking-[0.1em]">Right now</Mono>
-          <LiveDot />
-        </div>
-
-        <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+        <div className="grid gap-6">
           {/* next session */}
           {nextSession ? (
-            <Spotlight beam className="flex flex-col p-6">
+            <BorderBeam size="md" colorVariant="sunset" strength={1} className="flex flex-col p-6 rounded-[22px] text-white" style={{ background: 'linear-gradient(135deg,#13141d,#1c1e2e)' }}>
               <div className="mb-3.5 flex items-center justify-between">
                 <Mono tone="lime" className="!tracking-[0.08em] !text-[11.5px]">
                   Next · {formatClock(nextSession.startsAt)}
@@ -225,11 +250,13 @@ function Home() {
                 </div>
               )}
               <div className="mt-auto flex gap-2.5">
-                <Button variant="lime" className="flex-1">
-                  Save my seat
-                </Button>
+                <BorderBeam size="pulse-outside" colorVariant="sunset" strength={1.5} className="rounded-[13px]">
+                  <Button variant="lime" className="flex-1">
+                    Save my seat
+                  </Button>
+                </BorderBeam>
               </div>
-            </Spotlight>
+            </BorderBeam>
           ) : (
             <Card surface="white" className="grid place-items-center p-8 text-mist">
               No sessions scheduled yet.
@@ -237,7 +264,7 @@ function Home() {
           )}
 
           {/* right column */}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
             <GlassCard innerClassName="flex flex-col p-[17px_20px]">
               <div className="mb-3 text-[12.5px] text-muted">People to meet</div>
               <AvatarStack
@@ -267,7 +294,7 @@ function Home() {
                     {trendingProject.tagline}
                   </div>
                   <div className="mt-2.5 flex items-center gap-1.5 font-mono text-[12px] text-muted">
-                    <span className="text-slate">★</span>{' '}
+                    <Star size={13} className="fill-slate text-slate" />{' '}
                     {formatCount(trendingProject.trendingScore)} watching
                   </div>
                 </Link>
@@ -280,100 +307,35 @@ function Home() {
       {/* ── People to meet ────────────────────────────────────────── */}
       {peopleToMeet.length > 0 && (
         <div>
-          <div className="mb-3 flex items-center gap-2">
+          <div className="mb-3 flex items-center gap-2 mt-8">
             <Mono className="!text-[13px] !tracking-[0.1em]">People to meet</Mono>
-            <Link
-              to="/people"
-              className="text-[12.5px] text-muted transition-colors hover:text-slate"
-            >
-              See all →
-            </Link>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
             {peopleToMeet.map((person) => (
-              <div
+              <Link
+                to="/people/$userId"
+                params={{ userId: person.id }}
                 key={person.id}
-                className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card"
               >
-                <Link
-                  to="/people/$userId"
-                  params={{ userId: person.id }}
-                  className="shrink-0"
+                <GlassCard
+
+                  innerClassName="flex items-center flex-col gap-3 p-4"
                 >
                   <Avatar name={person.name} src={person.image} size={44} />
-                </Link>
-                <div className="min-w-0 flex-1">
-                  <Link
-                    to="/people/$userId"
-                    params={{ userId: person.id }}
-                    className="block truncate text-[14px] font-semibold tracking-[-0.01em] transition-colors hover:text-ink-2"
-                  >
-                    {person.name}
-                  </Link>
-                  <div className="truncate text-[12px] text-muted">
-                    {person.reason ?? person.headline ?? 'At the conference'}
+                  <div className="min-w-0 flex-1">
+                    <div className="block truncate text-[14px] font-semibold tracking-[-0.01em] transition-colors hover:text-ink-2">
+                      {person.name}
+                    </div>
+                    <div className="truncate text-[12px] text-muted">
+                      {person.reason ?? person.headline ?? 'At the conference'}
+                    </div>
                   </div>
-                </div>
-                <HomeConnect toUserId={person.id} />
-              </div>
+                </GlassCard>
+              </Link>
             ))}
           </div>
         </div>
       )}
-
-      {/* ── Counts ────────────────────────────────────────────────── */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        {[
-          { label: 'People', value: counts.people, to: '/people' as const },
-          { label: 'Projects', value: counts.projects, to: '/projects' as const },
-          { label: 'Sessions', value: counts.sessions, to: '/sessions' as const },
-        ].map((stat) => (
-          <Link
-            key={stat.label}
-            to={stat.to}
-            className="rounded-2xl bg-white p-5 shadow-card transition-transform hover:-translate-y-0.5"
-          >
-            <div className="text-[12.5px] text-muted">{stat.label}</div>
-            <div className="mt-2 text-3xl font-semibold tabular-nums">
-              {stat.value}
-            </div>
-          </Link>
-        ))}
-      </div>
     </div>
-  )
-}
-
-/** Inline connect CTA for a home suggestion: POST then reflect pending. */
-function HomeConnect({ toUserId }: { toUserId: string }) {
-  const [state, setState] = useState<'none' | 'pending'>('none')
-  if (state === 'pending') {
-    return (
-      <Button size="sm" variant="soft" disabled className="shrink-0">
-        Pending
-      </Button>
-    )
-  }
-  return (
-    <Button
-      size="sm"
-      variant="dark"
-      className="shrink-0"
-      onClick={async () => {
-        setState('pending')
-        try {
-          const res = await fetch('/api/connections', {
-            method: 'POST',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ toUserId }),
-          })
-          if (!res.ok) setState('none')
-        } catch {
-          setState('none')
-        }
-      }}
-    >
-      Connect
-    </Button>
   )
 }
