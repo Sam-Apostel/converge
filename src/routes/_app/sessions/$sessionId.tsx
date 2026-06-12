@@ -41,7 +41,7 @@ export const Route = createFileRoute('/_app/sessions/$sessionId')({
 function SessionScreen() {
   const { sessionId } = Route.useParams()
   const detail = Route.useLoaderData()
-  const { data: session } = useSession()
+  const { data: authSession } = useSession()
 
   const collection = useMemo(() => momentsCollection(sessionId), [sessionId])
   const videoId = detail ? livestreamFor(detail.livestreamUrl) : null
@@ -73,7 +73,7 @@ function SessionScreen() {
       collection.insert({
         id: crypto.randomUUID(),
         sessionId,
-        userId: session?.user.id ?? '',
+        userId: authSession?.user.id ?? '',
         timestampMs: fields.timestampMs,
         slideRef: fields.slideRef,
         transcriptSnippet: fields.transcriptSnippet,
