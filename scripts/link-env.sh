@@ -9,10 +9,12 @@ WORKTREES_DIR="$REPO_ROOT/.claude/worktrees"
 
 if [ ! -f "$ENV_SOURCE" ]; then
   echo "link-env: $ENV_SOURCE not found, skipping" >&2
+  echo '{}'
   exit 0
 fi
 
 if [ ! -d "$WORKTREES_DIR" ]; then
+  echo '{}'
   exit 0
 fi
 
@@ -23,5 +25,7 @@ for worktree in "$WORKTREES_DIR"/*/; do
     continue
   fi
   ln -sf "$ENV_SOURCE" "$target"
-  echo "link-env: linked .env.local → ${worktree#"$REPO_ROOT/"}"
+  echo "link-env: linked .env.local → ${worktree#"$REPO_ROOT/"}" >&2
 done
+
+echo '{}'
