@@ -3,7 +3,6 @@ import { and, asc, eq, isNull, or } from 'drizzle-orm'
 
 import { db } from '#/db'
 import { connection, message, profile, user } from '#/db/schema'
-import { demoOnline } from '#/lib/demo'
 import {
   buildThreads,
   type DirectoryPerson,
@@ -48,7 +47,7 @@ async function loadDirectory(): Promise<Array<DirectoryPerson>> {
     name: r.name,
     image: r.image,
     handle: r.handle,
-    online: demoOnline(r.id),
+    online: false,
   }))
 }
 

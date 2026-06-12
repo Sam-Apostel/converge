@@ -16,6 +16,7 @@ import {
 import { getHomeSummary } from '#/lib/queries'
 import { ConciergeMessage } from '#/components/concierge/message'
 import { formatClock, formatCount } from '#/lib/format'
+import { useSession } from '#/lib/auth-client'
 
 export const Route = createFileRoute('/_app/')({
   loader: () => getHomeSummary(),
@@ -23,7 +24,7 @@ export const Route = createFileRoute('/_app/')({
 })
 
 const SUGGESTIONS = [
-  'Find my next talk',
+  'Find my next session',
   'What did I miss?',
   'Find people on AI',
   'Where is Hall B?',
@@ -32,6 +33,8 @@ const SUGGESTIONS = [
 function Home() {
   const { counts, nextSession, peopleToMeet, trendingProject } =
     Route.useLoaderData()
+  const { data: session } = useSession()
+  const firstName = session?.user?.name?.split(' ')[0] ?? null
 
   const { messages, sendMessage, isLoading, error, stop } = useChat({
     connection: fetchServerSentEvents('/api/concierge'),
@@ -57,12 +60,14 @@ function Home() {
     <div className="flex flex-col gap-7">
       {/* ── Command bar / Concierge ───────────────────────────────── */}
       <div className="flex flex-col items-center gap-4 pb-2 pt-8 sm:pt-12">
-        <Mono
-          tone="ghost"
-          className="block text-center !text-[11.5px] !tracking-[0.14em]"
-        >
-          Good morning, Sam
-        </Mono>
+        {firstName && (
+          <Mono
+            tone="ghost"
+            className="block text-center !text-[11.5px] !tracking-[0.14em]"
+          >
+            Good morning, {firstName}
+          </Mono>
+        )}
 
         {empty ? (
           <h1 className="mx-auto max-w-xl text-balance text-center text-[30px] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[38px]">

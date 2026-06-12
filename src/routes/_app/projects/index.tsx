@@ -32,7 +32,10 @@ function ProjectsPage() {
   const scroll = (dir: number) =>
     carousel.current?.scrollBy({ left: dir * 500, behavior: 'smooth' })
 
-  const featured = projects.find((p) => p.slug === 'rari') ?? projects[0]
+  const featured =
+    projects.reduce<typeof projects[0] | undefined>((best, p) =>
+      !best || (p.trendingScore ?? 0) > (best.trendingScore ?? 0) ? p : best
+    , undefined) ?? projects[0]
   const relatedTalk = featured
     ? sessions.find((s) => s.speakerId === featured.ownerId)
     : undefined
@@ -166,7 +169,7 @@ function ProjectProfile({
 
       {relatedTalk && (
         <div className="mb-[18px] flex items-center gap-2 text-[13px] text-slate">
-          <span className="text-slate">↳</span> Related talk · “{relatedTalk.title}
+          <span className="text-slate">↳</span> Related session · “{relatedTalk.title}
           ” · {formatClock(relatedTalk.startsAt)}
         </div>
       )}
