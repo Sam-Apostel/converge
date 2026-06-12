@@ -16,24 +16,23 @@ function ClaudeMark({ size = 18 }: { size?: number }) {
 }
 
 /**
- * Deep-links to Claude's "Add custom connector" modal with Converge's MCP
- * server URL prefilled, so a user can wire up the connector in one click.
+ * Deep-links to Claude's install-MCP flow with Converge's MCP server prefilled,
+ * so a user can wire up the connector in one click.
  *
  * The MCP endpoint lives at `<origin>/mcp`; we resolve the origin on the client
  * so the link is correct in every environment. Styled with Claude's brand coral.
  */
 export function AddToClaudeButton({ className = '' }: { className?: string }) {
   const [href, setHref] = useState(
-    'https://claude.ai/settings/connectors?modal=add-custom-connector',
+    'https://claude.ai/install-mcp?name=Converge',
   )
 
   useEffect(() => {
     const params = new URLSearchParams({
-      modal: 'add-custom-connector',
-      mcpName: 'Converge',
-      mcpServerUrl: `${window.location.origin}/mcp`,
+      name: 'Converge',
+      url: `${window.location.origin}/mcp`,
     })
-    setHref(`https://claude.ai/settings/connectors?${params.toString()}`)
+    setHref(`https://claude.ai/install-mcp?${params.toString()}`)
   }, [])
 
   return (
