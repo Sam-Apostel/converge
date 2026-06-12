@@ -95,6 +95,16 @@ export const getSessionDetail = createServerFn({ method: 'GET' })
       .where(eq(discussion.sessionId, sessionId))
       .limit(1)
 
+    // The session's own discussion thread, if one exists (the Discussion tab
+    // links here). Prefer the most recent — a busy talk may spin out several.
+    const [linkedDiscussion] = await db
+      .select({ id: discussion.id })
+      .from(discussion)
+      .where(eq(discussion.sessionId, sessionId))
+      .orderBy(desc(discussion.createdAt))
+      .limit(1)
+    const discussionId = linkedDiscussion?.id ?? null
+
     let relatedProject = linkedProject ?? null
     if (!relatedProject) {
       const [trending] = await db
@@ -138,6 +148,7 @@ export const getSessionDetail = createServerFn({ method: 'GET' })
       session,
       speaker: speaker ?? null,
       questions,
+      discussionId,
       relatedProject,
       relatedPeople,
     }

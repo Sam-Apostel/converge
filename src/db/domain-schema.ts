@@ -1,4 +1,5 @@
 import {
+  type AnyPgColumn,
   boolean,
   index,
   integer,
@@ -265,10 +266,39 @@ export const question = pgTable(
     // open | answered | archived
     status: text('status').notNull().default('open'),
     upvotes: integer('upvotes').default(0).notNull(),
+    // Set once the question is promoted into a persistent discussion thread.
+    // Circular ref (discussion → question and back), so the column type is
+    // declared lazily via AnyPgColumn.
+    promotedDiscussionId: text('promoted_discussion_id').references(
+      (): AnyPgColumn => discussion.id,
+      { onDelete: 'set null' },
+    ),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
   (t) => [index('question_session_idx').on(t.sessionId)],
+)
+
+/**
+ * One upvote per (question, user) — the source of truth for who voted, so a
+ * vote can be toggled. `question.upvotes` is the denormalised running count.
+ */
+export const questionVote = pgTable(
+  'question_vote',
+  {
+    id: id(),
+    questionId: text('question_id')
+      .notNull()
+      .references(() => question.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    uniqueIndex('question_vote_unique').on(t.questionId, t.userId),
+    index('question_vote_question_idx').on(t.questionId),
+  ],
 )
 
 export const answer = pgTable(

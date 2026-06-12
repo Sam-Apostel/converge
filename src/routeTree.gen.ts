@@ -17,6 +17,7 @@ import { Route as ApiTasksRouteImport } from './routes/api/tasks'
 import { Route as ApiStreamRouteImport } from './routes/api/stream'
 import { Route as ApiSessionsRouteImport } from './routes/api/sessions'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
+import { Route as ApiQuestionsRouteImport } from './routes/api/questions'
 import { Route as ApiProjectsRouteImport } from './routes/api/projects'
 import { Route as ApiPeopleRouteImport } from './routes/api/people'
 import { Route as ApiMomentsRouteImport } from './routes/api/moments'
@@ -24,6 +25,7 @@ import { Route as ApiMessagesRouteImport } from './routes/api/messages'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiConnectionsRouteImport } from './routes/api/connections'
 import { Route as ApiConciergeRouteImport } from './routes/api/concierge'
+import { Route as ApiAnswersRouteImport } from './routes/api/answers'
 import { Route as AppVenueRouteImport } from './routes/_app/venue'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppSearchRouteImport } from './routes/_app/search'
@@ -41,6 +43,8 @@ import { Route as AppSessionsSessionIdRouteImport } from './routes/_app/sessions
 import { Route as AppProjectsSlugRouteImport } from './routes/_app/projects/$slug'
 import { Route as AppPeopleUserIdRouteImport } from './routes/_app/people/$userId'
 import { Route as AppDiscussionsIdRouteImport } from './routes/_app/discussions/$id'
+import { Route as ApiQuestionsIdVoteRouteImport } from './routes/api/questions.$id.vote'
+import { Route as ApiQuestionsIdPromoteRouteImport } from './routes/api/questions.$id.promote'
 
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
@@ -81,6 +85,11 @@ const ApiSearchRoute = ApiSearchRouteImport.update({
   path: '/api/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiQuestionsRoute = ApiQuestionsRouteImport.update({
+  id: '/api/questions',
+  path: '/api/questions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProjectsRoute = ApiProjectsRouteImport.update({
   id: '/api/projects',
   path: '/api/projects',
@@ -114,6 +123,11 @@ const ApiConnectionsRoute = ApiConnectionsRouteImport.update({
 const ApiConciergeRoute = ApiConciergeRouteImport.update({
   id: '/api/concierge',
   path: '/api/concierge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAnswersRoute = ApiAnswersRouteImport.update({
+  id: '/api/answers',
+  path: '/api/answers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppVenueRoute = AppVenueRouteImport.update({
@@ -203,6 +217,16 @@ const AppDiscussionsIdRoute = AppDiscussionsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AppDiscussionsRoute,
 } as any)
+const ApiQuestionsIdVoteRoute = ApiQuestionsIdVoteRouteImport.update({
+  id: '/$id/vote',
+  path: '/$id/vote',
+  getParentRoute: () => ApiQuestionsRoute,
+} as any)
+const ApiQuestionsIdPromoteRoute = ApiQuestionsIdPromoteRouteImport.update({
+  id: '/$id/promote',
+  path: '/$id/promote',
+  getParentRoute: () => ApiQuestionsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -216,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof AppSearchRoute
   '/settings': typeof AppSettingsRoute
   '/venue': typeof AppVenueRoute
+  '/api/answers': typeof ApiAnswersRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
@@ -223,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/api/moments': typeof ApiMomentsRouteWithChildren
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
+  '/api/questions': typeof ApiQuestionsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/api/sessions': typeof ApiSessionsRoute
   '/api/stream': typeof ApiStreamRoute
@@ -236,6 +262,8 @@ export interface FileRoutesByFullPath {
   '/people/': typeof AppPeopleIndexRoute
   '/projects/': typeof AppProjectsIndexRoute
   '/sessions/': typeof AppSessionsIndexRoute
+  '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
+  '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -248,6 +276,7 @@ export interface FileRoutesByTo {
   '/search': typeof AppSearchRoute
   '/settings': typeof AppSettingsRoute
   '/venue': typeof AppVenueRoute
+  '/api/answers': typeof ApiAnswersRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
@@ -255,6 +284,7 @@ export interface FileRoutesByTo {
   '/api/moments': typeof ApiMomentsRouteWithChildren
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
+  '/api/questions': typeof ApiQuestionsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/api/sessions': typeof ApiSessionsRoute
   '/api/stream': typeof ApiStreamRoute
@@ -269,6 +299,8 @@ export interface FileRoutesByTo {
   '/people': typeof AppPeopleIndexRoute
   '/projects': typeof AppProjectsIndexRoute
   '/sessions': typeof AppSessionsIndexRoute
+  '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
+  '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -283,6 +315,7 @@ export interface FileRoutesById {
   '/_app/search': typeof AppSearchRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/venue': typeof AppVenueRoute
+  '/api/answers': typeof ApiAnswersRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
@@ -290,6 +323,7 @@ export interface FileRoutesById {
   '/api/moments': typeof ApiMomentsRouteWithChildren
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
+  '/api/questions': typeof ApiQuestionsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/api/sessions': typeof ApiSessionsRoute
   '/api/stream': typeof ApiStreamRoute
@@ -304,6 +338,8 @@ export interface FileRoutesById {
   '/_app/people/': typeof AppPeopleIndexRoute
   '/_app/projects/': typeof AppProjectsIndexRoute
   '/_app/sessions/': typeof AppSessionsIndexRoute
+  '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
+  '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -319,6 +355,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/venue'
+    | '/api/answers'
     | '/api/concierge'
     | '/api/connections'
     | '/api/health'
@@ -326,6 +363,7 @@ export interface FileRouteTypes {
     | '/api/moments'
     | '/api/people'
     | '/api/projects'
+    | '/api/questions'
     | '/api/search'
     | '/api/sessions'
     | '/api/stream'
@@ -339,6 +377,8 @@ export interface FileRouteTypes {
     | '/people/'
     | '/projects/'
     | '/sessions/'
+    | '/api/questions/$id/promote'
+    | '/api/questions/$id/vote'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -351,6 +391,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/venue'
+    | '/api/answers'
     | '/api/concierge'
     | '/api/connections'
     | '/api/health'
@@ -358,6 +399,7 @@ export interface FileRouteTypes {
     | '/api/moments'
     | '/api/people'
     | '/api/projects'
+    | '/api/questions'
     | '/api/search'
     | '/api/sessions'
     | '/api/stream'
@@ -372,6 +414,8 @@ export interface FileRouteTypes {
     | '/people'
     | '/projects'
     | '/sessions'
+    | '/api/questions/$id/promote'
+    | '/api/questions/$id/vote'
   id:
     | '__root__'
     | '/_app'
@@ -385,6 +429,7 @@ export interface FileRouteTypes {
     | '/_app/search'
     | '/_app/settings'
     | '/_app/venue'
+    | '/api/answers'
     | '/api/concierge'
     | '/api/connections'
     | '/api/health'
@@ -392,6 +437,7 @@ export interface FileRouteTypes {
     | '/api/moments'
     | '/api/people'
     | '/api/projects'
+    | '/api/questions'
     | '/api/search'
     | '/api/sessions'
     | '/api/stream'
@@ -406,6 +452,8 @@ export interface FileRouteTypes {
     | '/_app/people/'
     | '/_app/projects/'
     | '/_app/sessions/'
+    | '/api/questions/$id/promote'
+    | '/api/questions/$id/vote'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -414,6 +462,7 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   Char91DotwellKnownChar93OauthAuthorizationServerRoute: typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ApiAnswersRoute: typeof ApiAnswersRoute
   ApiConciergeRoute: typeof ApiConciergeRoute
   ApiConnectionsRoute: typeof ApiConnectionsRoute
   ApiHealthRoute: typeof ApiHealthRoute
@@ -421,6 +470,7 @@ export interface RootRouteChildren {
   ApiMomentsRoute: typeof ApiMomentsRouteWithChildren
   ApiPeopleRoute: typeof ApiPeopleRoute
   ApiProjectsRoute: typeof ApiProjectsRoute
+  ApiQuestionsRoute: typeof ApiQuestionsRouteWithChildren
   ApiSearchRoute: typeof ApiSearchRoute
   ApiSessionsRoute: typeof ApiSessionsRoute
   ApiStreamRoute: typeof ApiStreamRoute
@@ -486,6 +536,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/questions': {
+      id: '/api/questions'
+      path: '/api/questions'
+      fullPath: '/api/questions'
+      preLoaderRoute: typeof ApiQuestionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/projects': {
       id: '/api/projects'
       path: '/api/projects'
@@ -533,6 +590,13 @@ declare module '@tanstack/react-router' {
       path: '/api/concierge'
       fullPath: '/api/concierge'
       preLoaderRoute: typeof ApiConciergeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/answers': {
+      id: '/api/answers'
+      path: '/api/answers'
+      fullPath: '/api/answers'
+      preLoaderRoute: typeof ApiAnswersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/venue': {
@@ -654,6 +718,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDiscussionsIdRouteImport
       parentRoute: typeof AppDiscussionsRoute
     }
+    '/api/questions/$id/vote': {
+      id: '/api/questions/$id/vote'
+      path: '/$id/vote'
+      fullPath: '/api/questions/$id/vote'
+      preLoaderRoute: typeof ApiQuestionsIdVoteRouteImport
+      parentRoute: typeof ApiQuestionsRoute
+    }
+    '/api/questions/$id/promote': {
+      id: '/api/questions/$id/promote'
+      path: '/$id/promote'
+      fullPath: '/api/questions/$id/promote'
+      preLoaderRoute: typeof ApiQuestionsIdPromoteRouteImport
+      parentRoute: typeof ApiQuestionsRoute
+    }
   }
 }
 
@@ -715,6 +793,20 @@ const ApiMomentsRouteWithChildren = ApiMomentsRoute._addFileChildren(
   ApiMomentsRouteChildren,
 )
 
+interface ApiQuestionsRouteChildren {
+  ApiQuestionsIdPromoteRoute: typeof ApiQuestionsIdPromoteRoute
+  ApiQuestionsIdVoteRoute: typeof ApiQuestionsIdVoteRoute
+}
+
+const ApiQuestionsRouteChildren: ApiQuestionsRouteChildren = {
+  ApiQuestionsIdPromoteRoute: ApiQuestionsIdPromoteRoute,
+  ApiQuestionsIdVoteRoute: ApiQuestionsIdVoteRoute,
+}
+
+const ApiQuestionsRouteWithChildren = ApiQuestionsRoute._addFileChildren(
+  ApiQuestionsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
@@ -723,6 +815,7 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OauthAuthorizationServerRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ApiAnswersRoute: ApiAnswersRoute,
   ApiConciergeRoute: ApiConciergeRoute,
   ApiConnectionsRoute: ApiConnectionsRoute,
   ApiHealthRoute: ApiHealthRoute,
@@ -730,6 +823,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiMomentsRoute: ApiMomentsRouteWithChildren,
   ApiPeopleRoute: ApiPeopleRoute,
   ApiProjectsRoute: ApiProjectsRoute,
+  ApiQuestionsRoute: ApiQuestionsRouteWithChildren,
   ApiSearchRoute: ApiSearchRoute,
   ApiSessionsRoute: ApiSessionsRoute,
   ApiStreamRoute: ApiStreamRoute,
@@ -739,12 +833,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

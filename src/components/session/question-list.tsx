@@ -1,13 +1,32 @@
-import { VoteControl } from '#/components/ui'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { useLiveQuery } from '@tanstack/react-db'
 
-export type SessionQuestion = {
+import { Badge, Button, VoteControl } from '#/components/ui'
+import { Thread } from '#/components/discussion'
+import {
+  promoteQuestion,
+  questionsCollection,
+  type QuestionAnswer,
+  type SessionQuestion,
+} from '#/db-collections/questions'
+import { useEventStream } from '#/hooks/use-event-stream'
+import type { DiscussionThread } from '#/lib/queries/discussions'
+
+/** Upvotes at which a question earns the "keep this going" promote affordance. */
+const PROMOTE_THRESHOLD = 3
+
+type Viewer = { id: string; name: string; image: string | null }
+type QuestionsCollection = ReturnType<typeof questionsCollection>
+
+/** The SSR question shape from the session loader — the pre-mount fallback. */
+export type SessionQuestionSeed = {
   id: string
   body: string
   upvotes: number
-  status: string
-  createdAt: string | Date
   authorName: string
   authorCompany: string | null
+  createdAt: string | Date
 }
 
 function timeAgo(value: string | Date): string {
@@ -21,51 +40,423 @@ function timeAgo(value: string | Date): string {
 }
 
 /**
- * The tab strip under the live slide. "Live questions" shows the session's real
- * `question` rows, hottest first; Discussion and Notes are the sibling surfaces
- * other silos own.
+ * The tab strip under the live slide. "Live questions" shows the session's
+ * real `question` rows (optimistic + realtime) with upvotes, answers and the
+ * promote-to-discussion flow; "Discussion" renders the talk's linked thread.
  */
 export function QuestionList({
+  sessionId,
   questions,
+  discussion,
+  me,
+  viewerIsSpeaker,
 }: {
-  questions: Array<SessionQuestion>
+  sessionId: string
+  questions: Array<SessionQuestionSeed>
+  discussion: DiscussionThread | null
+  me: Viewer | null
+  viewerIsSpeaker: boolean
 }) {
+  const [tab, setTab] = useState<'qa' | 'discussion'>('qa')
+
+  // The live collection is client-only — render the SSR list until mounted.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
   return (
     <div className="mt-[22px]">
       <div className="mb-4 flex gap-[22px] border-b border-[rgba(120,130,180,.16)]">
-        <span className="border-b-2 border-ink pb-[11px] text-sm font-semibold">
+        <TabButton active={tab === 'qa'} onClick={() => setTab('qa')}>
           Live questions
-        </span>
-        <span className="pb-[11px] text-sm font-medium text-faint">
+        </TabButton>
+        <TabButton
+          active={tab === 'discussion'}
+          onClick={() => setTab('discussion')}
+        >
           Discussion
-        </span>
+        </TabButton>
         <span className="pb-[11px] text-sm font-medium text-faint">Notes</span>
-        <span className="ml-auto self-center text-[12.5px] text-[#8186a0]">
-          sorted by votes
-        </span>
+        {tab === 'qa' && (
+          <span className="ml-auto self-center text-[12.5px] text-[#8186a0]">
+            sorted by votes
+          </span>
+        )}
       </div>
 
+      {tab === 'qa' ? (
+        mounted && me ? (
+          <LiveQuestions
+            sessionId={sessionId}
+            me={me}
+            viewerIsSpeaker={viewerIsSpeaker}
+          />
+        ) : (
+          <StaticQuestions questions={questions} />
+        )
+      ) : (
+        <DiscussionTab discussion={discussion} />
+      )}
+    </div>
+  )
+}
+
+function TabButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`pb-[11px] text-sm transition-colors ${
+        active
+          ? 'border-b-2 border-ink font-semibold text-ink'
+          : 'font-medium text-faint hover:text-ink'
+      }`}
+    >
+      {children}
+    </button>
+  )
+}
+
+/** Read-only SSR render, shown until the optimistic collection mounts. */
+function StaticQuestions({
+  questions,
+}: {
+  questions: Array<SessionQuestionSeed>
+}) {
+  if (questions.length === 0) {
+    return (
+      <p className="text-[13.5px] text-mist">
+        No questions yet — be the first to ask.
+      </p>
+    )
+  }
+  return (
+    <div className="flex flex-col gap-[11px]">
+      {questions.map((q) => (
+        <div key={q.id} className="flex items-start gap-[13px]">
+          <VoteControl count={q.upvotes} />
+          <div className="flex-1">
+            <p className="text-[14.5px] leading-[1.4]">{q.body}</p>
+            <div className="mt-1 font-mono text-[12px] text-faint">
+              {q.authorName}
+              {q.authorCompany ? ` · ${q.authorCompany}` : ''} ·{' '}
+              {timeAgo(q.createdAt)}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/** The live, interactive Q&A: ask box + optimistic list + realtime refresh. */
+function LiveQuestions({
+  sessionId,
+  me,
+  viewerIsSpeaker,
+}: {
+  sessionId: string
+  me: Viewer
+  viewerIsSpeaker: boolean
+}) {
+  const collection = useMemo(() => questionsCollection(sessionId), [sessionId])
+  const { data } = useLiveQuery(() => collection, [collection])
+
+  // Other tabs/devices: pull the latest when a question is published.
+  const onEvent = useCallback(
+    (type: string) => {
+      if (type === 'question.created') collection.utils.refetch()
+    },
+    [collection],
+  )
+  useEventStream({ channel: `session:${sessionId}`, onEvent })
+
+  const questions = useMemo(
+    () =>
+      [...(data ?? [])].sort(
+        (a, b) =>
+          b.upvotes - a.upvotes ||
+          (a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0),
+      ),
+    [data],
+  )
+
+  const [draft, setDraft] = useState('')
+  const ask = useCallback(() => {
+    const body = draft.trim()
+    if (!body) return
+    collection.insert({
+      id: crypto.randomUUID(),
+      sessionId,
+      authorId: me.id,
+      body,
+      status: 'open',
+      upvotes: 0,
+      hasVoted: false,
+      promotedDiscussionId: null,
+      createdAt: new Date().toISOString(),
+      authorName: me.name,
+      authorImage: me.image,
+      authorCompany: null,
+      answers: [],
+    })
+    setDraft('')
+  }, [draft, collection, sessionId, me])
+
+  const toggleVote = useCallback(
+    (q: SessionQuestion) => {
+      collection.update(q.id, (d) => {
+        const next = !d.hasVoted
+        d.hasVoted = next
+        d.upvotes += next ? 1 : -1
+      })
+    },
+    [collection],
+  )
+
+  return (
+    <div>
+      <AskBox value={draft} onChange={setDraft} onSubmit={ask} />
+
       {questions.length === 0 ? (
-        <p className="text-[13.5px] text-mist">
+        <p className="mt-3.5 text-[13.5px] text-mist">
           No questions yet — be the first to ask.
         </p>
       ) : (
-        <div className="flex flex-col gap-[11px]">
+        <div className="mt-3.5 flex flex-col gap-[16px]">
           {questions.map((q) => (
-            <div key={q.id} className="flex items-start gap-[13px]">
-              <VoteControl count={q.upvotes} />
-              <div className="flex-1">
-                <p className="text-[14.5px] leading-[1.4]">{q.body}</p>
-                <div className="mt-1 font-mono text-[12px] text-faint">
-                  {q.authorName}
-                  {q.authorCompany ? ` · ${q.authorCompany}` : ''} ·{' '}
-                  {timeAgo(q.createdAt)}
-                </div>
-              </div>
-            </div>
+            <QuestionRow
+              key={q.id}
+              q={q}
+              sessionId={sessionId}
+              me={me}
+              viewerIsSpeaker={viewerIsSpeaker}
+              collection={collection}
+              onVote={() => toggleVote(q)}
+            />
           ))}
         </div>
       )}
     </div>
+  )
+}
+
+function AskBox({
+  value,
+  onChange,
+  onSubmit,
+}: {
+  value: string
+  onChange: (v: string) => void
+  onSubmit: () => void
+}) {
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        onSubmit()
+      }}
+      className="flex gap-2"
+    >
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="Ask a question…"
+        aria-label="Ask a question"
+        className="flex-1 rounded-[11px] border border-[rgba(120,130,180,.22)] bg-white px-3.5 py-2 text-[14px] outline-none transition-colors placeholder:text-faint focus:border-ink/40"
+      />
+      <Button type="submit" size="sm" variant="dark" disabled={!value.trim()}>
+        Ask
+      </Button>
+    </form>
+  )
+}
+
+function QuestionRow({
+  q,
+  sessionId,
+  me,
+  viewerIsSpeaker,
+  collection,
+  onVote,
+}: {
+  q: SessionQuestion
+  sessionId: string
+  me: Viewer
+  viewerIsSpeaker: boolean
+  collection: QuestionsCollection
+  onVote: () => void
+}) {
+  const navigate = useNavigate()
+  const [reply, setReply] = useState('')
+  const [promoting, setPromoting] = useState(false)
+
+  const submitReply = useCallback(() => {
+    const body = reply.trim()
+    if (!body) return
+    collection.update(q.id, (d) => {
+      d.answers = [
+        ...d.answers,
+        {
+          id: crypto.randomUUID(),
+          body,
+          fromSpeaker: viewerIsSpeaker,
+          authorId: me.id,
+          authorName: me.name,
+          authorImage: me.image,
+          createdAt: new Date().toISOString(),
+        },
+      ]
+    })
+    setReply('')
+  }, [reply, collection, q.id, me, viewerIsSpeaker])
+
+  const promote = useCallback(async () => {
+    setPromoting(true)
+    const discussionId = await promoteQuestion(sessionId, q.id)
+    setPromoting(false)
+    if (discussionId) {
+      navigate({ to: '/discussions/$id', params: { id: discussionId } })
+    }
+  }, [sessionId, q.id, navigate])
+
+  return (
+    <div className="flex items-start gap-[13px]">
+      <VoteControl count={q.upvotes} onUpvote={onVote} active={q.hasVoted} />
+      <div className="flex-1">
+        <p className="text-[14.5px] leading-[1.4]">{q.body}</p>
+        <div className="mt-1 font-mono text-[12px] text-faint">
+          {q.authorName}
+          {q.authorCompany ? ` · ${q.authorCompany}` : ''} ·{' '}
+          {timeAgo(q.createdAt)}
+        </div>
+
+        {q.answers.length > 0 && (
+          <div className="mt-2.5 flex flex-col gap-2">
+            {q.answers.map((a) => (
+              <AnswerRow key={a.id} answer={a} />
+            ))}
+          </div>
+        )}
+
+        <ReplyBox
+          value={reply}
+          onChange={setReply}
+          onSubmit={submitReply}
+          isSpeaker={viewerIsSpeaker}
+        />
+
+        {q.promotedDiscussionId ? (
+          <Link
+            to="/discussions/$id"
+            params={{ id: q.promotedDiscussionId }}
+            className="mt-2 inline-flex"
+          >
+            <Badge tone="lime-soft">Continued in discussion →</Badge>
+          </Link>
+        ) : q.upvotes >= PROMOTE_THRESHOLD ? (
+          <button
+            type="button"
+            onClick={promote}
+            disabled={promoting}
+            className="mt-2 text-[13px] font-semibold text-ink/75 transition-colors hover:text-ink disabled:opacity-50"
+          >
+            Keep this conversation going →
+          </button>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
+function AnswerRow({ answer }: { answer: QuestionAnswer }) {
+  return (
+    <div
+      className={`rounded-[11px] px-3 py-2 ${
+        answer.fromSpeaker
+          ? 'border border-lime/40 bg-lime/15'
+          : 'bg-inner'
+      }`}
+    >
+      <div className="mb-0.5 flex items-center gap-2">
+        <span className="text-[13px] font-semibold">{answer.authorName}</span>
+        {answer.fromSpeaker && <Badge tone="lime-soft">SPEAKER</Badge>}
+        <span className="font-mono text-[11px] text-faint">
+          {timeAgo(answer.createdAt)}
+        </span>
+      </div>
+      <p className="text-[13.5px] leading-[1.45] text-[#3a3e54]">
+        {answer.body}
+      </p>
+    </div>
+  )
+}
+
+function ReplyBox({
+  value,
+  onChange,
+  onSubmit,
+  isSpeaker,
+}: {
+  value: string
+  onChange: (v: string) => void
+  onSubmit: () => void
+  isSpeaker: boolean
+}) {
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        onSubmit()
+      }}
+      className="mt-2 flex gap-2"
+    >
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={isSpeaker ? 'Answer as speaker…' : 'Reply…'}
+        aria-label="Reply to question"
+        className="flex-1 rounded-[10px] border border-[rgba(120,130,180,.22)] bg-white px-3 py-1.5 text-[13.5px] outline-none transition-colors placeholder:text-faint focus:border-ink/40"
+      />
+      <Button type="submit" size="sm" variant="soft" disabled={!value.trim()}>
+        {isSpeaker ? 'Answer' : 'Reply'}
+      </Button>
+    </form>
+  )
+}
+
+/** The Discussion tab: the talk's linked thread inline, plus a link out. */
+function DiscussionTab({
+  discussion,
+}: {
+  discussion: DiscussionThread | null
+}) {
+  if (!discussion) {
+    return (
+      <p className="text-[13.5px] text-mist">
+        No discussion yet — promote a question with enough upvotes to start one.
+      </p>
+    )
+  }
+  return (
+    <Thread
+      thread={discussion}
+      headerRight={
+        <Link
+          to="/discussions/$id"
+          params={{ id: discussion.id }}
+          className="text-[13px] font-semibold text-mist transition-colors hover:text-ink"
+        >
+          Open full thread →
+        </Link>
+      }
+    />
   )
 }

@@ -32,10 +32,19 @@ import {
 import { momentsCollection } from '#/db-collections/moments'
 import { useEventStream } from '#/hooks/use-event-stream'
 import { useSession } from '#/lib/auth-client'
+import { getDiscussion } from '#/lib/queries/discussions'
 import { getSessionDetail } from '#/lib/queries/sessions'
 
 export const Route = createFileRoute('/_app/sessions/$sessionId')({
-  loader: ({ params }) => getSessionDetail({ data: params.sessionId }),
+  loader: async ({ params }) => {
+    const detail = await getSessionDetail({ data: params.sessionId })
+    if (!detail) return null
+    // The linked discussion thread (if any) renders inline on the Discussion tab.
+    const discussion = detail.discussionId
+      ? await getDiscussion({ data: detail.discussionId })
+      : null
+    return { ...detail, discussion }
+  },
   component: SessionScreen,
 })
 
@@ -133,8 +142,17 @@ function SessionScreen() {
     )
   }
 
-  const { session, speaker, questions, relatedPeople, relatedProject } = detail
+  const {
+    session,
+    speaker,
+    questions,
+    discussion,
+    relatedPeople,
+    relatedProject,
+  } = detail
   const slide = SLIDES[playhead - 1]
+  const me = authSession?.user ?? null
+  const viewerIsSpeaker = !!me && !!speaker && me.id === speaker.id
 
   return (
     <div className="relative overflow-hidden rounded-[30px] [background:linear-gradient(180deg,#fbfcff,#f3f5fc)] [box-shadow:0_2px_8px_rgba(40,50,110,.05),0_30px_70px_rgba(40,50,110,.13),inset_0_1px_0_rgba(255,255,255,.9)]">
@@ -185,7 +203,13 @@ function SessionScreen() {
             />
           )}
 
-          <QuestionList questions={questions} />
+          <QuestionList
+            sessionId={sessionId}
+            questions={questions}
+            discussion={discussion}
+            me={me ? { id: me.id, name: me.name, image: me.image ?? null } : null}
+            viewerIsSpeaker={viewerIsSpeaker}
+          />
         </div>
 
         {/* Right — moments rail + context */}
