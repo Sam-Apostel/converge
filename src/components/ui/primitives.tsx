@@ -110,17 +110,43 @@ export function SectionHeader({
   )
 }
 
-/** Up/down vote control for questions. */
+/**
+ * Up/down vote control for questions. Static by default (used in read-only
+ * thread views); pass `onUpvote` to make the ▲ a real toggle button, and
+ * `active` to show the viewer's vote as a lime fill.
+ */
 export function VoteControl({
   count,
   downvote = false,
+  onUpvote,
+  active = false,
 }: {
   count: number
   downvote?: boolean
+  onUpvote?: () => void
+  active?: boolean
 }) {
   return (
-    <div className="flex min-w-[42px] flex-col items-center gap-0.5 rounded-xl bg-pillow px-2.5 py-1.5">
-      <span className="text-[12px] text-slate">▲</span>
+    <div
+      className={`flex min-w-[42px] flex-col items-center gap-0.5 rounded-xl px-2.5 py-1.5 transition-colors ${
+        active ? 'bg-lime/25' : 'bg-pillow'
+      }`}
+    >
+      {onUpvote ? (
+        <button
+          type="button"
+          onClick={onUpvote}
+          aria-pressed={active}
+          aria-label={active ? 'Remove upvote' : 'Upvote'}
+          className={`text-[12px] leading-none transition-colors ${
+            active ? 'text-ink' : 'text-slate hover:text-ink'
+          }`}
+        >
+          ▲
+        </button>
+      ) : (
+        <span className="text-[12px] text-slate">▲</span>
+      )}
       <span className="text-[13px] font-semibold tabular-nums">{count}</span>
       {downvote && <span className="text-[12px] text-[#c2c6d8]">▼</span>}
     </div>
