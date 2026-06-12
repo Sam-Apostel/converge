@@ -759,6 +759,9 @@ async function seed() {
     { session: 'js-bundlers', user: 'priya', ms: 11 * 60_000, snippet: '3 to 10x faster production builds for large monorepos.', note: 'CI time goal — flag for the platform team' },
     { session: 'rs-testing', user: 'devin', ms: 16 * 60_000, snippet: 'Flakiness is almost always timing. Await the UI, never the clock.', slide: '#21' },
     { session: 'rs-native', user: 'grace', ms: 25 * 60_000, snippet: 'Bridgeless mode is the single biggest win in the new architecture.', ai: true },
+    { session: 'js-streaming', user: 'theo', ms: 7 * 60_000 + 30_000, snippet: 'Backpressure is the hidden cost nobody benchmarks — your client will buffer silently until it doesn\'t.', note: 'Check if our streaming proxy handles this', slide: '#5', ai: true },
+    { session: 'js-streaming', user: 'finn', ms: 12 * 60_000, snippet: 'Abort controllers are your best friend. If the user navigates away, you have to stop the model.', slide: '#8' },
+    { session: 'js-streaming', user: 'imani', ms: 18 * 60_000, snippet: 'Token budget on the server side — never let the model output more than the UI can meaningfully render.', note: 'Hard limit for our chat feature' },
   ]
   for (const m of moments) {
     await db.insert(moment).values({
@@ -841,6 +844,28 @@ async function seed() {
       answers: [
         { author: 'aisha', fromSpeaker: true, body: 'MSW, every time. Mocking fetch leaks implementation details into your tests; intercepting at the network layer means your test does not care how you fetch.' },
       ],
+    },
+    {
+      key: 'q-streaming-backpressure',
+      session: 'js-streaming', author: 'theo', upvotes: 28, status: 'answered',
+      body: 'How do you handle backpressure when the client can\'t consume tokens as fast as the model produces them?',
+      answers: [
+        { author: 'jonas', fromSpeaker: true, body: 'ReadableStream with a TransformStream as a token buffer. If the queue depth exceeds a threshold I pause the upstream and let the UI drain. The key is never dropping tokens — buffering is fine, losing data is not.' },
+        { author: 'theo', body: 'This is the piece I was missing. Going to spike on this tomorrow.' },
+      ],
+    },
+    {
+      key: 'q-streaming-abort',
+      session: 'js-streaming', author: 'lukas', upvotes: 21, status: 'answered',
+      body: 'If the user cancels mid-stream, does the model keep running and billing you on the server?',
+      answers: [
+        { author: 'jonas', fromSpeaker: true, body: 'Yes, unless you propagate the AbortSignal all the way through. Pass it to the fetch, then forward it to the SDK. Most providers stop billing the moment the connection drops — but you have to actually close it.' },
+      ],
+    },
+    {
+      key: 'q-streaming-edge',
+      session: 'js-streaming', author: 'finn', upvotes: 15, status: 'open',
+      body: 'Does streaming LLM responses work well from edge runtimes, or does the cold start kill the TTFT advantage?',
     },
     {
       key: 'q-rsc-tanstack-query',

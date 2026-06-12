@@ -101,7 +101,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         {children}
         <PwaRegister />
-        <DevTools />
+        {process.env.NODE_ENV !== 'production' && <DevTools />}
         <Scripts />
       </body>
     </html>
