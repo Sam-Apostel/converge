@@ -391,3 +391,30 @@ export const task = pgTable(
   },
   (t) => [index('task_user_idx').on(t.userId)],
 )
+
+/* ------------------------------------------------------------------ */
+/* AI Concierge — bring-your-own-key model settings                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Per-user AI provider configuration for the concierge (silo 7).
+ *
+ * One row per user (`userId` PK). When absent, the concierge falls back to the
+ * local Ollama dev adapter. `apiKeyEncrypted` is AES-256-GCM ciphertext (see
+ * `src/lib/concierge/crypto.ts`) — it is decrypted only server-side and never
+ * sent to the client.
+ */
+export const userAiSettings = pgTable('user_ai_settings', {
+  userId: text('user_id')
+    .primaryKey()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  // ollama | openai | anthropic | openrouter
+  provider: text('provider').notNull().default('ollama'),
+  model: text('model'),
+  // AES-256-GCM ciphertext of the provider API key (never the raw key).
+  apiKeyEncrypted: text('api_key_encrypted'),
+  // Optional base URL override (e.g. a non-default Ollama host).
+  baseUrl: text('base_url'),
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
+})
