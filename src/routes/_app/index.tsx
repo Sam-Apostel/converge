@@ -6,6 +6,7 @@ import {
   Badge,
   Button,
   Card,
+  GlassCard,
   LiveDot,
   Mono,
   Spotlight,
@@ -32,40 +33,47 @@ function Home() {
   return (
     <div className="flex flex-col gap-7">
       {/* ── Command bar ───────────────────────────────────────────── */}
-      <Card surface="white" className="p-7 shadow-card-lg sm:p-9">
+      <div className="flex flex-col items-center gap-4 pb-2 pt-8 sm:pt-12">
         <Mono
           tone="ghost"
-          className="mb-3.5 block text-center !text-[11.5px] !tracking-[0.14em]"
+          className="block text-center !text-[11.5px] !tracking-[0.14em]"
         >
           Good morning, Sam
         </Mono>
-        <h1 className="mx-auto mb-6 max-w-xl text-balance text-center text-[30px] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[34px]">
+        <h1 className="mx-auto max-w-xl text-balance text-center text-[30px] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[38px]">
           What do you want to do right now?
         </h1>
 
-        <div className="mx-auto flex max-w-2xl items-center gap-3.5 rounded-[20px] bg-pillow px-[18px] py-[17px] [box-shadow:inset_2px_3px_7px_rgba(40,50,110,.1),inset_-2px_-2px_6px_rgba(255,255,255,.95)]">
-          <span className="text-[19px] text-[#7b809a]">⌕</span>
-          <span className="flex-1 text-[16px] text-slate">
-            Find people working on AI
-            <span className="animate-caret ml-0.5 inline-block h-[18px] w-0.5 translate-y-[3px] bg-lime align-baseline" />
-          </span>
-          <span className="hidden items-center gap-1 font-mono text-[12px] text-muted sm:flex">
-            <kbd className="rounded-md bg-white px-1.5 py-1 shadow-soft">⌘</kbd>
-            <kbd className="rounded-md bg-white px-2 py-1 shadow-soft">✎</kbd>
-          </span>
+        {/* glass frame → white inner input */}
+        <div className="w-full max-w-2xl rounded-[26px] border border-white/60 bg-white/32 p-2 [backdrop-filter:blur(22px)_saturate(1.7)] [box-shadow:0_1px_3px_rgba(40,50,110,.05),0_16px_40px_rgba(40,50,110,.12)]">
+          <div className="flex items-center gap-3.5 rounded-[18px] bg-white px-[18px] py-[11px] shadow-[0_1px_2px_rgba(40,50,110,.05)]">
+            <span className="text-[18px] text-[#7b809a]">⌕</span>
+            <input
+              placeholder="Find people working on AI"
+              className="flex-1 bg-transparent text-[16px] text-slate outline-none placeholder:text-slate/60"
+            />
+            <span className="hidden items-center gap-1 font-mono text-[12px] text-muted sm:flex">
+              <kbd className="rounded-[7px] bg-pillow px-[7px] py-[3px]">⌘</kbd>
+              <kbd className="rounded-[7px] bg-pillow px-2 py-[3px]">K</kbd>
+            </span>
+            <button className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[13px] bg-ink text-[17px] text-lime">
+              ↑
+            </button>
+          </div>
         </div>
 
-        <div className="mx-auto mt-4 flex max-w-2xl flex-wrap justify-center gap-2">
+        {/* chips in glass pill */}
+        <div className="flex w-fit flex-wrap justify-center gap-2 rounded-[40px] border border-white/60 bg-white/34 px-2 py-2 [backdrop-filter:blur(18px)_saturate(1.5)] [box-shadow:inset_0_1px_0_rgba(255,255,255,.6)]">
           {SUGGESTIONS.map((s) => (
             <button
               key={s}
-              className="rounded-full border border-[rgba(120,130,180,.16)] bg-white px-3.5 py-2 text-[13px] font-medium text-ink-2 shadow-soft transition-transform hover:scale-[0.98]"
+              className="rounded-full border border-[rgba(120,130,180,.18)] bg-white px-[15px] py-2 text-[13.5px] font-medium text-[#2a2e48] shadow-soft transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-px hover:border-[rgba(120,130,180,.4)] hover:[box-shadow:0_4px_12px_rgba(40,50,110,.14)] active:scale-[0.97]"
             >
               {s}
             </button>
           ))}
         </div>
-      </Card>
+      </div>
 
       {/* ── Right now ─────────────────────────────────────────────── */}
       <div>
@@ -118,7 +126,7 @@ function Home() {
 
           {/* right column */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            <Card surface="white" className="flex flex-col p-4">
+            <GlassCard innerClassName="flex flex-col p-[17px_20px]">
               <div className="mb-3 text-[12.5px] text-muted">People to meet</div>
               <AvatarStack
                 size={36}
@@ -128,28 +136,30 @@ function Home() {
                 {peopleToMeet.length} here share your intent ·{' '}
                 <span className="text-slate">co-founders</span>
               </div>
-            </Card>
+            </GlassCard>
 
             {trendingProject && (
-              <Link
-                to="/projects/$slug"
-                params={{ slug: trendingProject.slug }}
-                className="flex flex-col rounded-2xl bg-white p-4 shadow-card transition-transform hover:-translate-y-0.5"
-              >
-                <div className="mb-2.5 text-[12.5px] text-muted">
-                  Trending project
-                </div>
-                <div className="text-[16px] font-semibold tracking-[-0.01em]">
-                  {trendingProject.name}
-                </div>
-                <div className="mt-1 line-clamp-2 flex-1 text-[12.5px] leading-[1.35] text-mist">
-                  {trendingProject.tagline}
-                </div>
-                <div className="mt-2.5 flex items-center gap-1.5 font-mono text-[12px] text-muted">
-                  <span className="text-slate">★</span>{' '}
-                  {formatCount(trendingProject.trendingScore)} watching
-                </div>
-              </Link>
+              <GlassCard>
+                <Link
+                  to="/projects/$slug"
+                  params={{ slug: trendingProject.slug }}
+                  className="flex flex-col rounded-[18px] p-[17px_20px] transition-opacity hover:opacity-80"
+                >
+                  <div className="mb-2 text-[12.5px] text-muted">
+                    Trending project
+                  </div>
+                  <div className="text-[16px] font-semibold tracking-[-0.01em]">
+                    {trendingProject.name}
+                  </div>
+                  <div className="mt-1 line-clamp-2 flex-1 text-[12.5px] leading-[1.35] text-mist">
+                    {trendingProject.tagline}
+                  </div>
+                  <div className="mt-2.5 flex items-center gap-1.5 font-mono text-[12px] text-muted">
+                    <span className="text-slate">★</span>{' '}
+                    {formatCount(trendingProject.trendingScore)} watching
+                  </div>
+                </Link>
+              </GlassCard>
             )}
           </div>
         </div>
