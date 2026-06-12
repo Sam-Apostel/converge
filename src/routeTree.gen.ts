@@ -22,7 +22,9 @@ import { Route as ApiMomentsRouteImport } from './routes/api/moments'
 import { Route as ApiMessagesRouteImport } from './routes/api/messages'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiConnectionsRouteImport } from './routes/api/connections'
+import { Route as ApiConciergeRouteImport } from './routes/api/concierge'
 import { Route as AppVenueRouteImport } from './routes/_app/venue'
+import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppMessagesRouteImport } from './routes/_app/messages'
 import { Route as AppDiscussionsRouteImport } from './routes/_app/discussions'
@@ -102,9 +104,19 @@ const ApiConnectionsRoute = ApiConnectionsRouteImport.update({
   path: '/api/connections',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiConciergeRoute = ApiConciergeRouteImport.update({
+  id: '/api/concierge',
+  path: '/api/concierge',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppVenueRoute = AppVenueRouteImport.update({
   id: '/venue',
   path: '/venue',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProfileRoute = AppProfileRouteImport.update({
@@ -190,7 +202,9 @@ export interface FileRoutesByFullPath {
   '/discussions': typeof AppDiscussionsRouteWithChildren
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
+  '/settings': typeof AppSettingsRoute
   '/venue': typeof AppVenueRoute
+  '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
   '/api/messages': typeof ApiMessagesRoute
@@ -218,7 +232,9 @@ export interface FileRoutesByTo {
   '/discussions': typeof AppDiscussionsRouteWithChildren
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
+  '/settings': typeof AppSettingsRoute
   '/venue': typeof AppVenueRoute
+  '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
   '/api/messages': typeof ApiMessagesRoute
@@ -249,7 +265,9 @@ export interface FileRoutesById {
   '/_app/discussions': typeof AppDiscussionsRouteWithChildren
   '/_app/messages': typeof AppMessagesRoute
   '/_app/profile': typeof AppProfileRoute
+  '/_app/settings': typeof AppSettingsRoute
   '/_app/venue': typeof AppVenueRoute
+  '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
   '/api/messages': typeof ApiMessagesRoute
@@ -281,7 +299,9 @@ export interface FileRouteTypes {
     | '/discussions'
     | '/messages'
     | '/profile'
+    | '/settings'
     | '/venue'
+    | '/api/concierge'
     | '/api/connections'
     | '/api/health'
     | '/api/messages'
@@ -309,7 +329,9 @@ export interface FileRouteTypes {
     | '/discussions'
     | '/messages'
     | '/profile'
+    | '/settings'
     | '/venue'
+    | '/api/concierge'
     | '/api/connections'
     | '/api/health'
     | '/api/messages'
@@ -339,7 +361,9 @@ export interface FileRouteTypes {
     | '/_app/discussions'
     | '/_app/messages'
     | '/_app/profile'
+    | '/_app/settings'
     | '/_app/venue'
+    | '/api/concierge'
     | '/api/connections'
     | '/api/health'
     | '/api/messages'
@@ -366,6 +390,7 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   Char91DotwellKnownChar93OauthAuthorizationServerRoute: typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ApiConciergeRoute: typeof ApiConciergeRoute
   ApiConnectionsRoute: typeof ApiConnectionsRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ApiMessagesRoute: typeof ApiMessagesRoute
@@ -471,11 +496,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiConnectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/concierge': {
+      id: '/api/concierge'
+      path: '/api/concierge'
+      fullPath: '/api/concierge'
+      preLoaderRoute: typeof ApiConciergeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/venue': {
       id: '/_app/venue'
       path: '/venue'
       fullPath: '/venue'
       preLoaderRoute: typeof AppVenueRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/profile': {
@@ -596,6 +635,7 @@ interface AppRouteChildren {
   AppDiscussionsRoute: typeof AppDiscussionsRouteWithChildren
   AppMessagesRoute: typeof AppMessagesRoute
   AppProfileRoute: typeof AppProfileRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppVenueRoute: typeof AppVenueRoute
   AppIndexRoute: typeof AppIndexRoute
   AppPeopleUserIdRoute: typeof AppPeopleUserIdRoute
@@ -611,6 +651,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDiscussionsRoute: AppDiscussionsRouteWithChildren,
   AppMessagesRoute: AppMessagesRoute,
   AppProfileRoute: AppProfileRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppVenueRoute: AppVenueRoute,
   AppIndexRoute: AppIndexRoute,
   AppPeopleUserIdRoute: AppPeopleUserIdRoute,
@@ -631,6 +672,7 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OauthAuthorizationServerRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ApiConciergeRoute: ApiConciergeRoute,
   ApiConnectionsRoute: ApiConnectionsRoute,
   ApiHealthRoute: ApiHealthRoute,
   ApiMessagesRoute: ApiMessagesRoute,
