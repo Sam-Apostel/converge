@@ -44,6 +44,34 @@ export function Spotlight({
   )
 }
 
+/**
+ * Glass frame (translucent blurred border) wrapping an opaque white nested
+ * container — the design's primary card pattern for content that sits against
+ * the ambient periwinkle background.
+ */
+export function GlassCard({
+  className = '',
+  innerClassName = '',
+  children,
+  style,
+}: {
+  className?: string
+  innerClassName?: string
+  children: ReactNode
+  style?: CSSProperties
+}) {
+  return (
+    <div
+      className={`rounded-[26px] border border-white/60 bg-white/32 p-2 [backdrop-filter:blur(22px)_saturate(1.7)] [box-shadow:0_1px_3px_rgba(40,50,110,.05),0_12px_30px_rgba(40,50,110,.1)] ${className}`}
+      style={style}
+    >
+      <div className={`rounded-[18px] bg-white ${innerClassName}`}>
+        {children}
+      </div>
+    </div>
+  )
+}
+
 /** The neumorphic surface that nearly every screen is built from. */
 export function Card({
   surface = 'white',

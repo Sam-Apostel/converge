@@ -9,46 +9,47 @@ export const Route = createFileRoute('/_app')({
 
 const NAV = [
   { to: '/', label: 'Home', exact: true },
-  { to: '/sessions', label: 'Sessions', exact: false },
-  { to: '/people', label: 'People', exact: false },
-  { to: '/projects', label: 'Projects', exact: false },
+  { to: '/sessions', label: 'Session', exact: false },
   { to: '/discussions', label: 'Discussions', exact: false },
+  { to: '/projects', label: 'Projects', exact: false },
+  { to: '/people', label: 'People', exact: false },
+  { to: '/venue', label: 'Venue', exact: false },
+  { to: '/concierge', label: 'Concierge', exact: false },
 ] as const
 
 function AppLayout() {
   return (
-    <div className="min-h-screen pb-28">
-      <header className="sticky top-0 z-50 border-b border-[rgba(120,130,180,.14)] bg-[rgba(238,240,250,.72)] backdrop-blur-xl [backdrop-filter:blur(18px)_saturate(1.5)]">
-        <div className="mx-auto flex max-w-[1320px] items-center gap-6 px-6 py-3.5 md:px-[30px]">
-          <Link to="/" className="flex items-center gap-2.5">
-            <ConvergeLogo size={28} rounded="8px" />
+    <div className="min-h-screen">
+      <header className="sticky top-4 z-50 px-5">
+        <div className="mx-auto flex max-w-[1320px] items-center gap-4 rounded-[22px] border border-white/60 bg-white/34 py-[11px] pl-[15px] pr-3 [backdrop-filter:blur(28px)_saturate(1.7)] [box-shadow:0_14px_44px_rgba(40,50,110,.16),inset_0_1px_0_rgba(255,255,255,.75)]">
+          <Link to="/" className="flex items-center gap-2.5 shrink-0">
+            <ConvergeLogo size={32} rounded="10px" />
             <span className="text-[19px] font-semibold tracking-[-0.03em]">
               converge
             </span>
           </Link>
 
-          <span className="hidden h-5 w-px bg-[rgba(120,130,180,.22)] sm:block" />
-          <span className="hidden font-mono text-[12px] tracking-[0.02em] text-mist lg:block">
-            React Summit 2026 · Amsterdam · Day 1
+          <span className="hidden shrink-0 rounded-full border border-white/50 bg-white/50 px-[11px] py-[5px] font-mono text-[11.5px] tracking-[0.02em] text-mist lg:block">
+            Day 1 · Amsterdam
           </span>
 
-          <nav className="ml-auto flex items-center gap-1.5">
+          <nav className="ml-auto flex items-center gap-0.5">
             {NAV.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
                 activeOptions={{ exact: item.exact }}
-                className="rounded-full px-[15px] py-2 text-[13.5px] font-medium text-slate transition-colors hover:text-ink"
+                className="rounded-full px-[14px] py-[9px] text-[13.5px] font-medium text-slate transition-colors hover:text-ink"
                 activeProps={{
                   className:
-                    'rounded-full px-[15px] py-2 text-[13.5px] font-medium !text-ink bg-white shadow-soft [box-shadow:0_1px_3px_rgba(40,50,110,.08),inset_0_1px_0_rgba(255,255,255,.7)]',
+                    'rounded-full px-[14px] py-[9px] text-[13.5px] font-semibold text-ink bg-white [box-shadow:0_2px_8px_rgba(40,50,110,.12)]',
                 }}
               >
                 {item.label}
               </Link>
             ))}
-            <Link to="/profile" className="ml-1.5">
-              <Avatar name="Sam Conway" size={34} />
+            <Link to="/profile" className="ml-1 shrink-0">
+              <Avatar name="Sam Conway" size={36} />
             </Link>
           </nav>
         </div>
