@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "WorktreeCreate": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/link-env.sh",
+            "statusMessage": "Linking .env.local into worktree…"
+          }
+        ]
+      }
+    ]
+  }
+}
