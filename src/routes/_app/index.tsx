@@ -123,8 +123,9 @@ function Home() {
               value={input}
               onChange={(e) => setInput(e.target.value ?? '')}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && (e.shiftKey)) {
+                if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
+                  submit();
                 }
               }}
               placeholder={empty ? 'Find people working on AI' : 'Ask anything…'}
@@ -310,7 +311,7 @@ function Home() {
           <div className="mb-3 flex items-center gap-2 mt-8">
             <Mono className="!text-[13px] !tracking-[0.1em]">People to meet</Mono>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4">
             {peopleToMeet.map((person) => (
               <Link
                 to="/people/$userId"
@@ -326,7 +327,7 @@ function Home() {
                     <div className="block truncate text-[14px] font-semibold tracking-[-0.01em] transition-colors hover:text-ink-2">
                       {person.name}
                     </div>
-                    <div className="truncate text-[12px] text-muted">
+                    <div className="truncate text-[12px] text-muted text-wrap">
                       {person.reason ?? person.headline ?? 'At the conference'}
                     </div>
                   </div>
