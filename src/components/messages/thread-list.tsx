@@ -60,7 +60,10 @@ export function ThreadList({
                     {thread.lastMessage.body}
                   </span>
                   {thread.unread > 0 && (
-                    <Badge tone="lime" className="ml-auto shrink-0 tabular-nums">
+                    <Badge
+                      tone="lime"
+                      className="ml-auto shrink-0 tabular-nums"
+                    >
                       {thread.unread}
                     </Badge>
                   )}

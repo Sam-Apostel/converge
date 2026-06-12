@@ -140,60 +140,68 @@ async function loadThreads(
   if (rows.length === 0) return []
 
   const ids = rows.map((r) => r.id)
-  const questionIds = rows.map((r) => r.questionId).filter((v): v is string => !!v)
-  const sessionIds = rows.map((r) => r.sessionId).filter((v): v is string => !!v)
+  const questionIds = rows
+    .map((r) => r.questionId)
+    .filter((v): v is string => !!v)
+  const sessionIds = rows
+    .map((r) => r.sessionId)
+    .filter((v): v is string => !!v)
 
-  const [postRows, questionRows, sessionRows, speakerRows, voted] = await Promise.all([
-    db
-      .select({
-        id: discussionPost.id,
-        discussionId: discussionPost.discussionId,
-        parentId: discussionPost.parentId,
-        body: discussionPost.body,
-        authorId: user.id,
-        authorName: user.name,
-        authorImage: user.image,
-        authorCompany: profile.company,
-      })
-      .from(discussionPost)
-      .innerJoin(user, eq(user.id, discussionPost.authorId))
-      .leftJoin(profile, eq(profile.userId, user.id))
-      .where(inArray(discussionPost.discussionId, ids))
-      .orderBy(asc(discussionPost.createdAt)),
-    questionIds.length
-      ? db
-          .select({
-            id: question.id,
-            body: question.body,
-            upvotes: question.upvotes,
-            status: question.status,
-            authorId: user.id,
-            authorName: user.name,
-            authorImage: user.image,
-            authorCompany: profile.company,
-          })
-          .from(question)
-          .innerJoin(user, eq(user.id, question.authorId))
-          .leftJoin(profile, eq(profile.userId, user.id))
-          .where(inArray(question.id, questionIds))
-      : Promise.resolve([]),
-    sessionIds.length
-      ? db
-          .select({ id: conferenceSession.id, title: conferenceSession.title })
-          .from(conferenceSession)
-          .where(inArray(conferenceSession.id, sessionIds))
-      : Promise.resolve([]),
-    sessionIds.length
-      ? db
-          .select({
-            sessionId: sessionSpeaker.sessionId,
-            userId: sessionSpeaker.userId,
-          })
-          .from(sessionSpeaker)
-          .where(inArray(sessionSpeaker.sessionId, sessionIds))
-      : Promise.resolve([]),
-    votedQuestionIds(viewer, questionIds),
-  ])
+  const [postRows, questionRows, sessionRows, speakerRows, voted] =
+    await Promise.all([
+      db
+        .select({
+          id: discussionPost.id,
+          discussionId: discussionPost.discussionId,
+          parentId: discussionPost.parentId,
+          body: discussionPost.body,
+          authorId: user.id,
+          authorName: user.name,
+          authorImage: user.image,
+          authorCompany: profile.company,
+        })
+        .from(discussionPost)
+        .innerJoin(user, eq(user.id, discussionPost.authorId))
+        .leftJoin(profile, eq(profile.userId, user.id))
+        .where(inArray(discussionPost.discussionId, ids))
+        .orderBy(asc(discussionPost.createdAt)),
+      questionIds.length
+        ? db
+            .select({
+              id: question.id,
+              body: question.body,
+              upvotes: question.upvotes,
+              status: question.status,
+              authorId: user.id,
+              authorName: user.name,
+              authorImage: user.image,
+              authorCompany: profile.company,
+            })
+            .from(question)
+            .innerJoin(user, eq(user.id, question.authorId))
+            .leftJoin(profile, eq(profile.userId, user.id))
+            .where(inArray(question.id, questionIds))
+        : Promise.resolve([]),
+      sessionIds.length
+        ? db
+            .select({
+              id: conferenceSession.id,
+              title: conferenceSession.title,
+            })
+            .from(conferenceSession)
+            .where(inArray(conferenceSession.id, sessionIds))
+        : Promise.resolve([]),
+      sessionIds.length
+        ? db
+            .select({
+              sessionId: sessionSpeaker.sessionId,
+              userId: sessionSpeaker.userId,
+            })
+            .from(sessionSpeaker)
+            .where(inArray(sessionSpeaker.sessionId, sessionIds))
+        : Promise.resolve([]),
+      votedQuestionIds(viewer, questionIds),
+    ])
 
   const sessionTitle = new Map(sessionRows.map((s) => [s.id, s.title]))
   const questionById = new Map(questionRows.map((q) => [q.id, q]))
@@ -225,7 +233,8 @@ async function loadThreads(
     const mine = postRows.filter((p) => p.discussionId === row.id)
     const replyCounts = new Map<string, number>()
     for (const p of mine) {
-      if (p.parentId) replyCounts.set(p.parentId, (replyCounts.get(p.parentId) ?? 0) + 1)
+      if (p.parentId)
+        replyCounts.set(p.parentId, (replyCounts.get(p.parentId) ?? 0) + 1)
     }
 
     const posts: Array<ThreadPost> = mine.map((p, i) => ({
@@ -238,14 +247,19 @@ async function loadThreads(
     }))
 
     const q = row.questionId ? questionById.get(row.questionId) : undefined
-    const question: ThreadQuestion | null = q
+    const threadQuestion: ThreadQuestion | null = q
       ? {
           id: q.id,
           body: q.body,
           upvotes: q.upvotes,
           hasVoted: voted.has(q.id),
           status: q.status,
-          author: author(q.authorId, q.authorName, q.authorImage, q.authorCompany),
+          author: author(
+            q.authorId,
+            q.authorName,
+            q.authorImage,
+            q.authorCompany,
+          ),
         }
       : null
 
@@ -258,7 +272,7 @@ async function loadThreads(
         participants.push(a)
       }
     }
-    add(question?.author ?? null)
+    add(threadQuestion?.author ?? null)
     for (const p of posts) add(p.author)
 
     return {
@@ -266,8 +280,10 @@ async function loadThreads(
       title: row.title,
       topic: row.topic,
       sessionId: row.sessionId,
-      sessionTitle: row.sessionId ? (sessionTitle.get(row.sessionId) ?? null) : null,
-      question,
+      sessionTitle: row.sessionId
+        ? (sessionTitle.get(row.sessionId) ?? null)
+        : null,
+      question: threadQuestion,
       posts,
       participants,
     }
@@ -332,8 +348,8 @@ export const listDiscussions = createServerFn({ method: 'GET' }).handler(
           hasVoted: trendingVoted.has(topQuestion.id),
           sessionTitle: topQuestion.sessionTitle,
           followUps:
-            threads.find((t) => t.question?.id === topQuestion.id)?.posts.length ??
-            0,
+            threads.find((t) => t.question?.id === topQuestion.id)?.posts
+              .length ?? 0,
         }
       : null
 

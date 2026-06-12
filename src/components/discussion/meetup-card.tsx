@@ -8,7 +8,9 @@ import type { DiscussionThread } from '#/lib/queries/discussions'
 function humanizeTopic(topic: string): string {
   return topic
     .split('-')
-    .map((w) => (w.length <= 2 ? w.toUpperCase() : w[0].toUpperCase() + w.slice(1)))
+    .map((w) =>
+      w.length <= 2 ? w.toUpperCase() : w[0].toUpperCase() + w.slice(1),
+    )
     .join(' ')
 }
 
@@ -28,7 +30,10 @@ export function MeetupCard({ thread }: { thread: DiscussionThread }) {
   // unless you're already in the thread (then Join just confirms your spot).
   const me = session?.user
   const alreadyIn = me ? thread.participants.some((p) => p.id === me.id) : false
-  const attendees = thread.participants.map((p) => ({ name: p.name, src: p.image }))
+  const attendees = thread.participants.map((p) => ({
+    name: p.name,
+    src: p.image,
+  }))
   if (joined && me && !alreadyIn) {
     attendees.push({ name: me.name, src: me.image ?? null })
   }
@@ -43,7 +48,9 @@ export function MeetupCard({ thread }: { thread: DiscussionThread }) {
       </div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div className="text-[17px] font-semibold tracking-[-0.01em]">{title}</div>
+          <div className="text-[17px] font-semibold tracking-[-0.01em]">
+            {title}
+          </div>
           <div className="mt-1 font-mono text-[13px] text-[#b9bcd0]">
             Time and place TBC
           </div>

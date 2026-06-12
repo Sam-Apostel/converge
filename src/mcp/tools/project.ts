@@ -3,12 +3,7 @@ import { desc, eq, ilike, or } from 'drizzle-orm'
 import { z } from 'zod'
 
 import { db } from '#/db'
-import {
-  discussion,
-  project,
-  projectMember,
-  user,
-} from '#/db/schema'
+import { discussion, project, projectMember, user } from '#/db/schema'
 import { projectsGridResource } from '#/mcp/apps'
 
 import { text } from './util'
@@ -41,7 +36,8 @@ export function register(server: McpServer, _userId: string) {
     'get_trending_projects',
     {
       title: 'Get trending projects',
-      description: 'Top projects ranked by trending score — what people are most excited about.',
+      description:
+        'Top projects ranked by trending score — what people are most excited about.',
       inputSchema: {
         limit: z
           .number()
@@ -116,7 +112,9 @@ export function register(server: McpServer, _userId: string) {
       title: 'Search projects',
       description:
         'Find projects by name, tagline, description or category. Returns JSON.',
-      inputSchema: { query: z.string().default('').describe('Free-text search') },
+      inputSchema: {
+        query: z.string().default('').describe('Free-text search'),
+      },
     },
     async ({ query }) => {
       const like = `%${query}%`

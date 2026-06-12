@@ -109,18 +109,12 @@ const getScheduleDef = toolDefinition({
       .string()
       .optional()
       .meta({ description: 'Filter to a single track' }),
-    startsAfter: z
-      .string()
-      .optional()
-      .meta({
-        description: 'Only sessions starting at/after this ISO timestamp',
-      }),
-    startsBefore: z
-      .string()
-      .optional()
-      .meta({
-        description: 'Only sessions starting at/before this ISO timestamp',
-      }),
+    startsAfter: z.string().optional().meta({
+      description: 'Only sessions starting at/after this ISO timestamp',
+    }),
+    startsBefore: z.string().optional().meta({
+      description: 'Only sessions starting at/before this ISO timestamp',
+    }),
   }),
 })
 
@@ -129,13 +123,9 @@ const listProjectsDef = toolDefinition({
   description:
     'List projects people are building, newest first. Optionally filter by category.',
   inputSchema: z.object({
-    category: z
-      .string()
-      .optional()
-      .meta({
-        description:
-          'startup | side-project | research | open-source | product',
-      }),
+    category: z.string().optional().meta({
+      description: 'startup | side-project | research | open-source | product',
+    }),
   }),
 })
 

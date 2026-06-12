@@ -37,10 +37,7 @@ function ProfilePage() {
         title="Profile"
         subtitle="Your identity, intent, current focus, conversation preferences and projects."
         actions={
-          <Button
-            fillMode="outline"
-            onClick={() => authClient.signOut()}
-          >
+          <Button fillMode="outline" onClick={() => authClient.signOut()}>
             Sign out
           </Button>
         }
@@ -55,7 +52,6 @@ function ProfilePage() {
           <p className="text-sm text-muted">{user.email}</p>
         </div>
       </div>
-
     </div>
   )
 }

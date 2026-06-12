@@ -11,10 +11,30 @@ import { Card } from '#/components/ui'
 
 /** The five stages a question travels through, with the connectors between them. */
 const STAGES = [
-  { Icon: HelpCircle, label: 'Question', chip: 'bg-ink text-white', strong: true },
-  { Icon: MessageSquare, label: 'Answer', chip: 'bg-[#3a3e54] text-white', strong: true },
-  { Icon: CornerDownRight, label: 'Follow-up', chip: 'bg-inner text-[#52566c]', strong: false },
-  { Icon: Users, label: 'Community', chip: 'bg-inner text-[#52566c]', strong: false },
+  {
+    Icon: HelpCircle,
+    label: 'Question',
+    chip: 'bg-ink text-white',
+    strong: true,
+  },
+  {
+    Icon: MessageSquare,
+    label: 'Answer',
+    chip: 'bg-[#3a3e54] text-white',
+    strong: true,
+  },
+  {
+    Icon: CornerDownRight,
+    label: 'Follow-up',
+    chip: 'bg-inner text-[#52566c]',
+    strong: false,
+  },
+  {
+    Icon: Users,
+    label: 'Community',
+    chip: 'bg-inner text-[#52566c]',
+    strong: false,
+  },
   { Icon: Coffee, label: 'Meetup', chip: 'bg-lime text-ink', strong: true },
 ] as const
 
@@ -32,7 +52,10 @@ const CONNECTORS = [
  */
 export function LifecycleRail() {
   return (
-    <Card surface="white" className="mb-6 flex flex-wrap items-center px-[22px] py-4">
+    <Card
+      surface="white"
+      className="mb-6 flex flex-wrap items-center px-[22px] py-4"
+    >
       {STAGES.map((stage, i) => (
         <Fragment key={stage.label}>
           {i > 0 && (
@@ -49,7 +72,9 @@ export function LifecycleRail() {
             </span>
             <span
               className={`text-[13.5px] ${
-                stage.strong ? 'font-semibold text-ink' : 'font-medium text-[#52566c]'
+                stage.strong
+                  ? 'font-semibold text-ink'
+                  : 'font-medium text-[#52566c]'
               }`}
             >
               {stage.label}

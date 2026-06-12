@@ -90,7 +90,7 @@ function SessionScreen() {
         icon: <Star size={15} className="fill-current" />,
       })
     },
-    [collection, sessionId],
+    [collection, sessionId, authSession?.user.id, notify],
   )
 
   // Live stream: record the exact stream timecode + a resumable deep link.
@@ -210,7 +210,9 @@ function SessionScreen() {
             sessionId={sessionId}
             questions={questions}
             discussion={discussion}
-            me={me ? { id: me.id, name: me.name, image: me.image ?? null } : null}
+            me={
+              me ? { id: me.id, name: me.name, image: me.image ?? null } : null
+            }
             viewerIsSpeaker={viewerIsSpeaker}
           />
         </div>
@@ -245,7 +247,6 @@ function SessionScreen() {
           </div>
         )}
       </div>
-
     </div>
   )
 }

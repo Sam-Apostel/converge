@@ -65,10 +65,7 @@ export function LiveProgress({
         </Mono>
         <div className="relative h-2.5 flex-1">
           <div className="absolute inset-0 flex gap-[3px]">
-            <ProgressBar
-              value={clamped * 100}
-              className="converge-live-bar"
-            />
+            <ProgressBar value={clamped * 100} className="converge-live-bar" />
             <div className="flex-[2] rounded-full [background:repeating-linear-gradient(90deg,#e7eaf4_0_5px,#dde1ee_5px_10px)]" />
           </div>
           <div

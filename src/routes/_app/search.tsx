@@ -38,7 +38,9 @@ function SearchPage() {
     setLoading(true)
     const handle = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}`)
+        const res = await fetch(
+          `/api/search?q=${encodeURIComponent(query.trim())}`,
+        )
         const data = (await res.json()) as SearchResult[]
         if (ignore) return
         lastFetched.current = query
@@ -88,7 +90,10 @@ function SearchSkeleton() {
           key={i}
           className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-soft"
         >
-          <Skeleton shape="circle" style={{ width: 40, height: 40, flexShrink: 0 }} />
+          <Skeleton
+            shape="circle"
+            style={{ width: 40, height: 40, flexShrink: 0 }}
+          />
           <div className="flex flex-1 flex-col gap-2">
             <Skeleton shape="text" style={{ width: '60%', height: 14 }} />
             <Skeleton shape="text" style={{ width: '38%', height: 12 }} />

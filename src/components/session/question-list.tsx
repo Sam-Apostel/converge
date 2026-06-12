@@ -383,9 +383,7 @@ function AnswerRow({ answer }: { answer: QuestionAnswer }) {
   return (
     <div
       className={`rounded-[11px] px-3 py-2 ${
-        answer.fromSpeaker
-          ? 'border border-lime/40 bg-lime/15'
-          : 'bg-inner'
+        answer.fromSpeaker ? 'border border-lime/40 bg-lime/15' : 'bg-inner'
       }`}
     >
       <div className="mb-0.5 flex items-center gap-2">

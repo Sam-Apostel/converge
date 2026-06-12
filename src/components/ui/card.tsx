@@ -59,7 +59,10 @@ export function Spotlight({
   return (
     <div
       className={`relative overflow-hidden rounded-[22px] text-white ${className}`}
-      style={{ background: 'linear-gradient(135deg,#13141d,#1c1e2e)', ...style }}
+      style={{
+        background: 'linear-gradient(135deg,#13141d,#1c1e2e)',
+        ...style,
+      }}
     >
       {beam && <BorderBeam speed={4.8} />}
       <div className="relative">{children}</div>
@@ -108,7 +111,10 @@ export function Card({
   style?: CSSProperties
 }) {
   return (
-    <div className={`rounded-2xl ${SURFACE[surface]} ${className}`} style={style}>
+    <div
+      className={`rounded-2xl ${SURFACE[surface]} ${className}`}
+      style={style}
+    >
       {children}
     </div>
   )

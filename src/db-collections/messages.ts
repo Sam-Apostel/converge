@@ -33,7 +33,9 @@ function makeCollection(me: string) {
       queryKey: ['messages', me],
       queryClient,
       queryFn: () =>
-        getJson<Array<MessageRow>>(`/api/messages?me=${encodeURIComponent(me)}`),
+        getJson<Array<MessageRow>>(
+          `/api/messages?me=${encodeURIComponent(me)}`,
+        ),
       getKey: (m: MessageRow) => m.id,
       onInsert: async ({ transaction }) => {
         const draft = transaction.mutations[0].modified as MessageRow

@@ -103,43 +103,44 @@ async function suggestPeopleToMeet(limit = 5): Promise<Array<SuggestedPerson>> {
 /** Home dashboard: counts, the next session, people to meet, trending project. */
 export const getHomeSummary = createServerFn({ method: 'GET' }).handler(
   async () => {
-    const [people, projects, sessions, next, peopleToMeet, trending] = await Promise.all([
-      db.$count(profile),
-      db.$count(project),
-      db.$count(conferenceSession),
-      db
-        .select({
-          id: conferenceSession.id,
-          title: conferenceSession.title,
-          startsAt: conferenceSession.startsAt,
-          track: conferenceSession.track,
-          roomName: room.name,
-          speakerId: sessionSpeaker.userId,
-          speakerName: user.name,
-        })
-        .from(conferenceSession)
-        .leftJoin(room, eq(room.id, conferenceSession.roomId))
-        .leftJoin(
-          sessionSpeaker,
-          eq(sessionSpeaker.sessionId, conferenceSession.id),
-        )
-        .leftJoin(user, eq(user.id, sessionSpeaker.userId))
-        .orderBy(asc(conferenceSession.startsAt))
-        .limit(1),
-      suggestPeopleToMeet(),
-      db
-        .select({
-          name: project.name,
-          slug: project.slug,
-          tagline: project.tagline,
-          trendingScore: project.trendingScore,
-          ownerName: user.name,
-        })
-        .from(project)
-        .leftJoin(user, eq(user.id, project.ownerId))
-        .orderBy(desc(project.trendingScore))
-        .limit(1),
-    ])
+    const [people, projects, sessions, next, peopleToMeet, trending] =
+      await Promise.all([
+        db.$count(profile),
+        db.$count(project),
+        db.$count(conferenceSession),
+        db
+          .select({
+            id: conferenceSession.id,
+            title: conferenceSession.title,
+            startsAt: conferenceSession.startsAt,
+            track: conferenceSession.track,
+            roomName: room.name,
+            speakerId: sessionSpeaker.userId,
+            speakerName: user.name,
+          })
+          .from(conferenceSession)
+          .leftJoin(room, eq(room.id, conferenceSession.roomId))
+          .leftJoin(
+            sessionSpeaker,
+            eq(sessionSpeaker.sessionId, conferenceSession.id),
+          )
+          .leftJoin(user, eq(user.id, sessionSpeaker.userId))
+          .orderBy(asc(conferenceSession.startsAt))
+          .limit(1),
+        suggestPeopleToMeet(),
+        db
+          .select({
+            name: project.name,
+            slug: project.slug,
+            tagline: project.tagline,
+            trendingScore: project.trendingScore,
+            ownerName: user.name,
+          })
+          .from(project)
+          .leftJoin(user, eq(user.id, project.ownerId))
+          .orderBy(desc(project.trendingScore))
+          .limit(1),
+      ])
 
     return {
       counts: { people, projects, sessions },
@@ -167,9 +168,7 @@ export const listPeople = createServerFn({ method: 'GET' }).handler(
   },
 )
 
-export type ProjectWithOwner = Awaited<
-  ReturnType<typeof listProjects>
->[number]
+export type ProjectWithOwner = Awaited<ReturnType<typeof listProjects>>[number]
 
 export const listProjects = createServerFn({ method: 'GET' }).handler(
   async () =>
@@ -193,23 +192,27 @@ export const listProjects = createServerFn({ method: 'GET' }).handler(
       .limit(100),
 )
 
-export const listSessions = createServerFn({ method: 'GET' }).handler(async () =>
-  db
-    .select({
-      id: conferenceSession.id,
-      title: conferenceSession.title,
-      abstract: conferenceSession.abstract,
-      track: conferenceSession.track,
-      startsAt: conferenceSession.startsAt,
-      endsAt: conferenceSession.endsAt,
-      roomName: room.name,
-      speakerId: sessionSpeaker.userId,
-      speakerName: user.name,
-    })
-    .from(conferenceSession)
-    .leftJoin(room, eq(room.id, conferenceSession.roomId))
-    .leftJoin(sessionSpeaker, eq(sessionSpeaker.sessionId, conferenceSession.id))
-    .leftJoin(user, eq(user.id, sessionSpeaker.userId))
-    .orderBy(asc(conferenceSession.startsAt))
-    .limit(200),
+export const listSessions = createServerFn({ method: 'GET' }).handler(
+  async () =>
+    db
+      .select({
+        id: conferenceSession.id,
+        title: conferenceSession.title,
+        abstract: conferenceSession.abstract,
+        track: conferenceSession.track,
+        startsAt: conferenceSession.startsAt,
+        endsAt: conferenceSession.endsAt,
+        roomName: room.name,
+        speakerId: sessionSpeaker.userId,
+        speakerName: user.name,
+      })
+      .from(conferenceSession)
+      .leftJoin(room, eq(room.id, conferenceSession.roomId))
+      .leftJoin(
+        sessionSpeaker,
+        eq(sessionSpeaker.sessionId, conferenceSession.id),
+      )
+      .leftJoin(user, eq(user.id, sessionSpeaker.userId))
+      .orderBy(asc(conferenceSession.startsAt))
+      .limit(200),
 )

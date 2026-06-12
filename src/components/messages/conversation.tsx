@@ -78,7 +78,10 @@ export function Conversation({
       </div>
 
       {/* messages */}
-      <div ref={scrollRef} className="flex-1 space-y-2.5 overflow-y-auto px-5 py-4">
+      <div
+        ref={scrollRef}
+        className="flex-1 space-y-2.5 overflow-y-auto px-5 py-4"
+      >
         {messages.length === 0 ? (
           <div className="grid h-full place-items-center text-center text-[13.5px] text-mist">
             No messages yet — say hello.

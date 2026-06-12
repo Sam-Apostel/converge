@@ -39,8 +39,8 @@ function DiscussionsIndex() {
       </h1>
       <p className="mb-6 mt-1 max-w-2xl text-[14.5px] text-mist">
         Traditional Q&amp;A answers a handful and drops the rest. Converge turns
-        each question into a thread with a life of its own — and the best ones end
-        as a real meetup.
+        each question into a thread with a life of its own — and the best ones
+        end as a real meetup.
       </p>
 
       <LifecycleRail />

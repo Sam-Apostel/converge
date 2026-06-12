@@ -102,8 +102,8 @@ function ProjectDetail() {
 
       {relatedTalk && (
         <div className="mb-6 flex items-center gap-2 text-[13px] text-slate">
-          <CornerDownRight size={14} className="text-slate" /> Related session · “
-          {relatedTalk.title}” · {formatTime(relatedTalk.startsAt)}
+          <CornerDownRight size={14} className="text-slate" /> Related session ·
+          “{relatedTalk.title}” · {formatTime(relatedTalk.startsAt)}
         </div>
       )}
 

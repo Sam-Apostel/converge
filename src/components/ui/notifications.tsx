@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import type { ReactNode } from 'react'
 import {
   Notification,
@@ -16,7 +22,11 @@ const NotifyContext = createContext<NotifyFn>(() => {})
 
 export const useNotify = () => useContext(NotifyContext)
 
-export function NotificationProvider({ children }: { children: React.ReactNode }) {
+export function NotificationProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const [items, setItems] = useState<Item[]>([])
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])

@@ -123,11 +123,13 @@ function Home() {
               value={input}
               onChange={(e) => setInput(e.target.value ?? '')}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && (e.shiftKey)) {
+                if (e.key === 'Enter' && e.shiftKey) {
                   e.preventDefault()
                 }
               }}
-              placeholder={empty ? 'Find people working on AI' : 'Ask anything…'}
+              placeholder={
+                empty ? 'Find people working on AI' : 'Ask anything…'
+              }
               className="*:h-unset  flex-1 *:text-[16px] *:text-slate *:outline-none *:placeholder:text-slate/60"
               autoSize={true}
               rows={1}
@@ -146,8 +148,12 @@ function Home() {
               <>
                 {input.trim() && (
                   <span className="hidden items-center gap-1 font-mono text-[12px] text-muted sm:flex">
-                    <kbd className="rounded-[7px] bg-pillow px-2 py-[3px]">↵</kbd>
-                    <kbd className="rounded-[7px] bg-pillow px-[7px] py-[3px]">⌘</kbd>
+                    <kbd className="rounded-[7px] bg-pillow px-2 py-[3px]">
+                      ↵
+                    </kbd>
+                    <kbd className="rounded-[7px] bg-pillow px-[7px] py-[3px]">
+                      ⌘
+                    </kbd>
                   </span>
                 )}
                 <button
@@ -167,41 +173,43 @@ function Home() {
         {/* suggestion chips — only in empty state when concierge is ready */}
         {empty && conciergeStatus.ready && (
           <>
-          <div className="flex w-fit flex-wrap justify-center gap-2">
-            {SUGGESTIONS.slice(0, 3).map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => sendMessage(s)}
-                className="rounded-full border border-[rgba(120,130,180,.18)] bg-white px-[15px] py-2 text-[13.5px] font-medium text-[#2a2e48] shadow-soft transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-px hover:border-[rgba(120,130,180,.4)] hover:[box-shadow:0_4px_12px_rgba(40,50,110,.14)] active:scale-[0.97]"
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-          <div className="flex w-fit flex-wrap justify-center gap-2">
-        {SUGGESTIONS.slice(3).map((s) => (
-          <button
-          key={s}
-        type="button"
-        onClick={() => sendMessage(s)}
-        className="rounded-full border border-[rgba(120,130,180,.18)] bg-white px-[15px] py-2 text-[13.5px] font-medium text-[#2a2e48] shadow-soft transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-px hover:border-[rgba(120,130,180,.4)] hover:[box-shadow:0_4px_12px_rgba(40,50,110,.14)] active:scale-[0.97]"
-      >
-        {s}
-      </button>
-      ))}
-    </div>
-    </>
+            <div className="flex w-fit flex-wrap justify-center gap-2">
+              {SUGGESTIONS.slice(0, 3).map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => sendMessage(s)}
+                  className="rounded-full border border-[rgba(120,130,180,.18)] bg-white px-[15px] py-2 text-[13.5px] font-medium text-[#2a2e48] shadow-soft transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-px hover:border-[rgba(120,130,180,.4)] hover:[box-shadow:0_4px_12px_rgba(40,50,110,.14)] active:scale-[0.97]"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+            <div className="flex w-fit flex-wrap justify-center gap-2">
+              {SUGGESTIONS.slice(3).map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => sendMessage(s)}
+                  className="rounded-full border border-[rgba(120,130,180,.18)] bg-white px-[15px] py-2 text-[13.5px] font-medium text-[#2a2e48] shadow-soft transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-px hover:border-[rgba(120,130,180,.4)] hover:[box-shadow:0_4px_12px_rgba(40,50,110,.14)] active:scale-[0.97]"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </>
         )}
 
         {/* deep-link Converge's MCP server into Claude */}
         {empty && (
           <div className="mt-6 flex flex-col items-center gap-4">
             <Mono tone="faint" className="!text-[11px] !tracking-[0.06em]">
-              Or use your own mcp enabled agent by adding <pre className="bg-gray-900 text-white inline px-1">{window.location.origin}/mcp</pre>
+              Or use your own mcp enabled agent by adding{' '}
+              <pre className="bg-gray-900 text-white inline px-1">
+                {window.location.origin}/mcp
+              </pre>
             </Mono>
             <AddToClaudeButton />
-
           </div>
         )}
 
@@ -223,7 +231,13 @@ function Home() {
         <div className="grid gap-6">
           {/* next session */}
           {nextSession ? (
-            <BorderBeam size="md" colorVariant="sunset" strength={1} className="flex flex-col p-6 rounded-[22px] text-white" style={{ background: 'linear-gradient(135deg,#13141d,#1c1e2e)' }}>
+            <BorderBeam
+              size="md"
+              colorVariant="sunset"
+              strength={1}
+              className="flex flex-col p-6 rounded-[22px] text-white"
+              style={{ background: 'linear-gradient(135deg,#13141d,#1c1e2e)' }}
+            >
               <div className="mb-3.5 flex items-center justify-between">
                 <Mono tone="lime" className="!tracking-[0.08em] !text-[11.5px]">
                   Next · {formatClock(nextSession.startsAt)}
@@ -250,7 +264,12 @@ function Home() {
                 </div>
               )}
               <div className="mt-auto flex gap-2.5">
-                <BorderBeam size="pulse-outside" colorVariant="sunset" strength={1.5} className="rounded-[13px]">
+                <BorderBeam
+                  size="pulse-outside"
+                  colorVariant="sunset"
+                  strength={1.5}
+                  className="rounded-[13px]"
+                >
                   <Button variant="lime" className="flex-1">
                     Save my seat
                   </Button>
@@ -258,7 +277,10 @@ function Home() {
               </div>
             </BorderBeam>
           ) : (
-            <Card surface="white" className="grid place-items-center p-8 text-mist">
+            <Card
+              surface="white"
+              className="grid place-items-center p-8 text-mist"
+            >
               No sessions scheduled yet.
             </Card>
           )}
@@ -266,7 +288,9 @@ function Home() {
           {/* right column */}
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
             <GlassCard innerClassName="flex flex-col p-[17px_20px]">
-              <div className="mb-3 text-[12.5px] text-muted">People to meet</div>
+              <div className="mb-3 text-[12.5px] text-muted">
+                People to meet
+              </div>
               <AvatarStack
                 size={36}
                 people={peopleToMeet.map((p) => ({ name: p.name }))}
@@ -308,7 +332,9 @@ function Home() {
       {peopleToMeet.length > 0 && (
         <div>
           <div className="mb-3 flex items-center gap-2 mt-8">
-            <Mono className="!text-[13px] !tracking-[0.1em]">People to meet</Mono>
+            <Mono className="!text-[13px] !tracking-[0.1em]">
+              People to meet
+            </Mono>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
             {peopleToMeet.map((person) => (
@@ -317,10 +343,7 @@ function Home() {
                 params={{ userId: person.id }}
                 key={person.id}
               >
-                <GlassCard
-
-                  innerClassName="flex items-center flex-col gap-3 p-4"
-                >
+                <GlassCard innerClassName="flex items-center flex-col gap-3 p-4">
                   <Avatar name={person.name} src={person.image} size={44} />
                   <div className="min-w-0 flex-1">
                     <div className="block truncate text-[14px] font-semibold tracking-[-0.01em] transition-colors hover:text-ink-2">

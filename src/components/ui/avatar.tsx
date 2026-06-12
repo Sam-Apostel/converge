@@ -100,7 +100,9 @@ export function Avatar({
         fontWeight: 600,
         fontSize: Math.max(10, Math.round(size * 0.36)),
         letterSpacing: '-0.01em',
-        border: border ? `${Math.max(2, size * 0.06)}px solid ${border}` : undefined,
+        border: border
+          ? `${Math.max(2, size * 0.06)}px solid ${border}`
+          : undefined,
         ...style,
       }}
     >
@@ -201,7 +203,10 @@ export function AvatarStack({
           {...p}
           size={size}
           border={border}
-          style={{ marginLeft: i === 0 ? 0 : -overlap, zIndex: shown.length - i }}
+          style={{
+            marginLeft: i === 0 ? 0 : -overlap,
+            zIndex: shown.length - i,
+          }}
         />
       ))}
       {overflow > 0 && (

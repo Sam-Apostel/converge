@@ -30,7 +30,6 @@ function isLiveNow(row: SessionRow): boolean {
 }
 
 function SessionsPage() {
-
   const now = new Date()
   const sessions = Route.useLoaderData().filter(
     (session) => session.endsAt != null && new Date(session.endsAt) > now,
@@ -81,7 +80,10 @@ function SessionsPage() {
                         }
                         style={
                           live
-                            ? { background: 'linear-gradient(135deg,#13141d,#1c1e2e)' }
+                            ? {
+                                background:
+                                  'linear-gradient(135deg,#13141d,#1c1e2e)',
+                              }
                             : undefined
                         }
                       >

@@ -94,7 +94,10 @@ function makeCollection(sessionId: string) {
               await fetch('/api/answers', {
                 method: 'POST',
                 headers: { 'content-type': 'application/json' },
-                body: JSON.stringify({ questionId: after.id, body: added.body }),
+                body: JSON.stringify({
+                  questionId: after.id,
+                  body: added.body,
+                }),
               })
               // Pull the server-authoritative answer (real id + fromSpeaker).
               await cache.get(sessionId)?.utils.refetch()

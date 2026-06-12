@@ -83,10 +83,7 @@ async function loadVenue() {
   }
 
   const [rooms, sessionRows] = await Promise.all([
-    db
-      .select()
-      .from(room)
-      .where(eq(room.conferenceId, active.id)),
+    db.select().from(room).where(eq(room.conferenceId, active.id)),
     db
       .select({
         id: conferenceSession.id,
@@ -221,7 +218,9 @@ async function loadVenue() {
 
   /* Featured people = the speakers on stage at this conference (the stars). */
   const speakerIds = [
-    ...new Set(sessionRows.map((r) => r.speakerId).filter((x): x is string => !!x)),
+    ...new Set(
+      sessionRows.map((r) => r.speakerId).filter((x): x is string => !!x),
+    ),
   ]
   const people: Person[] = speakerIds.length
     ? (

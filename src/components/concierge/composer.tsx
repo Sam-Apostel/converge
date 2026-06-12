@@ -1,5 +1,8 @@
 import { useState } from 'react'
-import { TextArea, type TextAreaChangeEvent } from '@progress/kendo-react-inputs'
+import {
+  TextArea,
+  type TextAreaChangeEvent,
+} from '@progress/kendo-react-inputs'
 import { ArrowUp, Sparkles } from 'lucide-react'
 
 /**

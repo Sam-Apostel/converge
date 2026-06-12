@@ -56,7 +56,9 @@ export function register(server: McpServer, userId: string) {
       title: 'Search people',
       description:
         'Find attendees by name, headline, company, current focus or bio. Returns JSON.',
-      inputSchema: { query: z.string().default('').describe('Free-text search') },
+      inputSchema: {
+        query: z.string().default('').describe('Free-text search'),
+      },
     },
     async ({ query }) => text(await searchPeople(query)),
   )
@@ -67,7 +69,9 @@ export function register(server: McpServer, userId: string) {
       title: 'Search people (interactive)',
       description:
         'Find attendees and render an interactive directory (MCP Apps). Same data as search_people.',
-      inputSchema: { query: z.string().default('').describe('Free-text search') },
+      inputSchema: {
+        query: z.string().default('').describe('Free-text search'),
+      },
     },
     async ({ query }) => {
       const people = await searchPeople(query)
@@ -120,10 +124,7 @@ export function register(server: McpServer, userId: string) {
         .where(
           status === 'all'
             ? eq(connection.userId, userId)
-            : and(
-                eq(connection.userId, userId),
-                eq(connection.status, status),
-              ),
+            : and(eq(connection.userId, userId), eq(connection.status, status)),
         )
 
       return text(

@@ -28,7 +28,10 @@ export function useQuestionVote(
         method: 'POST',
       })
       if (!res.ok) throw new Error(`vote -> ${res.status}`)
-      const data = (await res.json()) as { voteCount: number; hasVoted: boolean }
+      const data = (await res.json()) as {
+        voteCount: number
+        hasVoted: boolean
+      }
       setState({ count: data.voteCount, hasVoted: data.hasVoted })
     } catch {
       setState(prev)

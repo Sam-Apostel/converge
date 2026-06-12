@@ -1,10 +1,14 @@
 import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ChipList, type ChipListChangeEvent } from '@progress/kendo-react-buttons'
+import {
+  ChipList,
+  type ChipListChangeEvent,
+} from '@progress/kendo-react-buttons'
 
 import {
   Avatar,
-  Button, GlassCard,
+  Button,
+  GlassCard,
   Mono,
   Spotlight,
   Tag,
@@ -49,12 +53,11 @@ function PeoplePage() {
         People — before sessions
       </h1>
       <p className="mb-5 mt-1 max-w-2xl text-[14.5px] text-mist">
-        Converge makes people the primary object — searchable by intent, not just
-        by name.
+        Converge makes people the primary object — searchable by intent, not
+        just by name.
       </p>
 
       <div className="mb-5 flex flex-wrap items-center gap-2">
-
         <ChipList
           data={INTENTS}
           selection="single"
@@ -100,11 +103,7 @@ function TopMatch({ person }: { person: Person }) {
       }}
     >
       <div className="flex min-w-[300px] flex-1 items-center gap-[18px]">
-        <Avatar
-          name={person.name}
-          src={person.image}
-          size={68}
-        />
+        <Avatar name={person.name} src={person.image} size={68} />
         <div>
           <Mono tone="lime" className="mb-1.5 block !text-[11px]">
             You should meet
@@ -221,7 +220,9 @@ function ProfilePanel({ person }: { person: Person }) {
       {p?.currentFocus && (
         <div className="mb-[18px]">
           <Mono className="mb-2 block !text-[11px]">Current focus</Mono>
-          <p className="text-[14px] leading-[1.5] text-slate">{p.currentFocus}</p>
+          <p className="text-[14px] leading-[1.5] text-slate">
+            {p.currentFocus}
+          </p>
         </div>
       )}
 

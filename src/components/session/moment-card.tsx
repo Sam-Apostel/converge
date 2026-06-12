@@ -59,7 +59,9 @@ export function MomentCard({
         sessionId,
       )}&timestampMs=${timestampMs}`,
     )
-      .then((r) => (r.ok ? (r.json() as Promise<Array<SharedMomentPerson>>) : []))
+      .then((r) =>
+        r.ok ? (r.json() as Promise<Array<SharedMomentPerson>>) : [],
+      )
       .then((people) => {
         if (active) setShared(people)
       })
@@ -189,9 +191,17 @@ export function MomentCard({
                 params={{ userId: p.userId }}
                 title={p.name}
                 className="rounded-full transition-transform hover:-translate-y-0.5"
-                style={{ marginLeft: i === 0 ? 0 : -8, zIndex: shownShared.length - i }}
+                style={{
+                  marginLeft: i === 0 ? 0 : -8,
+                  zIndex: shownShared.length - i,
+                }}
               >
-                <Avatar name={p.name} src={p.avatarUrl} size={22} border="#fff" />
+                <Avatar
+                  name={p.name}
+                  src={p.avatarUrl}
+                  size={22}
+                  border="#fff"
+                />
               </Link>
             ))}
             {overflow > 0 && (

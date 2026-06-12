@@ -47,7 +47,9 @@ function ResultRow({ result }: { result: SearchResult }) {
           {result.title}
         </div>
         {result.subtitle ? (
-          <div className="truncate text-[13px] text-mist">{result.subtitle}</div>
+          <div className="truncate text-[13px] text-mist">
+            {result.subtitle}
+          </div>
         ) : null}
       </div>
       <ArrowRight
@@ -102,7 +104,11 @@ function ResultLink({
       )
     case 'discussion':
       return (
-        <Link to="/discussions/$id" params={{ id: result.id }} className={ROW_CLASS}>
+        <Link
+          to="/discussions/$id"
+          params={{ id: result.id }}
+          className={ROW_CLASS}
+        >
           {children}
         </Link>
       )

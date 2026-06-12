@@ -82,7 +82,8 @@ function TrendingQuestionInner({ trending }: { trending: TrendingQuestion }) {
         {trending.sessionTitle && <span>· from "{trending.sessionTitle}"</span>}
         {trending.followUps > 0 && (
           <span>
-            · {trending.followUps} follow-up{trending.followUps === 1 ? '' : 's'}
+            · {trending.followUps} follow-up
+            {trending.followUps === 1 ? '' : 's'}
           </span>
         )}
       </div>

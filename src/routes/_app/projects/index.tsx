@@ -25,7 +25,13 @@ export const Route = createFileRoute('/_app/projects/')({
   component: ProjectsPage,
 })
 
-const CATEGORIES = ['All', 'Frameworks', 'AI & agents', 'React Native', 'Trending']
+const CATEGORIES = [
+  'All',
+  'Frameworks',
+  'AI & agents',
+  'React Native',
+  'Trending',
+]
 
 function ProjectsPage() {
   const { projects, sessions } = Route.useLoaderData()
@@ -34,9 +40,11 @@ function ProjectsPage() {
     carousel.current?.scrollBy({ left: dir * 500, behavior: 'smooth' })
 
   const featured =
-    projects.reduce<typeof projects[0] | undefined>((best, p) =>
-      !best || (p.trendingScore ?? 0) > (best.trendingScore ?? 0) ? p : best
-    , undefined) ?? projects[0]
+    projects.reduce<(typeof projects)[0] | undefined>(
+      (best, p) =>
+        !best || (p.trendingScore ?? 0) > (best.trendingScore ?? 0) ? p : best,
+      undefined,
+    ) ?? projects[0]
   const relatedTalk = featured
     ? sessions.find((s) => s.speakerId === featured.ownerId)
     : undefined
@@ -178,8 +186,8 @@ function ProjectProfile({
 
       {relatedTalk && (
         <div className="mb-[18px] flex items-center gap-2 text-[13px] text-slate">
-          <CornerDownRight size={14} className="text-slate" /> Related session · “
-          {relatedTalk.title}” · {formatClock(relatedTalk.startsAt)}
+          <CornerDownRight size={14} className="text-slate" /> Related session ·
+          “{relatedTalk.title}” · {formatClock(relatedTalk.startsAt)}
         </div>
       )}
 
@@ -187,7 +195,10 @@ function ProjectProfile({
         <Button variant="dark" className="flex-1">
           Message {project.ownerName?.split(' ')[0] ?? 'creator'}
         </Button>
-        <Badge tone="lime-soft" className="!rounded-[13px] !px-4 !py-3 !text-[13.5px]">
+        <Badge
+          tone="lime-soft"
+          className="!rounded-[13px] !px-4 !py-3 !text-[13.5px]"
+        >
           <Star size={15} /> Star
         </Badge>
       </div>
