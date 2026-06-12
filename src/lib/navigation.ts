@@ -5,7 +5,6 @@ import {
   MapPin,
   MessagesSquare,
   Rocket,
-  Sparkles,
   User,
   Users,
 } from 'lucide-react'
@@ -25,7 +24,6 @@ export const navItems: Array<NavItem> = [
   { to: '/projects', label: 'Projects', icon: Rocket },
   { to: '/discussions', label: 'Discussions', icon: MessagesSquare },
   { to: '/messages', label: 'Messages', icon: Mail },
-  { to: '/concierge', label: 'AI Concierge', icon: Sparkles },
   { to: '/venue', label: 'Venue', icon: MapPin },
   { to: '/profile', label: 'Profile', icon: User },
 ]

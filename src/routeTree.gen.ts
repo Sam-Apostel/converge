@@ -30,7 +30,6 @@ import { Route as AppSearchRouteImport } from './routes/_app/search'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppMessagesRouteImport } from './routes/_app/messages'
 import { Route as AppDiscussionsRouteImport } from './routes/_app/discussions'
-import { Route as AppConciergeRouteImport } from './routes/_app/concierge'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotwellKnownChar93OauthAuthorizationServerRouteImport } from './routes/[.well-known]/oauth-authorization-server'
 import { Route as AppSessionsIndexRouteImport } from './routes/_app/sessions/index'
@@ -146,11 +145,6 @@ const AppDiscussionsRoute = AppDiscussionsRouteImport.update({
   path: '/discussions',
   getParentRoute: () => AppRoute,
 } as any)
-const AppConciergeRoute = AppConciergeRouteImport.update({
-  id: '/concierge',
-  path: '/concierge',
-  getParentRoute: () => AppRoute,
-} as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
     id: '/.well-known/oauth-protected-resource',
@@ -210,12 +204,11 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
-  '/concierge': typeof AppConciergeRoute
   '/discussions': typeof AppDiscussionsRouteWithChildren
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
-  '/settings': typeof AppSettingsRoute
   '/search': typeof AppSearchRoute
+  '/settings': typeof AppSettingsRoute
   '/venue': typeof AppVenueRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
@@ -242,12 +235,11 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
-  '/concierge': typeof AppConciergeRoute
   '/discussions': typeof AppDiscussionsRouteWithChildren
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
-  '/settings': typeof AppSettingsRoute
   '/search': typeof AppSearchRoute
+  '/settings': typeof AppSettingsRoute
   '/venue': typeof AppVenueRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
@@ -277,12 +269,11 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
-  '/_app/concierge': typeof AppConciergeRoute
   '/_app/discussions': typeof AppDiscussionsRouteWithChildren
   '/_app/messages': typeof AppMessagesRoute
   '/_app/profile': typeof AppProfileRoute
-  '/_app/settings': typeof AppSettingsRoute
   '/_app/search': typeof AppSearchRoute
+  '/_app/settings': typeof AppSettingsRoute
   '/_app/venue': typeof AppVenueRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
@@ -313,12 +304,11 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
-    | '/concierge'
     | '/discussions'
     | '/messages'
     | '/profile'
-    | '/settings'
     | '/search'
+    | '/settings'
     | '/venue'
     | '/api/concierge'
     | '/api/connections'
@@ -345,12 +335,11 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
-    | '/concierge'
     | '/discussions'
     | '/messages'
     | '/profile'
-    | '/settings'
     | '/search'
+    | '/settings'
     | '/venue'
     | '/api/concierge'
     | '/api/connections'
@@ -379,12 +368,11 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
-    | '/_app/concierge'
     | '/_app/discussions'
     | '/_app/messages'
     | '/_app/profile'
-    | '/_app/settings'
     | '/_app/search'
+    | '/_app/settings'
     | '/_app/venue'
     | '/api/concierge'
     | '/api/connections'
@@ -577,13 +565,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDiscussionsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/concierge': {
-      id: '/_app/concierge'
-      path: '/concierge'
-      fullPath: '/concierge'
-      preLoaderRoute: typeof AppConciergeRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
       path: '/.well-known/oauth-protected-resource'
@@ -670,12 +651,11 @@ const AppDiscussionsRouteWithChildren = AppDiscussionsRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
-  AppConciergeRoute: typeof AppConciergeRoute
   AppDiscussionsRoute: typeof AppDiscussionsRouteWithChildren
   AppMessagesRoute: typeof AppMessagesRoute
   AppProfileRoute: typeof AppProfileRoute
-  AppSettingsRoute: typeof AppSettingsRoute
   AppSearchRoute: typeof AppSearchRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppVenueRoute: typeof AppVenueRoute
   AppIndexRoute: typeof AppIndexRoute
   AppPeopleUserIdRoute: typeof AppPeopleUserIdRoute
@@ -687,12 +667,11 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppConciergeRoute: AppConciergeRoute,
   AppDiscussionsRoute: AppDiscussionsRouteWithChildren,
   AppMessagesRoute: AppMessagesRoute,
   AppProfileRoute: AppProfileRoute,
-  AppSettingsRoute: AppSettingsRoute,
   AppSearchRoute: AppSearchRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppVenueRoute: AppVenueRoute,
   AppIndexRoute: AppIndexRoute,
   AppPeopleUserIdRoute: AppPeopleUserIdRoute,
@@ -729,12 +708,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

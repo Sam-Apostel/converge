@@ -14,7 +14,6 @@ const NAV = [
   { to: '/projects', label: 'Projects', exact: false },
   { to: '/people', label: 'People', exact: false },
   { to: '/venue', label: 'Venue', exact: false },
-  { to: '/concierge', label: 'Concierge', exact: false },
 ] as const
 
 function AppLayout() {
