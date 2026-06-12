@@ -51,6 +51,15 @@ function createMomentsCollection(sessionId: string) {
           }),
         })
       },
+      onUpdate: async ({ transaction }) => {
+        // Only the inline note is editable; persist it to the viewer's moment.
+        const { modified } = transaction.mutations[0]
+        await fetch(`/api/moments?id=${encodeURIComponent(modified.id)}`, {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ note: modified.note }),
+        })
+      },
       onDelete: async ({ transaction }) => {
         const { original } = transaction.mutations[0]
         await fetch(`/api/moments?id=${encodeURIComponent(original.id)}`, {

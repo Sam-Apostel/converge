@@ -9,7 +9,9 @@ import { requireUser } from '#/lib/server-auth'
 /**
  * Moments API — backs the `momentsCollection` TanStack DB collection.
  * GET lists the viewer's moments for a session; POST bookmarks the current
- * slide; DELETE removes one. Each moment is scoped to the authenticated viewer.
+ * slide; PATCH edits a moment's note; DELETE removes one. Each moment is scoped
+ * to the authenticated viewer. The social side — who else kept the same passage
+ * — lives at `GET /api/moments/shared`.
  */
 
 export const Route = createFileRoute('/api/moments')({
@@ -57,6 +59,21 @@ export const Route = createFileRoute('/api/moments')({
           data: row,
         })
         return Response.json(row, { status: 201 })
+      },
+
+      // Edit the inline note on one of the viewer's own moments.
+      PATCH: async ({ request }) => {
+        const id = new URL(request.url).searchParams.get('id')
+        if (!id) return new Response('Missing id', { status: 400 })
+        const { id: userId } = await requireUser(request)
+        const body = (await request.json()) as { note?: string | null }
+        const [row] = await db
+          .update(moment)
+          .set({ note: body.note ?? null })
+          .where(and(eq(moment.id, id), eq(moment.userId, userId)))
+          .returning()
+        if (!row) return new Response('Not found', { status: 404 })
+        return Response.json(row)
       },
 
       DELETE: async ({ request }) => {

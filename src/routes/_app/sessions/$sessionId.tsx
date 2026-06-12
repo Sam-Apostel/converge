@@ -111,6 +111,16 @@ function SessionScreen() {
     [collection],
   )
 
+  // Inline note edits flow through the optimistic collection (PATCHes on commit).
+  const saveNote = useCallback(
+    (id: string, note: string) => {
+      collection.update(id, (draft) => {
+        draft.note = note
+      })
+    },
+    [collection],
+  )
+
   if (!detail) {
     return (
       <div className="rounded-2xl border border-dashed border-black/10 bg-white/60 p-8 text-center text-sm text-muted">
@@ -186,6 +196,7 @@ function SessionScreen() {
             relatedPeople={relatedPeople}
             relatedProject={relatedProject}
             onRemove={remove}
+            onSaveNote={saveNote}
           />
         ) : (
           <div className="bg-inner px-6 pb-[30px] pt-[26px]">
@@ -219,12 +230,14 @@ function LiveRail({
   relatedPeople,
   relatedProject,
   onRemove,
+  onSaveNote,
 }: {
   collection: ReturnType<typeof momentsCollection>
   sessionId: string
   relatedPeople: Array<RelatedPerson>
   relatedProject: RelatedProject | null
   onRemove: (id: string) => void
+  onSaveNote: (id: string, note: string) => void
 }) {
   const { data } = useLiveQuery((q) => q.from({ moment: collection }))
 
@@ -245,9 +258,12 @@ function LiveRail({
       const id = link ? youtubeId(link) : null
       return {
         id: m.id,
+        sessionId: m.sessionId,
+        timestampMs: m.timestampMs,
         time: formatOffset(m.timestampMs),
         slideRef: link ? null : m.slideRef,
-        topic: m.transcriptSnippet || m.note || 'Moment',
+        topic: m.transcriptSnippet || 'Moment',
+        note: m.note,
         thumbnailUrl: link && id ? youtubeThumb(id) : null,
         href: link,
       }
@@ -260,6 +276,7 @@ function LiveRail({
       relatedPeople={relatedPeople}
       relatedProject={relatedProject}
       onRemove={onRemove}
+      onSaveNote={onSaveNote}
     />
   )
 }

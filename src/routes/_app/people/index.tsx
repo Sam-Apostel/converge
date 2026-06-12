@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { ChipList, type ChipListChangeEvent } from '@progress/kendo-react-buttons'
 
 import {
@@ -90,6 +90,7 @@ function PeoplePage() {
 }
 
 function TopMatch({ person }: { person: Person }) {
+  const navigate = useNavigate()
   const p = person.profile
   return (
     <Spotlight
@@ -133,10 +134,60 @@ function TopMatch({ person }: { person: Person }) {
         </div>
       </div>
       <div className="flex gap-2.5">
-        <Button variant="lime">Say hi</Button>
-        <Button variant="glass">View profile</Button>
+        <Button
+          variant="lime"
+          onClick={() =>
+            navigate({
+              to: '/messages',
+              search: { me: undefined, dm: person.id },
+            })
+          }
+        >
+          Say hi
+        </Button>
+        <Button
+          variant="glass"
+          onClick={() =>
+            navigate({ to: '/people/$userId', params: { userId: person.id } })
+          }
+        >
+          View profile
+        </Button>
       </div>
     </Spotlight>
+  )
+}
+
+/** Connect CTA used on the directory's profile panel: POST then reflect pending. */
+function QuickConnect({ toUserId }: { toUserId: string }) {
+  const [state, setState] = useState<'none' | 'pending'>('none')
+  if (state === 'pending') {
+    return (
+      <Button size="sm" variant="soft" disabled>
+        Pending
+      </Button>
+    )
+  }
+  return (
+    <Button
+      size="sm"
+      variant="dark"
+      onClick={async () => {
+        setState('pending')
+        try {
+          const res = await fetch('/api/connections', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ toUserId }),
+          })
+          if (!res.ok) setState('none')
+        } catch {
+          setState('none')
+        }
+      }}
+    >
+      Connect
+    </Button>
   )
 }
 
@@ -155,9 +206,7 @@ function ProfilePanel({ person }: { person: Person }) {
             {p?.company ? ` · ${p.company}` : ''}
           </div>
         </div>
-        <Button size="sm" variant="dark">
-          Connect
-        </Button>
+        <QuickConnect toUserId={person.id} />
       </div>
 
       {p?.bio && (

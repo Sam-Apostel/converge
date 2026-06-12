@@ -35,6 +35,7 @@ import { Route as Char91DotwellKnownChar93OauthAuthorizationServerRouteImport } 
 import { Route as AppSessionsIndexRouteImport } from './routes/_app/sessions/index'
 import { Route as AppProjectsIndexRouteImport } from './routes/_app/projects/index'
 import { Route as AppPeopleIndexRouteImport } from './routes/_app/people/index'
+import { Route as ApiMomentsSharedRouteImport } from './routes/api/moments/shared'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppSessionsSessionIdRouteImport } from './routes/_app/sessions/$sessionId'
 import { Route as AppProjectsSlugRouteImport } from './routes/_app/projects/$slug'
@@ -172,6 +173,11 @@ const AppPeopleIndexRoute = AppPeopleIndexRouteImport.update({
   path: '/people/',
   getParentRoute: () => AppRoute,
 } as any)
+const ApiMomentsSharedRoute = ApiMomentsSharedRouteImport.update({
+  id: '/shared',
+  path: '/shared',
+  getParentRoute: () => ApiMomentsRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -214,7 +220,7 @@ export interface FileRoutesByFullPath {
   '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
   '/api/messages': typeof ApiMessagesRoute
-  '/api/moments': typeof ApiMomentsRoute
+  '/api/moments': typeof ApiMomentsRouteWithChildren
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/search': typeof ApiSearchRoute
@@ -226,6 +232,7 @@ export interface FileRoutesByFullPath {
   '/projects/$slug': typeof AppProjectsSlugRoute
   '/sessions/$sessionId': typeof AppSessionsSessionIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/moments/shared': typeof ApiMomentsSharedRoute
   '/people/': typeof AppPeopleIndexRoute
   '/projects/': typeof AppProjectsIndexRoute
   '/sessions/': typeof AppSessionsIndexRoute
@@ -245,7 +252,7 @@ export interface FileRoutesByTo {
   '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
   '/api/messages': typeof ApiMessagesRoute
-  '/api/moments': typeof ApiMomentsRoute
+  '/api/moments': typeof ApiMomentsRouteWithChildren
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/search': typeof ApiSearchRoute
@@ -258,6 +265,7 @@ export interface FileRoutesByTo {
   '/projects/$slug': typeof AppProjectsSlugRoute
   '/sessions/$sessionId': typeof AppSessionsSessionIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/moments/shared': typeof ApiMomentsSharedRoute
   '/people': typeof AppPeopleIndexRoute
   '/projects': typeof AppProjectsIndexRoute
   '/sessions': typeof AppSessionsIndexRoute
@@ -279,7 +287,7 @@ export interface FileRoutesById {
   '/api/connections': typeof ApiConnectionsRoute
   '/api/health': typeof ApiHealthRoute
   '/api/messages': typeof ApiMessagesRoute
-  '/api/moments': typeof ApiMomentsRoute
+  '/api/moments': typeof ApiMomentsRouteWithChildren
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/search': typeof ApiSearchRoute
@@ -292,6 +300,7 @@ export interface FileRoutesById {
   '/_app/projects/$slug': typeof AppProjectsSlugRoute
   '/_app/sessions/$sessionId': typeof AppSessionsSessionIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/moments/shared': typeof ApiMomentsSharedRoute
   '/_app/people/': typeof AppPeopleIndexRoute
   '/_app/projects/': typeof AppProjectsIndexRoute
   '/_app/sessions/': typeof AppSessionsIndexRoute
@@ -326,6 +335,7 @@ export interface FileRouteTypes {
     | '/projects/$slug'
     | '/sessions/$sessionId'
     | '/api/auth/$'
+    | '/api/moments/shared'
     | '/people/'
     | '/projects/'
     | '/sessions/'
@@ -358,6 +368,7 @@ export interface FileRouteTypes {
     | '/projects/$slug'
     | '/sessions/$sessionId'
     | '/api/auth/$'
+    | '/api/moments/shared'
     | '/people'
     | '/projects'
     | '/sessions'
@@ -391,6 +402,7 @@ export interface FileRouteTypes {
     | '/_app/projects/$slug'
     | '/_app/sessions/$sessionId'
     | '/api/auth/$'
+    | '/api/moments/shared'
     | '/_app/people/'
     | '/_app/projects/'
     | '/_app/sessions/'
@@ -406,7 +418,7 @@ export interface RootRouteChildren {
   ApiConnectionsRoute: typeof ApiConnectionsRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ApiMessagesRoute: typeof ApiMessagesRoute
-  ApiMomentsRoute: typeof ApiMomentsRoute
+  ApiMomentsRoute: typeof ApiMomentsRouteWithChildren
   ApiPeopleRoute: typeof ApiPeopleRoute
   ApiProjectsRoute: typeof ApiProjectsRoute
   ApiSearchRoute: typeof ApiSearchRoute
@@ -600,6 +612,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPeopleIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/api/moments/shared': {
+      id: '/api/moments/shared'
+      path: '/shared'
+      fullPath: '/api/moments/shared'
+      preLoaderRoute: typeof ApiMomentsSharedRouteImport
+      parentRoute: typeof ApiMomentsRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -684,6 +703,18 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface ApiMomentsRouteChildren {
+  ApiMomentsSharedRoute: typeof ApiMomentsSharedRoute
+}
+
+const ApiMomentsRouteChildren: ApiMomentsRouteChildren = {
+  ApiMomentsSharedRoute: ApiMomentsSharedRoute,
+}
+
+const ApiMomentsRouteWithChildren = ApiMomentsRoute._addFileChildren(
+  ApiMomentsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
@@ -696,7 +727,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiConnectionsRoute: ApiConnectionsRoute,
   ApiHealthRoute: ApiHealthRoute,
   ApiMessagesRoute: ApiMessagesRoute,
-  ApiMomentsRoute: ApiMomentsRoute,
+  ApiMomentsRoute: ApiMomentsRouteWithChildren,
   ApiPeopleRoute: ApiPeopleRoute,
   ApiProjectsRoute: ApiProjectsRoute,
   ApiSearchRoute: ApiSearchRoute,
@@ -710,6 +741,7 @@ export const routeTree = rootRouteImport
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true

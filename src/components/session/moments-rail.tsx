@@ -6,9 +6,12 @@ import { MomentCard } from './moment-card'
 
 export type MomentView = {
   id: string
+  sessionId: string
+  timestampMs: number
   time: string
   slideRef: string | null
   topic: string
+  note: string | null
   thumbnailUrl?: string | null
   href?: string | null
 }
@@ -38,12 +41,14 @@ export function MomentsRail({
   relatedPeople,
   relatedProject,
   onRemove,
+  onSaveNote,
 }: {
   moments: Array<MomentView>
   ready: boolean
   relatedPeople: Array<RelatedPerson>
   relatedProject: RelatedProject | null
   onRemove: (id: string) => void
+  onSaveNote: (id: string, note: string) => void
 }) {
   return (
     <div className="bg-inner px-6 pb-[30px] pt-[26px]">
@@ -80,12 +85,16 @@ export function MomentsRail({
           {moments.map((m) => (
             <MomentCard
               key={m.id}
+              sessionId={m.sessionId}
+              timestampMs={m.timestampMs}
               time={m.time}
               slideRef={m.slideRef}
               topic={m.topic}
+              note={m.note}
               thumbnailUrl={m.thumbnailUrl}
               href={m.href}
               onRemove={() => onRemove(m.id)}
+              onSaveNote={(note) => onSaveNote(m.id, note)}
             />
           ))}
         </div>
@@ -112,7 +121,7 @@ export function MomentsRail({
                   params={{ userId: p.id }}
                   className="rounded-full bg-pillow px-[11px] py-1.5 text-[12px] font-medium text-slate transition-colors hover:bg-[#e3e7f2]"
                 >
-                  Connect
+                  View profile
                 </Link>
               </div>
             ))}
