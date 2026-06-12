@@ -2,13 +2,10 @@ import { Link } from '@tanstack/react-router'
 
 import { Avatar, Tag, paletteFor } from '#/components/ui'
 import type { Person } from '#/db/types'
-import { demoMatch, demoOnline } from '#/lib/demo'
 
-/** Directory card: cover strip · overlapping avatar+dot · intent chip · tags. */
+/** Directory card: cover strip · overlapping avatar · intent chip · tags. */
 export function PersonCard({ person }: { person: Person }) {
   const pal = paletteFor(person.name)
-  const match = demoMatch(person.id)
-  const online = demoOnline(person.id)
   const p = person.profile
 
   return (
@@ -20,18 +17,13 @@ export function PersonCard({ person }: { person: Person }) {
       <div
         className="relative h-12"
         style={{ background: `linear-gradient(110deg, ${pal.bg}, #eef0f8)` }}
-      >
-        <span className="absolute right-2.5 top-2 inline-flex items-center rounded-full bg-lime/80 px-2 py-0.5 font-mono text-[11px] font-semibold text-ink-2">
-          {match}%
-        </span>
-      </div>
+      />
 
       <div className="flex flex-1 flex-col px-[15px] pb-[15px]">
         <Avatar
           name={person.name}
           src={person.image}
           size={52}
-          dot={online ? 'online' : 'offline'}
           border="#fff"
           className="-mt-[26px] self-start"
         />

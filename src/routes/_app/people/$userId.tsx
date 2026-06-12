@@ -68,30 +68,34 @@ function PersonDetail() {
 
       {(p?.interestedTopics?.length || p?.notInterestedTopics?.length) && (
         <div className="mb-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <div>
-            <Mono tone="slate" className="mb-2.5 block !text-[11px]">
-              Talk to me about
-            </Mono>
-            <div className="flex flex-wrap gap-1.5">
-              {(p?.interestedTopics ?? []).map((t) => (
-                <Tag key={t} variant="lime">
-                  {t}
-                </Tag>
-              ))}
+          {p?.interestedTopics?.length ? (
+            <div>
+              <Mono tone="slate" className="mb-2.5 block !text-[11px]">
+                Talk to me about
+              </Mono>
+              <div className="flex flex-wrap gap-1.5">
+                {p.interestedTopics.map((t) => (
+                  <Tag key={t} variant="lime">
+                    {t}
+                  </Tag>
+                ))}
+              </div>
             </div>
-          </div>
-          <div>
-            <Mono tone="mute" className="mb-2.5 block !text-[11px]">
-              Please don't
-            </Mono>
-            <div className="flex flex-wrap gap-1.5">
-              {(p?.notInterestedTopics ?? []).map((t) => (
-                <Tag key={t} variant="strike">
-                  {t}
-                </Tag>
-              ))}
+          ) : null}
+          {p?.notInterestedTopics?.length ? (
+            <div>
+              <Mono tone="mute" className="mb-2.5 block !text-[11px]">
+                Please don't
+              </Mono>
+              <div className="flex flex-wrap gap-1.5">
+                {p.notInterestedTopics.map((t) => (
+                  <Tag key={t} variant="strike">
+                    {t}
+                  </Tag>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
       )}
 

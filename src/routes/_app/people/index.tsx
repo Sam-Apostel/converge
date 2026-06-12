@@ -11,7 +11,6 @@ import {
 } from '#/components/ui'
 import { PersonCard } from '#/components/person-card'
 import { listPeople } from '#/lib/queries'
-import { demoMatch } from '#/lib/demo'
 import type { Person } from '#/db/types'
 
 export const Route = createFileRoute('/_app/people/')({
@@ -32,16 +31,15 @@ function PeoplePage() {
   const people = Route.useLoaderData()
   const [selectedIntent, setSelectedIntent] = useState('all')
 
-  const ranked = [...people].sort((a, b) => demoMatch(b.id) - demoMatch(a.id))
   const filtered =
     selectedIntent === 'all'
-      ? ranked
-      : ranked.filter((p) =>
+      ? people
+      : people.filter((p) =>
           p.profile?.intents?.some((i) =>
             i.toLowerCase().includes(selectedIntent),
           ),
         )
-  const top = filtered[0] ?? ranked[0]
+  const top = filtered[0] ?? people[0]
   const featured =
     people.find((p) => p.profile?.handle === 'kitze') ?? filtered[1] ?? top
 
@@ -92,7 +90,6 @@ function PeoplePage() {
 }
 
 function TopMatch({ person }: { person: Person }) {
-  const match = demoMatch(person.id)
   const p = person.profile
   return (
     <Spotlight
@@ -108,12 +105,10 @@ function TopMatch({ person }: { person: Person }) {
           name={person.name}
           src={person.image}
           size={68}
-          ring={match}
-          ringLabel={`${match}%`}
         />
         <div>
           <Mono tone="lime" className="mb-1.5 block !text-[11px]">
-            Your top match right now
+            People you should meet
           </Mono>
           <div className="text-[22px] font-semibold tracking-[-0.02em]">
             {person.name}

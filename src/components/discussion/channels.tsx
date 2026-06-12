@@ -5,7 +5,7 @@ import type { TopicChannel, TrendingQuestion } from '#/lib/queries/discussions'
 export function TopicChannels({ channels }: { channels: Array<TopicChannel> }) {
   return (
     <Card surface="white" className="p-5">
-      <div className="mb-3.5 text-[14px] font-semibold">Topic channels</div>
+      <div className="mb-3.5 text-[14px] font-semibold">Discussions</div>
       <div className="flex flex-col gap-0.5">
         {channels.map((c) => (
           <div
@@ -31,7 +31,7 @@ export function TopicChannels({ channels }: { channels: Array<TopicChannel> }) {
           </div>
         ))}
         {channels.length === 0 && (
-          <p className="text-[13px] text-muted">No channels yet.</p>
+          <p className="text-[13px] text-muted">No discussions yet.</p>
         )}
       </div>
     </Card>

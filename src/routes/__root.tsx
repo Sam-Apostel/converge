@@ -3,10 +3,8 @@ import {
   Scripts,
   createRootRouteWithContext,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
 
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
+import { DevTools } from '../integrations/devtools'
 import { PwaRegister } from '../components/pwa-register'
 
 import appCss from '../styles.css?url'
@@ -33,7 +31,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {
         name: 'description',
         content:
-          'A people-first conference platform: discover the right people, capture moments, and continue conversations long after the event ends.',
+          'A people-first conference companion: discover the right people, capture moments, and continue conversations long after the event ends.',
       },
       {
         name: 'theme-color',
@@ -103,18 +101,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         {children}
         <PwaRegister />
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            TanStackQueryDevtools,
-          ]}
-        />
+        <DevTools />
         <Scripts />
       </body>
     </html>

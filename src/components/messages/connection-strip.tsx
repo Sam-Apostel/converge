@@ -61,21 +61,23 @@ export function ConnectionStrip({
           <Mono tone="slate" className="!text-[11px] !tracking-[0.08em]">
             Connections · {accepted.length}
           </Mono>
-          <button
-            type="button"
-            className="-mr-1 rounded-full p-0.5 transition-transform hover:-translate-y-px"
-            onClick={() => accepted[0] && onOpen(accepted[0].id)}
-            title="Message a connection"
-          >
-            <AvatarStack
-              people={accepted.map((c) => ({
-                name: c.name,
-                src: c.image,
-              }))}
-              size={30}
-              max={6}
-            />
-          </button>
+          <div className="-mr-1 flex">
+            {accepted.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                className="rounded-full p-0.5 transition-transform hover:-translate-y-px"
+                onClick={() => onOpen(c.id)}
+                title={`Message ${c.name}`}
+              >
+                <AvatarStack
+                  people={[{ name: c.name, src: c.image }]}
+                  size={30}
+                  max={1}
+                />
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

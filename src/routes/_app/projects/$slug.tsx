@@ -100,7 +100,7 @@ function ProjectDetail() {
 
       {relatedTalk && (
         <div className="mb-6 flex items-center gap-2 text-[13px] text-slate">
-          <span className="text-slate">↳</span> Related talk · “
+          <span className="text-slate">↳</span> Related session · “
           {relatedTalk.title}” · {formatTime(relatedTalk.startsAt)}
         </div>
       )}

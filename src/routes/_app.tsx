@@ -2,6 +2,7 @@ import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
 
 import { Avatar, NotificationProvider } from '#/components/ui'
 import { ConvergeLogo } from '#/components/converge-logo'
+import { useSession } from '#/lib/auth-client'
 
 export const Route = createFileRoute('/_app')({
   component: AppLayout,
@@ -95,6 +96,9 @@ const BOTTOM_NAV = [
 ] as const
 
 function AppLayout() {
+  const { data: session } = useSession()
+  const userName = session?.user?.name ?? ''
+
   return (
     <NotificationProvider>
       <div className="min-h-screen pb-[72px] lg:pb-0">
@@ -106,13 +110,6 @@ function AppLayout() {
                 converge
               </span>
             </Link>
-
-            <span className="shrink-0 rounded-full border border-white/50 bg-white/50 px-[11px] py-[5px] font-mono text-[11.5px] tracking-[0.02em] text-mist lg:hidden">
-              Day 1 · AMS
-            </span>
-            <span className="hidden shrink-0 rounded-full border border-white/50 bg-white/50 px-[11px] py-[5px] font-mono text-[11.5px] tracking-[0.02em] text-mist lg:block">
-              Day 1 · Amsterdam
-            </span>
 
             <nav className="ml-auto hidden items-center gap-0.5 lg:flex">
               {NAV.map((item) => (
@@ -132,7 +129,7 @@ function AppLayout() {
             </nav>
 
             <Link to="/profile" className="ml-auto shrink-0 lg:ml-1">
-              <Avatar name="Sam Conway" size={36} />
+              <Avatar name={userName} size={36} />
             </Link>
           </div>
         </header>

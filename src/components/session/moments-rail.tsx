@@ -140,10 +140,10 @@ export function MomentsRail({
             </div>
             {relatedProject.tagline ? (
               <div className="mt-[3px] text-[12.5px] leading-[1.4] text-mist">
-                {relatedProject.tagline}
+                {relatedProject.tagline.replace(/\.$/, '')}
                 {relatedProject.ownerName
-                  ? ` By ${relatedProject.ownerName}.`
-                  : ''}
+                  ? `. by ${relatedProject.ownerName}.`
+                  : '.'}
               </div>
             ) : null}
           </div>
