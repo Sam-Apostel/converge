@@ -1,5 +1,34 @@
 import type { CSSProperties, ReactNode } from 'react'
 
+/**
+ * Animated lime beam that sweeps around the border of a dark card.
+ * Parent must be `position:relative overflow-hidden`.
+ */
+export function BorderBeam({ speed = 4.8 }: { speed?: number }) {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-[inherit]"
+      style={{
+        padding: '1.5px',
+        WebkitMask:
+          'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+        WebkitMaskComposite: 'xor',
+        maskComposite: 'exclude',
+      }}
+    >
+      <div
+        className="absolute left-1/2 top-1/2 aspect-square w-[220%]"
+        style={{
+          background:
+            'conic-gradient(from 0deg, transparent 0 74%, #99ff00 84%, #eaffc4 90%, #99ff00 96%, transparent 100%)',
+          animation: `beamRot ${speed}s linear infinite`,
+        }}
+      />
+    </div>
+  )
+}
+
 type Surface = 'white' | 'inner' | 'dark' | 'glass'
 
 const SURFACE: Record<Surface, string> = {
@@ -18,11 +47,13 @@ const SURFACE: Record<Surface, string> = {
 export function Spotlight({
   className = '',
   glow = 'top-right',
+  beam = false,
   children,
   style,
 }: {
   className?: string
   glow?: 'top-right' | 'right'
+  beam?: boolean
   children: ReactNode
   style?: CSSProperties
 }) {
@@ -31,6 +62,7 @@ export function Spotlight({
       className={`relative overflow-hidden rounded-[22px] text-white ${className}`}
       style={{ background: 'linear-gradient(135deg,#13141d,#1c1e2e)', ...style }}
     >
+      {beam && <BorderBeam speed={4.8} />}
       <div
         className="pointer-events-none absolute h-36 w-36 rounded-full [background:radial-gradient(circle,rgba(153,255,0,.35),transparent_70%)]"
         style={
