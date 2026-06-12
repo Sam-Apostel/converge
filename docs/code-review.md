@@ -73,7 +73,7 @@ cannot reach the client.
 | B6 | Medium | `src/lib/queries.ts:195` (`listSessions`) | `limit(200)` applies to speaker-join fanned-out rows: duplicate sessions for multi-speaker talks and nondeterministic truncation (no secondary sort). Same fan-out-then-limit bug in `suggestPeopleToMeet` (`queries.ts:57`). |
 | B7 | Medium | `src/lib/queries/profiles.ts:60` | Connection state only checks the outgoing direction (incoming pending renders as `none` → duplicate requests) and maps `rejected` to `pending` forever. Schema comment, PATCH route, and reader disagree on the status enum — reconcile in one exported union. |
 | B8 | Medium | `src/lib/queries/discussions.ts:298` | "Most active" orders by `updatedAt`, but inserting a post never bumps the parent — activity ordering is actually creation ordering. |
-| B9 | Medium | `src/routes/_app/index.tsx:125` | Concierge composer: Enter never submits (the handler only `preventDefault`s Shift+Enter — backwards), while the ↵/⌘ kbd hint advertises the shortcut. Keyboard users cannot send. |
+| B9 | ~~Medium~~ Fixed | `src/routes/_app/index.tsx:125` | ~~Concierge composer: Enter never submits.~~ Fixed on main (`27e0b1b` merge): Enter-without-shift now submits. |
 | B10 | Medium | `src/routes/_app.tsx:210` | `pb-safe` is not a defined utility anywhere — the bottom tab bar ignores the iPhone home-indicator inset on a phone-first PWA. Add `pb-[env(safe-area-inset-bottom)]` (or define the utility). Likewise `*:h-unset` (`index.tsx:133`) is a no-op (`h-[unset]` would be the valid form). |
 | B11 | Medium | `src/routes/_app/messages.tsx:34` | `selectedId` initialised once from `?dm=` — deep-linking while mounted does nothing. Derive selection from search params with a local override. |
 | B12 | Medium | `src/mcp/tools/people.ts:178` (`find_people`) | The intent/topic post-filter ends in an unconditional `return true` — it never filters, and the advertised intents/topics matching isn't in the SQL either. |
@@ -194,8 +194,8 @@ the phone UI. It matches the README's "best at ~390px" claim. Gaps:
 - Messages below `lg` stacks both panes in one fixed `h-[calc(100vh-220px)]`
   grid — the conversation pane is crushed; the phone-first screen most needs
   a master→detail story.
-- Home people grid `md:grid-cols-4 lg:grid-cols-6` truncates names to
-  near-uselessness at exactly 1024px.
+- ~~Home people grid `lg:grid-cols-6` truncates names at 1024px~~ — fixed on
+  main (`27e0b1b` merge): now `lg:grid-cols-4`.
 
 **Variants.** The kit's discriminators are inconsistent (`Button.variant` +
 `size`, `Tag.variant`, `Badge.tone`, `Mono.tone`, `Card.surface`,
