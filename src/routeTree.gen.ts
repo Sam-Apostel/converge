@@ -16,6 +16,7 @@ import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as ApiTasksRouteImport } from './routes/api/tasks'
 import { Route as ApiStreamRouteImport } from './routes/api/stream'
 import { Route as ApiSessionsRouteImport } from './routes/api/sessions'
+import { Route as ApiSearchRouteImport } from './routes/api/search'
 import { Route as ApiProjectsRouteImport } from './routes/api/projects'
 import { Route as ApiPeopleRouteImport } from './routes/api/people'
 import { Route as ApiMomentsRouteImport } from './routes/api/moments'
@@ -25,6 +26,7 @@ import { Route as ApiConnectionsRouteImport } from './routes/api/connections'
 import { Route as ApiConciergeRouteImport } from './routes/api/concierge'
 import { Route as AppVenueRouteImport } from './routes/_app/venue'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
+import { Route as AppSearchRouteImport } from './routes/_app/search'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppMessagesRouteImport } from './routes/_app/messages'
 import { Route as AppDiscussionsRouteImport } from './routes/_app/discussions'
@@ -74,6 +76,11 @@ const ApiSessionsRoute = ApiSessionsRouteImport.update({
   path: '/api/sessions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSearchRoute = ApiSearchRouteImport.update({
+  id: '/api/search',
+  path: '/api/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProjectsRoute = ApiProjectsRouteImport.update({
   id: '/api/projects',
   path: '/api/projects',
@@ -117,6 +124,11 @@ const AppVenueRoute = AppVenueRouteImport.update({
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSearchRoute = AppSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProfileRoute = AppProfileRouteImport.update({
@@ -203,6 +215,7 @@ export interface FileRoutesByFullPath {
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
   '/settings': typeof AppSettingsRoute
+  '/search': typeof AppSearchRoute
   '/venue': typeof AppVenueRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
@@ -211,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/api/moments': typeof ApiMomentsRoute
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
+  '/api/search': typeof ApiSearchRoute
   '/api/sessions': typeof ApiSessionsRoute
   '/api/stream': typeof ApiStreamRoute
   '/api/tasks': typeof ApiTasksRoute
@@ -233,6 +247,7 @@ export interface FileRoutesByTo {
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
   '/settings': typeof AppSettingsRoute
+  '/search': typeof AppSearchRoute
   '/venue': typeof AppVenueRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
@@ -241,6 +256,7 @@ export interface FileRoutesByTo {
   '/api/moments': typeof ApiMomentsRoute
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
+  '/api/search': typeof ApiSearchRoute
   '/api/sessions': typeof ApiSessionsRoute
   '/api/stream': typeof ApiStreamRoute
   '/api/tasks': typeof ApiTasksRoute
@@ -266,6 +282,7 @@ export interface FileRoutesById {
   '/_app/messages': typeof AppMessagesRoute
   '/_app/profile': typeof AppProfileRoute
   '/_app/settings': typeof AppSettingsRoute
+  '/_app/search': typeof AppSearchRoute
   '/_app/venue': typeof AppVenueRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
@@ -274,6 +291,7 @@ export interface FileRoutesById {
   '/api/moments': typeof ApiMomentsRoute
   '/api/people': typeof ApiPeopleRoute
   '/api/projects': typeof ApiProjectsRoute
+  '/api/search': typeof ApiSearchRoute
   '/api/sessions': typeof ApiSessionsRoute
   '/api/stream': typeof ApiStreamRoute
   '/api/tasks': typeof ApiTasksRoute
@@ -300,6 +318,7 @@ export interface FileRouteTypes {
     | '/messages'
     | '/profile'
     | '/settings'
+    | '/search'
     | '/venue'
     | '/api/concierge'
     | '/api/connections'
@@ -308,6 +327,7 @@ export interface FileRouteTypes {
     | '/api/moments'
     | '/api/people'
     | '/api/projects'
+    | '/api/search'
     | '/api/sessions'
     | '/api/stream'
     | '/api/tasks'
@@ -330,6 +350,7 @@ export interface FileRouteTypes {
     | '/messages'
     | '/profile'
     | '/settings'
+    | '/search'
     | '/venue'
     | '/api/concierge'
     | '/api/connections'
@@ -338,6 +359,7 @@ export interface FileRouteTypes {
     | '/api/moments'
     | '/api/people'
     | '/api/projects'
+    | '/api/search'
     | '/api/sessions'
     | '/api/stream'
     | '/api/tasks'
@@ -362,6 +384,7 @@ export interface FileRouteTypes {
     | '/_app/messages'
     | '/_app/profile'
     | '/_app/settings'
+    | '/_app/search'
     | '/_app/venue'
     | '/api/concierge'
     | '/api/connections'
@@ -370,6 +393,7 @@ export interface FileRouteTypes {
     | '/api/moments'
     | '/api/people'
     | '/api/projects'
+    | '/api/search'
     | '/api/sessions'
     | '/api/stream'
     | '/api/tasks'
@@ -397,6 +421,7 @@ export interface RootRouteChildren {
   ApiMomentsRoute: typeof ApiMomentsRoute
   ApiPeopleRoute: typeof ApiPeopleRoute
   ApiProjectsRoute: typeof ApiProjectsRoute
+  ApiSearchRoute: typeof ApiSearchRoute
   ApiSessionsRoute: typeof ApiSessionsRoute
   ApiStreamRoute: typeof ApiStreamRoute
   ApiTasksRoute: typeof ApiTasksRoute
@@ -452,6 +477,13 @@ declare module '@tanstack/react-router' {
       path: '/api/sessions'
       fullPath: '/api/sessions'
       preLoaderRoute: typeof ApiSessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/search': {
+      id: '/api/search'
+      path: '/api/search'
+      fullPath: '/api/search'
+      preLoaderRoute: typeof ApiSearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/projects': {
@@ -515,6 +547,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/search': {
+      id: '/_app/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof AppSearchRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/profile': {
@@ -636,6 +675,7 @@ interface AppRouteChildren {
   AppMessagesRoute: typeof AppMessagesRoute
   AppProfileRoute: typeof AppProfileRoute
   AppSettingsRoute: typeof AppSettingsRoute
+  AppSearchRoute: typeof AppSearchRoute
   AppVenueRoute: typeof AppVenueRoute
   AppIndexRoute: typeof AppIndexRoute
   AppPeopleUserIdRoute: typeof AppPeopleUserIdRoute
@@ -652,6 +692,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppMessagesRoute: AppMessagesRoute,
   AppProfileRoute: AppProfileRoute,
   AppSettingsRoute: AppSettingsRoute,
+  AppSearchRoute: AppSearchRoute,
   AppVenueRoute: AppVenueRoute,
   AppIndexRoute: AppIndexRoute,
   AppPeopleUserIdRoute: AppPeopleUserIdRoute,
@@ -679,6 +720,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiMomentsRoute: ApiMomentsRoute,
   ApiPeopleRoute: ApiPeopleRoute,
   ApiProjectsRoute: ApiProjectsRoute,
+  ApiSearchRoute: ApiSearchRoute,
   ApiSessionsRoute: ApiSessionsRoute,
   ApiStreamRoute: ApiStreamRoute,
   ApiTasksRoute: ApiTasksRoute,
