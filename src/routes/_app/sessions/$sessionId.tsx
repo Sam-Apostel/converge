@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { useLiveQuery } from '@tanstack/react-db'
 
-import { Avatar } from '#/components/ui'
+import { Skeleton } from '@progress/kendo-react-indicators'
+
+import { Avatar, useNotify } from '#/components/ui'
 import { LivePlayer } from '#/components/session/live-player'
 import { LiveProgress } from '#/components/session/live-progress'
 import { LiveSlide } from '#/components/session/live-slide'
@@ -27,7 +29,6 @@ import {
   formatOffset,
   talkFraction,
 } from '#/components/session/slides'
-import { Toast } from '#/components/session/toast'
 import { momentsCollection } from '#/db-collections/moments'
 import { useEventStream } from '#/hooks/use-event-stream'
 import { useSession } from '#/lib/auth-client'
@@ -43,6 +44,7 @@ function SessionScreen() {
   const detail = Route.useLoaderData()
   const { data: authSession } = useSession()
 
+  const notify = useNotify()
   const collection = useMemo(() => momentsCollection(sessionId), [sessionId])
   const videoId = detail ? livestreamFor(detail.session.livestreamUrl) : null
 
@@ -51,18 +53,10 @@ function SessionScreen() {
   // / webapps / canvases with no deck at all).
   const [streamFraction, setStreamFraction] = useState(0)
   const [playhead, setPlayhead] = useState(INITIAL_SLIDE)
-  const [toast, setToast] = useState(false)
-  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Collections are client-only — gate the live rail until after mount.
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
-  useEffect(
-    () => () => {
-      if (toastTimer.current) clearTimeout(toastTimer.current)
-    },
-    [],
-  )
 
   const addMoment = useCallback(
     (fields: {
@@ -82,9 +76,7 @@ function SessionScreen() {
         createdAt: new Date(),
       })
       setPlayhead((n) => Math.min(SLIDES.length, n + 1))
-      setToast(true)
-      if (toastTimer.current) clearTimeout(toastTimer.current)
-      toastTimer.current = setTimeout(() => setToast(false), 2200)
+      notify('Moment saved to your rail', { icon: '★' })
     },
     [collection, sessionId],
   )
@@ -196,17 +188,26 @@ function SessionScreen() {
             onRemove={remove}
           />
         ) : (
-          <MomentsRail
-            moments={[]}
-            ready={false}
-            relatedPeople={relatedPeople}
-            relatedProject={relatedProject}
-            onRemove={remove}
-          />
+          <div className="bg-inner px-6 pb-[30px] pt-[26px]">
+            <div className="mb-1 flex items-center gap-[9px]">
+              <Skeleton shape="text" style={{ width: 120, height: 20 }} />
+            </div>
+            <p className="mb-4">
+              <Skeleton shape="text" style={{ width: '75%', height: 14 }} />
+            </p>
+            <div className="grid grid-cols-2 gap-2.5">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton
+                  key={i}
+                  shape="rectangle"
+                  style={{ height: 84, borderRadius: 12 }}
+                />
+              ))}
+            </div>
+          </div>
         )}
       </div>
 
-      <Toast show={toast} label="Moment saved to your rail" />
     </div>
   )
 }

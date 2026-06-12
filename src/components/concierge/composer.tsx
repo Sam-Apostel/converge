@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TextArea, type TextAreaChangeEvent } from '@progress/kendo-react-inputs'
 
 /**
  * The concierge input dock (silo 7) — opaque neumorphic card inside the glass
@@ -27,13 +28,13 @@ export function Composer({
   }
 
   return (
-    <div className="mt-3 flex items-center gap-2.5 rounded-2xl bg-surface py-2.5 pl-4 pr-2.5 shadow-card [box-shadow:0_1px_3px_rgba(40,50,110,.08),inset_0_1px_0_rgba(255,255,255,.9)]">
-      <span className="text-[16px] text-slate" aria-hidden>
+    <div className="mt-3 flex items-end gap-2.5 rounded-2xl bg-surface py-2.5 pl-4 pr-2.5 shadow-card [box-shadow:0_1px_3px_rgba(40,50,110,.08),inset_0_1px_0_rgba(255,255,255,.9)]">
+      <span className="mb-[9px] text-[16px] text-slate" aria-hidden>
         ✦
       </span>
-      <input
+      <TextArea
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e: TextAreaChangeEvent) => setValue(e.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault()
@@ -42,7 +43,10 @@ export function Composer({
         }}
         disabled={disabled}
         placeholder={placeholder}
-        className="min-w-0 flex-1 bg-transparent text-[14.5px] text-ink placeholder:text-muted focus:outline-none disabled:opacity-60"
+        autoSize
+        rows={1}
+        fillMode="flat"
+        className="converge-textarea disabled:opacity-60"
       />
       {isLoading ? (
         <button

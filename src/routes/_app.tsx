@@ -1,6 +1,6 @@
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
 
-import { Avatar } from '#/components/ui'
+import { Avatar, NotificationProvider } from '#/components/ui'
 import { ConvergeLogo } from '#/components/converge-logo'
 
 export const Route = createFileRoute('/_app')({
@@ -96,69 +96,71 @@ const BOTTOM_NAV = [
 
 function AppLayout() {
   return (
-    <div className="min-h-screen pb-[72px] lg:pb-0">
-      <header className="sticky top-0 z-50 px-0 lg:top-4 lg:px-5">
-        <div className="mx-auto flex max-w-[1320px] items-center gap-3 border-b border-white/40 bg-[rgba(233,235,247,.82)] py-[11px] pl-4 pr-3 [backdrop-filter:blur(28px)_saturate(1.7)] lg:gap-4 lg:rounded-[22px] lg:border lg:border-white/60 lg:bg-white/34 lg:pl-[15px] lg:[box-shadow:0_14px_44px_rgba(40,50,110,.16),inset_0_1px_0_rgba(255,255,255,.75)]">
-          <Link to="/" className="flex shrink-0 items-center gap-2.5">
-            <ConvergeLogo size={32} rounded="10px" />
-            <span className="text-[19px] font-semibold tracking-[-0.03em]">
-              converge
+    <NotificationProvider>
+      <div className="min-h-screen pb-[72px] lg:pb-0">
+        <header className="sticky top-0 z-50 px-0 lg:top-4 lg:px-5">
+          <div className="mx-auto flex max-w-[1320px] items-center gap-3 border-b border-white/40 bg-[rgba(233,235,247,.82)] py-[11px] pl-4 pr-3 [backdrop-filter:blur(28px)_saturate(1.7)] lg:gap-4 lg:rounded-[22px] lg:border lg:border-white/60 lg:bg-white/34 lg:pl-[15px] lg:[box-shadow:0_14px_44px_rgba(40,50,110,.16),inset_0_1px_0_rgba(255,255,255,.75)]">
+            <Link to="/" className="flex shrink-0 items-center gap-2.5">
+              <ConvergeLogo size={32} rounded="10px" />
+              <span className="text-[19px] font-semibold tracking-[-0.03em]">
+                converge
+              </span>
+            </Link>
+
+            <span className="shrink-0 rounded-full border border-white/50 bg-white/50 px-[11px] py-[5px] font-mono text-[11.5px] tracking-[0.02em] text-mist lg:hidden">
+              Day 1 · AMS
             </span>
-          </Link>
+            <span className="hidden shrink-0 rounded-full border border-white/50 bg-white/50 px-[11px] py-[5px] font-mono text-[11.5px] tracking-[0.02em] text-mist lg:block">
+              Day 1 · Amsterdam
+            </span>
 
-          <span className="shrink-0 rounded-full border border-white/50 bg-white/50 px-[11px] py-[5px] font-mono text-[11.5px] tracking-[0.02em] text-mist lg:hidden">
-            Day 1 · AMS
-          </span>
-          <span className="hidden shrink-0 rounded-full border border-white/50 bg-white/50 px-[11px] py-[5px] font-mono text-[11.5px] tracking-[0.02em] text-mist lg:block">
-            Day 1 · Amsterdam
-          </span>
+            <nav className="ml-auto hidden items-center gap-0.5 lg:flex">
+              {NAV.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  activeOptions={{ exact: item.exact }}
+                  className="rounded-full px-[14px] py-[9px] text-[13.5px] font-medium text-slate transition-colors hover:text-ink"
+                  activeProps={{
+                    className:
+                      'rounded-full px-[14px] py-[9px] text-[13.5px] font-semibold text-ink bg-white [box-shadow:0_2px_8px_rgba(40,50,110,.12)]',
+                  }}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
 
-          <nav className="ml-auto hidden items-center gap-0.5 lg:flex">
-            {NAV.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                activeOptions={{ exact: item.exact }}
-                className="rounded-full px-[14px] py-[9px] text-[13.5px] font-medium text-slate transition-colors hover:text-ink"
-                activeProps={{
-                  className:
-                    'rounded-full px-[14px] py-[9px] text-[13.5px] font-semibold text-ink bg-white [box-shadow:0_2px_8px_rgba(40,50,110,.12)]',
-                }}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+            <Link to="/profile" className="ml-auto shrink-0 lg:ml-1">
+              <Avatar name="Sam Conway" size={36} />
+            </Link>
+          </div>
+        </header>
 
-          <Link to="/profile" className="ml-auto shrink-0 lg:ml-1">
-            <Avatar name="Sam Conway" size={36} />
-          </Link>
-        </div>
-      </header>
+        <main className="mx-auto max-w-[1320px] px-6 py-8 md:px-[30px]">
+          <Outlet />
+        </main>
 
-      <main className="mx-auto max-w-[1320px] px-6 py-8 md:px-[30px]">
-        <Outlet />
-      </main>
-
-      {/* Mobile bottom tab bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-[rgba(180,185,220,.22)] bg-[rgba(233,235,247,.82)] pb-safe [backdrop-filter:blur(24px)_saturate(1.6)] lg:hidden">
-        {BOTTOM_NAV.map((item) => (
-          <Link
-            key={item.to}
-            to={item.to}
-            activeOptions={{ exact: item.exact }}
-            className="flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-muted transition-colors"
-            activeProps={{ className: 'flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold text-ink transition-colors' }}
-          >
-            {({ isActive }: { isActive: boolean }) => (
-              <>
-                {isActive ? item.iconActive : item.icon}
-                {item.label}
-              </>
-            )}
-          </Link>
-        ))}
-      </nav>
-    </div>
+        {/* Mobile bottom tab bar */}
+        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-[rgba(180,185,220,.22)] bg-[rgba(233,235,247,.82)] pb-safe [backdrop-filter:blur(24px)_saturate(1.6)] lg:hidden">
+          {BOTTOM_NAV.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              activeOptions={{ exact: item.exact }}
+              className="flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-muted transition-colors"
+              activeProps={{ className: 'flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold text-ink transition-colors' }}
+            >
+              {({ isActive }: { isActive: boolean }) => (
+                <>
+                  {isActive ? item.iconActive : item.icon}
+                  {item.label}
+                </>
+              )}
+            </Link>
+          ))}
+        </nav>
+      </div>
+    </NotificationProvider>
   )
 }
