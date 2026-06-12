@@ -44,7 +44,7 @@ function SessionScreen() {
   const { data: authSession } = useSession()
 
   const collection = useMemo(() => momentsCollection(sessionId), [sessionId])
-  const videoId = detail ? livestreamFor(detail.livestreamUrl) : null
+  const videoId = detail ? livestreamFor(detail.session.livestreamUrl) : null
 
   // Livestream is the model: the talk progress bar follows the stream position.
   // The slide playhead only drives the no-stream fallback (some talks are demos
