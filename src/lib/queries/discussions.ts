@@ -301,7 +301,7 @@ export const listDiscussions = createServerFn({ method: 'GET' }).handler(
 
 /** A single thread by id, or null when it doesn't exist. */
 export const getDiscussion = createServerFn({ method: 'GET' })
-  .inputValidator((id: string) => id)
+  .validator((id: string) => id)
   .handler(async ({ data: id }): Promise<DiscussionThread | null> => {
     const rows = await db
       .select(discussionColumns)
