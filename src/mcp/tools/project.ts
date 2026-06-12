@@ -38,6 +38,24 @@ export function register(server: McpServer, _userId: string) {
   )
 
   server.registerTool(
+    'get_trending_projects',
+    {
+      title: 'Get trending projects',
+      description: 'Top projects ranked by trending score — what people are most excited about.',
+      inputSchema: {
+        limit: z
+          .number()
+          .int()
+          .min(1)
+          .max(50)
+          .default(10)
+          .describe('Maximum number of projects to return'),
+      },
+    },
+    async ({ limit }) => text(await listProjects(limit ?? 10)),
+  )
+
+  server.registerTool(
     'list_projects_app',
     {
       title: 'List projects (interactive)',

@@ -11,16 +11,18 @@
  */
 import { toolDefinition } from '@tanstack/ai'
 import type { ServerTool } from '@tanstack/ai'
-import { and, asc, eq, gte, ilike, inArray, lte, or } from 'drizzle-orm'
+import { and, asc, desc, eq, gte, ilike, inArray, lte, or } from 'drizzle-orm'
 import { z } from 'zod'
 
 import { db } from '#/db'
 import {
+  answer,
   conferenceSession,
   moment,
   note,
   profile,
   project,
+  question,
   sessionSpeaker,
   user,
 } from '#/db/schema'
@@ -149,6 +151,37 @@ const myScheduleDef = toolDefinition({
   name: 'my_schedule',
   description:
     "The current user's sessions — talks they speak at, bookmarked a moment in, or took a note on — ordered by start time.",
+  inputSchema: z.object({}),
+})
+
+const getTrendingProjectsDef = toolDefinition({
+  name: 'get_trending_projects',
+  description:
+    'Top projects ranked by trending score. Use this to find what people are most excited about at the conference.',
+  inputSchema: z.object({
+    limit: z
+      .number()
+      .int()
+      .min(1)
+      .max(50)
+      .default(10)
+      .meta({ description: 'Maximum number of projects to return' }),
+  }),
+})
+
+const getSessionSummaryDef = toolDefinition({
+  name: 'get_session_summary',
+  description:
+    'Get full details for a session (talk), including abstract, speakers, and the Q&A from the audience.',
+  inputSchema: z.object({
+    sessionId: z.string().meta({ description: 'Session id to look up' }),
+  }),
+})
+
+const getMyMomentsDef = toolDefinition({
+  name: 'get_my_moments',
+  description:
+    "Get the current user's bookmarked moments — key highlights they tapped to save during talks.",
   inputSchema: z.object({}),
 })
 
@@ -311,6 +344,97 @@ export function buildTools(userId: string): Array<ServerTool> {
     return { sessions: rows.map(toSession) }
   })
 
+  const getTrendingProjectsTool = getTrendingProjectsDef.server(
+    async ({ limit }) => {
+      const rows = await db
+        .select()
+        .from(project)
+        .orderBy(desc(project.trendingScore))
+        .limit(limit ?? 10)
+      return {
+        projects: rows.map(
+          (p): ProjectResult => ({
+            id: p.id,
+            slug: p.slug,
+            name: p.name,
+            tagline: p.tagline,
+            category: p.category,
+            techStack: p.techStack,
+            lookingFor: p.lookingFor,
+          }),
+        ),
+      }
+    },
+  )
+
+  const getSessionSummaryTool = getSessionSummaryDef.server(
+    async ({ sessionId }) => {
+      const [session] = await db
+        .select()
+        .from(conferenceSession)
+        .where(eq(conferenceSession.id, sessionId))
+        .limit(1)
+      if (!session) return { session: null }
+
+      const speakers = await db
+        .select({ id: user.id, name: user.name, image: user.image })
+        .from(sessionSpeaker)
+        .innerJoin(user, eq(user.id, sessionSpeaker.userId))
+        .where(eq(sessionSpeaker.sessionId, sessionId))
+
+      const questions = await db
+        .select()
+        .from(question)
+        .where(eq(question.sessionId, sessionId))
+        .orderBy(desc(question.upvotes), asc(question.createdAt))
+        .limit(20)
+
+      const questionIds = questions.map((q) => q.id)
+      const answers =
+        questionIds.length > 0
+          ? await db
+              .select()
+              .from(answer)
+              .where(inArray(answer.questionId, questionIds))
+          : []
+
+      const answersByQuestion = new Map<
+        string,
+        Array<(typeof answers)[number]>
+      >()
+      for (const a of answers) {
+        const list = answersByQuestion.get(a.questionId) ?? []
+        list.push(a)
+        answersByQuestion.set(a.questionId, list)
+      }
+
+      return {
+        session: toSession(session),
+        speakers,
+        qa: questions.map((q) => ({
+          id: q.id,
+          body: q.body,
+          status: q.status,
+          upvotes: q.upvotes,
+          answers: (answersByQuestion.get(q.id) ?? []).map((a) => ({
+            body: a.body,
+            fromSpeaker: a.fromSpeaker,
+          })),
+        })),
+      }
+    },
+  )
+
+  const getMyMomentsTool = getMyMomentsDef.server(async () => {
+    const rows = await db
+      .select()
+      .from(moment)
+      .where(eq(moment.userId, userId))
+      .orderBy(desc(moment.createdAt))
+      .limit(50)
+    return { moments: rows }
+  })
+
   return [
     searchPeopleTool,
     listSessionsTool,
@@ -318,5 +442,8 @@ export function buildTools(userId: string): Array<ServerTool> {
     listProjectsTool,
     getProfileTool,
     myScheduleTool,
+    getTrendingProjectsTool,
+    getSessionSummaryTool,
+    getMyMomentsTool,
   ]
 }
