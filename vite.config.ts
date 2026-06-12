@@ -20,31 +20,45 @@ import { nitro } from 'nitro/vite'
  * Returning empty stubs here lets the plugin finish its transformation so that
  * dead-code elimination properly removes `import { db } from '#/db'` from the
  * client bundle.
+ *
+ * Two things make this reliable:
+ *  - `enforce: 'pre'` + being first in the plugin list, so our `resolveId` wins
+ *    over TanStack Start / nitro's own resolvers (which otherwise claim `pg`
+ *    before we ever get a turn — the reason an earlier version silently failed).
+ *  - We stub `#/db` itself (the single chokepoint that imports the driver) in
+ *    addition to the `pg` package family, so the client graph never even
+ *    reaches the Node-only code. `#/db` is server-only by convention; the
+ *    client only ever needs the type-only `#/db/types` and `#/db/schema`.
  */
 function stubNodeOnlyPackagesForClient(): Plugin {
-  const STUB_PACKAGES = new Set([
-    'pg',
-    'pg-protocol',
-    'pg-types',
-    'pg-connection-string',
-    'pgpass',
-    'drizzle-orm/node-postgres',
-  ])
+  // The Node-only postgres driver family, matched on the bare specifier or any
+  // deep import within them (e.g. `pg/lib/...`).
+  const STUB_RE =
+    /^(pg|pgpass|pg-pool|pg-protocol|pg-types|pg-connection-string|pg-cloudflare|pg-native)(\/.*)?$/
+  const isStubbed = (id: string) =>
+    id === '#/db' ||
+    id === '#/db/index' ||
+    id === '#/db/index.ts' ||
+    id === 'drizzle-orm/node-postgres' ||
+    STUB_RE.test(id)
   const STUB_ID = '\0server-only-stub'
 
   return {
     name: 'stub-node-only-packages-for-client',
+    enforce: 'pre',
     applyToEnvironment(env) {
       return env.name === 'client'
     },
     resolveId(id) {
-      const base = id.split('/').slice(0, 2).join('/')
-      if (STUB_PACKAGES.has(id) || STUB_PACKAGES.has(base)) {
-        return STUB_ID
-      }
+      // Guard on the environment too, so this can never affect the server build
+      // even if `applyToEnvironment` semantics change.
+      if (this.environment?.name !== 'client') return
+      if (id === STUB_ID || isStubbed(id)) return STUB_ID
     },
     load(id) {
-      if (id === STUB_ID) return 'export default {}; export const Pool = class {};'
+      if (id === STUB_ID) {
+        return 'export default {}; export const Pool = class {}; export const drizzle = () => ({}); export const db = {};'
+      }
     },
   }
 }
@@ -52,12 +66,14 @@ function stubNodeOnlyPackagesForClient(): Plugin {
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
+    // Must come first: it stubs the server-only db driver in the client env,
+    // and needs to resolve `pg` / `#/db` before any other plugin does.
+    stubNodeOnlyPackagesForClient(),
     devtools(),
     nitro({ rollupConfig: { external: [/^@sentry\//] } }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),
-    stubNodeOnlyPackagesForClient(),
   ],
 })
 
