@@ -1,5 +1,5 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { and, asc, desc, eq, gte, lte } from 'drizzle-orm'
+import { and, asc, desc, eq, gte, lte, ne } from 'drizzle-orm'
 import { z } from 'zod'
 
 import { db } from '#/db'
@@ -40,9 +40,10 @@ async function loadSession(sessionId: string) {
 
 /**
  * Conference surface: the public conference graph — talks, rooms, schedule and
- * speakers. Nothing here is user-scoped.
+ * speakers. Mostly user-agnostic; `get_moment_matches` is the one user-scoped
+ * tool, surfacing who the calling user overlaps with inside a talk.
  */
-export function register(server: McpServer, _userId: string) {
+export function register(server: McpServer, userId: string) {
   server.registerTool(
     'list_conferences',
     {
@@ -187,6 +188,66 @@ export function register(server: McpServer, _userId: string) {
           upvotes: q.upvotes,
         })),
       })
+    },
+  )
+
+  server.registerTool(
+    'get_moment_matches',
+    {
+      title: 'Get moment matches',
+      description:
+        'For a talk, find the other attendees who bookmarked the same passages as the calling user (within a time window of each of their moments), sorted by number of shared moments descending. Use this to say e.g. "you and @alex both kept the same part of the talk".',
+      inputSchema: {
+        sessionId: z.string().describe('Session id'),
+        windowMs: z
+          .number()
+          .int()
+          .min(0)
+          .default(30_000)
+          .describe('How close two moments must be to count as shared (ms)'),
+      },
+    },
+    async ({ sessionId, windowMs }) => {
+      // My moments in this talk, and everyone else's.
+      const mine = await db
+        .select({ timestampMs: moment.timestampMs })
+        .from(moment)
+        .where(and(eq(moment.sessionId, sessionId), eq(moment.userId, userId)))
+
+      if (mine.length === 0) return text([])
+
+      const others = await db
+        .select({
+          userId: moment.userId,
+          timestampMs: moment.timestampMs,
+          name: user.name,
+          image: user.image,
+        })
+        .from(moment)
+        .innerJoin(user, eq(user.id, moment.userId))
+        .where(and(eq(moment.sessionId, sessionId), ne(moment.userId, userId)))
+
+      // Count, per attendee, how many of their moments land near one of mine.
+      const byUser = new Map<
+        string,
+        { userId: string; name: string; image: string | null; sharedMoments: number }
+      >()
+      for (const o of others) {
+        const near = mine.some(
+          (m) => Math.abs(m.timestampMs - o.timestampMs) <= windowMs,
+        )
+        if (!near) continue
+        const entry =
+          byUser.get(o.userId) ??
+          { userId: o.userId, name: o.name, image: o.image, sharedMoments: 0 }
+        entry.sharedMoments += 1
+        byUser.set(o.userId, entry)
+      }
+
+      const matches = [...byUser.values()].sort(
+        (a, b) => b.sharedMoments - a.sharedMoments,
+      )
+      return text(matches)
     },
   )
 

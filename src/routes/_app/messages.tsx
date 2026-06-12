@@ -12,6 +12,8 @@ import { getMessagesData } from '#/lib/queries/messages'
 export const Route = createFileRoute('/_app/messages')({
   validateSearch: (search: Record<string, unknown>) => ({
     me: typeof search.me === 'string' ? search.me : undefined,
+    // Deep-link to a conversation with this person (e.g. "Say hi" from /people).
+    dm: typeof search.dm === 'string' ? search.dm : undefined,
   }),
   loaderDeps: ({ search }) => ({ me: search.me }),
   loader: ({ deps }) => getMessagesData({ data: { me: deps.me } }),
@@ -20,6 +22,7 @@ export const Route = createFileRoute('/_app/messages')({
 
 function MessagesPage() {
   const { me, people, threads, connections } = Route.useLoaderData()
+  const { dm } = Route.useSearch()
   const router = useRouter()
 
   const peopleById = useMemo(
@@ -27,9 +30,12 @@ function MessagesPage() {
     [people],
   )
 
-  // Default to the most recent thread, then any accepted contact.
+  // A `?dm=` deep link wins; otherwise the most recent thread, then a contact.
   const [selectedId, setSelectedId] = useState<string | null>(
-    threads[0]?.otherId ?? connections.accepted[0]?.id ?? null,
+    (dm && peopleById.has(dm) ? dm : null) ??
+      threads[0]?.otherId ??
+      connections.accepted[0]?.id ??
+      null,
   )
 
   // The collection (and thus the conversation pane) is client-only.

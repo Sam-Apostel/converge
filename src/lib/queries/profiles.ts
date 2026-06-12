@@ -1,9 +1,10 @@
 import { createServerFn } from '@tanstack/react-start'
-import { asc, eq } from 'drizzle-orm'
+import { and, asc, eq } from 'drizzle-orm'
 
 import { db } from '#/db'
 import {
   conferenceSession,
+  connection,
   profile,
   project,
   projectMember,
@@ -11,6 +12,10 @@ import {
   user,
 } from '#/db/schema'
 import type { Person } from '#/db/types'
+import { resolveViewer } from '#/lib/queries/messages'
+
+/** Where the viewer stands with this person: not yet, requested, or connected. */
+export type ConnectionState = 'none' | 'pending' | 'accepted'
 
 /** A person's project as shown in the profile rows / project header. */
 export type ProfileProject = {
@@ -25,6 +30,8 @@ export type ProfileProject = {
 export type PersonDetail = {
   person: Person
   projects: Array<ProfileProject>
+  /** The viewer's connection state with this person — drives the Connect button. */
+  connectionState: ConnectionState
 }
 
 /** A full person profile: the user, their profile, and the projects they own/join. */
@@ -46,6 +53,21 @@ export const getPersonById = createServerFn({ method: 'GET' })
       name: row.user.name,
       image: row.user.image,
       profile: row.profile,
+    }
+
+    // The viewer's standing with this person (none → pending → accepted).
+    const me = await resolveViewer()
+    let connectionState: ConnectionState = 'none'
+    if (me !== userId) {
+      const [link] = await db
+        .select({ status: connection.status })
+        .from(connection)
+        .where(
+          and(eq(connection.userId, me), eq(connection.contactId, userId)),
+        )
+        .limit(1)
+      if (link?.status === 'accepted') connectionState = 'accepted'
+      else if (link) connectionState = 'pending'
     }
 
     const cols = {
@@ -73,7 +95,7 @@ export const getPersonById = createServerFn({ method: 'GET' })
       (a, b) => b.trendingScore - a.trendingScore,
     )
 
-    return { person, projects }
+    return { person, projects, connectionState }
   })
 
 /** A project member, surfaced in the "looking for" avatar stack. */

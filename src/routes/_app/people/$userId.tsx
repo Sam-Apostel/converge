@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 
 import { Avatar, Button, Mono, Tag } from '#/components/ui'
 import { getPersonById } from '#/lib/queries/profiles'
-import type { ProfileProject } from '#/lib/queries/profiles'
+import type { ConnectionState, ProfileProject } from '#/lib/queries/profiles'
 
 export const Route = createFileRoute('/_app/people/$userId')({
   loader: ({ params }) => getPersonById({ data: params.userId }),
@@ -14,7 +15,7 @@ function PersonDetail() {
 
   if (!data) return <NotFound />
 
-  const { person, projects } = data
+  const { person, projects, connectionState } = data
   const p = person.profile
 
   return (
@@ -43,7 +44,7 @@ function PersonDetail() {
             </div>
           )}
         </div>
-        <Button variant="dark">Connect</Button>
+        <ConnectButton toUserId={person.id} initial={connectionState} />
       </div>
 
       {p?.bio && (
@@ -110,6 +111,56 @@ function PersonDetail() {
         </div>
       )}
     </div>
+  )
+}
+
+/** Connect CTA: requests a connection, then reflects pending / connected. */
+function ConnectButton({
+  toUserId,
+  initial,
+}: {
+  toUserId: string
+  initial: ConnectionState
+}) {
+  const [state, setState] = useState<ConnectionState>(initial)
+  const [busy, setBusy] = useState(false)
+
+  if (state === 'accepted') {
+    return (
+      <Button variant="soft" disabled>
+        ✓ Connected
+      </Button>
+    )
+  }
+  if (state === 'pending') {
+    return (
+      <Button variant="soft" disabled>
+        Pending
+      </Button>
+    )
+  }
+
+  const connect = async () => {
+    setBusy(true)
+    setState('pending') // optimistic
+    try {
+      const res = await fetch('/api/connections', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ toUserId }),
+      })
+      if (!res.ok) setState('none')
+    } catch {
+      setState('none')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <Button variant="dark" onClick={connect} disabled={busy}>
+      Connect
+    </Button>
   )
 }
 

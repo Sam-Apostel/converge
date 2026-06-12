@@ -278,6 +278,50 @@ function Home() {
         </div>
       </div>
 
+      {/* ── People to meet ────────────────────────────────────────── */}
+      {peopleToMeet.length > 0 && (
+        <div>
+          <div className="mb-3 flex items-center gap-2">
+            <Mono className="!text-[13px] !tracking-[0.1em]">People to meet</Mono>
+            <Link
+              to="/people"
+              className="text-[12.5px] text-muted transition-colors hover:text-slate"
+            >
+              See all →
+            </Link>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {peopleToMeet.map((person) => (
+              <div
+                key={person.id}
+                className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card"
+              >
+                <Link
+                  to="/people/$userId"
+                  params={{ userId: person.id }}
+                  className="shrink-0"
+                >
+                  <Avatar name={person.name} src={person.image} size={44} />
+                </Link>
+                <div className="min-w-0 flex-1">
+                  <Link
+                    to="/people/$userId"
+                    params={{ userId: person.id }}
+                    className="block truncate text-[14px] font-semibold tracking-[-0.01em] transition-colors hover:text-ink-2"
+                  >
+                    {person.name}
+                  </Link>
+                  <div className="truncate text-[12px] text-muted">
+                    {person.reason ?? person.headline ?? 'At the conference'}
+                  </div>
+                </div>
+                <HomeConnect toUserId={person.id} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* ── Counts ────────────────────────────────────────────────── */}
       <div className="grid gap-4 sm:grid-cols-3">
         {[
@@ -298,5 +342,39 @@ function Home() {
         ))}
       </div>
     </div>
+  )
+}
+
+/** Inline connect CTA for a home suggestion: POST then reflect pending. */
+function HomeConnect({ toUserId }: { toUserId: string }) {
+  const [state, setState] = useState<'none' | 'pending'>('none')
+  if (state === 'pending') {
+    return (
+      <Button size="sm" variant="soft" disabled className="shrink-0">
+        Pending
+      </Button>
+    )
+  }
+  return (
+    <Button
+      size="sm"
+      variant="dark"
+      className="shrink-0"
+      onClick={async () => {
+        setState('pending')
+        try {
+          const res = await fetch('/api/connections', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ toUserId }),
+          })
+          if (!res.ok) setState('none')
+        } catch {
+          setState('none')
+        }
+      }}
+    >
+      Connect
+    </Button>
   )
 }

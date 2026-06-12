@@ -1,9 +1,10 @@
 import { createServerFn } from '@tanstack/react-start'
-import { asc, desc, eq } from 'drizzle-orm'
+import { asc, desc, eq, ne } from 'drizzle-orm'
 
 import { db } from '#/db'
 import {
   conferenceSession,
+  connection,
   profile,
   project,
   room,
@@ -11,11 +12,98 @@ import {
   user,
 } from '#/db/schema'
 import type { Person } from '#/db/types'
+import { resolveViewer } from '#/lib/queries/messages'
+
+/** A suggested attendee to meet on the home page. */
+export type SuggestedPerson = {
+  id: string
+  name: string
+  image: string | null
+  headline: string | null
+  /** Why we surfaced them — e.g. "both into RSCs" or null for a fallback pick. */
+  reason: string | null
+}
+
+/** Count how many entries two (possibly null) arrays share. */
+function sharedCount(a: Array<string> | null, b: Array<string> | null): number {
+  if (!a?.length || !b?.length) return 0
+  const set = new Set(a)
+  return b.filter((x) => set.has(x)).length
+}
+
+/**
+ * People to meet: attendees the viewer hasn't connected with yet, ranked by
+ * overlapping interested-topics / intents, falling back to project momentum so
+ * the slot is never empty. (Shared-moment ranking lives in the MCP layer.)
+ */
+async function suggestPeopleToMeet(limit = 5): Promise<Array<SuggestedPerson>> {
+  const me = await resolveViewer()
+
+  const [mine] = await db
+    .select()
+    .from(profile)
+    .where(eq(profile.userId, me))
+    .limit(1)
+
+  const already = new Set(
+    (
+      await db
+        .select({ contactId: connection.contactId })
+        .from(connection)
+        .where(eq(connection.userId, me))
+    ).map((r) => r.contactId),
+  )
+
+  const candidates = await db
+    .select({ user, profile, ownerScore: project.trendingScore })
+    .from(user)
+    .innerJoin(profile, eq(profile.userId, user.id))
+    .leftJoin(project, eq(project.ownerId, user.id))
+    .where(ne(user.id, me))
+    .limit(300)
+
+  // Dedupe (a person may own several projects), keeping their best project score.
+  const byId = new Map<string, (typeof candidates)[number]>()
+  for (const c of candidates) {
+    const prev = byId.get(c.user.id)
+    if (!prev || (c.ownerScore ?? 0) > (prev.ownerScore ?? 0)) {
+      byId.set(c.user.id, c)
+    }
+  }
+
+  const scored = [...byId.values()]
+    .filter((c) => !already.has(c.user.id))
+    .map((c) => {
+      const topics = sharedCount(
+        mine?.interestedTopics ?? null,
+        c.profile.interestedTopics,
+      )
+      const intents = sharedCount(mine?.intents ?? null, c.profile.intents)
+      const sharedTopic = (mine?.interestedTopics ?? []).find((t) =>
+        (c.profile.interestedTopics ?? []).includes(t),
+      )
+      return {
+        affinity: topics + intents,
+        momentum: c.ownerScore ?? 0,
+        person: {
+          id: c.user.id,
+          name: c.user.name,
+          image: c.user.image,
+          headline: c.profile.headline ?? c.profile.title,
+          reason: sharedTopic ? `both into ${sharedTopic}` : null,
+        } satisfies SuggestedPerson,
+      }
+    })
+    .sort((a, b) => b.affinity - a.affinity || b.momentum - a.momentum)
+    .slice(0, limit)
+
+  return scored.map((s) => s.person)
+}
 
 /** Home dashboard: counts, the next session, people to meet, trending project. */
 export const getHomeSummary = createServerFn({ method: 'GET' }).handler(
   async () => {
-    const [people, projects, sessions, next, ppl, trending] = await Promise.all([
+    const [people, projects, sessions, next, peopleToMeet, trending] = await Promise.all([
       db.$count(profile),
       db.$count(project),
       db.$count(conferenceSession),
@@ -38,11 +126,7 @@ export const getHomeSummary = createServerFn({ method: 'GET' }).handler(
         .leftJoin(user, eq(user.id, sessionSpeaker.userId))
         .orderBy(asc(conferenceSession.startsAt))
         .limit(1),
-      db
-        .select({ id: user.id, name: user.name })
-        .from(user)
-        .innerJoin(profile, eq(profile.userId, user.id))
-        .limit(6),
+      suggestPeopleToMeet(),
       db
         .select({
           name: project.name,
@@ -60,7 +144,7 @@ export const getHomeSummary = createServerFn({ method: 'GET' }).handler(
     return {
       counts: { people, projects, sessions },
       nextSession: next[0] ?? null,
-      peopleToMeet: ppl,
+      peopleToMeet,
       trendingProject: trending[0] ?? null,
     }
   },
