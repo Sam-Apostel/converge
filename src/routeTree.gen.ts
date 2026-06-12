@@ -38,7 +38,7 @@ import { Route as AppProjectsIndexRouteImport } from './routes/_app/projects/ind
 import { Route as AppPeopleIndexRouteImport } from './routes/_app/people/index'
 import { Route as ApiMomentsSharedRouteImport } from './routes/api/moments/shared'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as AppSessionsSessionIdRouteImport } from './routes/_app/sessions/$sessionId'
+import { Route as AppSessionsSlugRouteImport } from './routes/_app/sessions/$slug'
 import { Route as AppProjectsSlugRouteImport } from './routes/_app/projects/$slug'
 import { Route as AppPeopleUserIdRouteImport } from './routes/_app/people/$userId'
 import { Route as AppDiscussionsIdRouteImport } from './routes/_app/discussions/$id'
@@ -191,9 +191,9 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppSessionsSessionIdRoute = AppSessionsSessionIdRouteImport.update({
-  id: '/sessions/$sessionId',
-  path: '/sessions/$sessionId',
+const AppSessionsSlugRoute = AppSessionsSlugRouteImport.update({
+  id: '/sessions/$slug',
+  path: '/sessions/$slug',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProjectsSlugRoute = AppProjectsSlugRouteImport.update({
@@ -249,7 +249,7 @@ export interface FileRoutesByFullPath {
   '/discussions/$id': typeof AppDiscussionsIdRoute
   '/people/$userId': typeof AppPeopleUserIdRoute
   '/projects/$slug': typeof AppProjectsSlugRoute
-  '/sessions/$sessionId': typeof AppSessionsSessionIdRoute
+  '/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/moments/shared': typeof ApiMomentsSharedRoute
   '/people/': typeof AppPeopleIndexRoute
@@ -285,7 +285,7 @@ export interface FileRoutesByTo {
   '/discussions/$id': typeof AppDiscussionsIdRoute
   '/people/$userId': typeof AppPeopleUserIdRoute
   '/projects/$slug': typeof AppProjectsSlugRoute
-  '/sessions/$sessionId': typeof AppSessionsSessionIdRoute
+  '/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/moments/shared': typeof ApiMomentsSharedRoute
   '/people': typeof AppPeopleIndexRoute
@@ -323,7 +323,7 @@ export interface FileRoutesById {
   '/_app/discussions/$id': typeof AppDiscussionsIdRoute
   '/_app/people/$userId': typeof AppPeopleUserIdRoute
   '/_app/projects/$slug': typeof AppProjectsSlugRoute
-  '/_app/sessions/$sessionId': typeof AppSessionsSessionIdRoute
+  '/_app/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/moments/shared': typeof ApiMomentsSharedRoute
   '/_app/people/': typeof AppPeopleIndexRoute
@@ -361,7 +361,7 @@ export interface FileRouteTypes {
     | '/discussions/$id'
     | '/people/$userId'
     | '/projects/$slug'
-    | '/sessions/$sessionId'
+    | '/sessions/$slug'
     | '/api/auth/$'
     | '/api/moments/shared'
     | '/people/'
@@ -397,7 +397,7 @@ export interface FileRouteTypes {
     | '/discussions/$id'
     | '/people/$userId'
     | '/projects/$slug'
-    | '/sessions/$sessionId'
+    | '/sessions/$slug'
     | '/api/auth/$'
     | '/api/moments/shared'
     | '/people'
@@ -434,7 +434,7 @@ export interface FileRouteTypes {
     | '/_app/discussions/$id'
     | '/_app/people/$userId'
     | '/_app/projects/$slug'
-    | '/_app/sessions/$sessionId'
+    | '/_app/sessions/$slug'
     | '/api/auth/$'
     | '/api/moments/shared'
     | '/_app/people/'
@@ -671,11 +671,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/sessions/$sessionId': {
-      id: '/_app/sessions/$sessionId'
-      path: '/sessions/$sessionId'
-      fullPath: '/sessions/$sessionId'
-      preLoaderRoute: typeof AppSessionsSessionIdRouteImport
+    '/_app/sessions/$slug': {
+      id: '/_app/sessions/$slug'
+      path: '/sessions/$slug'
+      fullPath: '/sessions/$slug'
+      preLoaderRoute: typeof AppSessionsSlugRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/projects/$slug': {
@@ -737,7 +737,7 @@ interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   AppPeopleUserIdRoute: typeof AppPeopleUserIdRoute
   AppProjectsSlugRoute: typeof AppProjectsSlugRoute
-  AppSessionsSessionIdRoute: typeof AppSessionsSessionIdRoute
+  AppSessionsSlugRoute: typeof AppSessionsSlugRoute
   AppPeopleIndexRoute: typeof AppPeopleIndexRoute
   AppProjectsIndexRoute: typeof AppProjectsIndexRoute
   AppSessionsIndexRoute: typeof AppSessionsIndexRoute
@@ -752,7 +752,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   AppPeopleUserIdRoute: AppPeopleUserIdRoute,
   AppProjectsSlugRoute: AppProjectsSlugRoute,
-  AppSessionsSessionIdRoute: AppSessionsSessionIdRoute,
+  AppSessionsSlugRoute: AppSessionsSlugRoute,
   AppPeopleIndexRoute: AppPeopleIndexRoute,
   AppProjectsIndexRoute: AppProjectsIndexRoute,
   AppSessionsIndexRoute: AppSessionsIndexRoute,

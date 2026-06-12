@@ -26,6 +26,20 @@ export function paletteFor(seed: string) {
   return AVATAR_PALETTE[hash(seed) % AVATAR_PALETTE.length]
 }
 
+/**
+ * Default avatars keyed by normalized name — used when a person has no explicit
+ * image of their own. Lets us seed a real photo for known people.
+ */
+const NAME_AVATARS: Record<string, string> = {
+  'sam apostel': '/avatars/sam-apostel.jpg',
+}
+
+/** A built-in default avatar for this name, if any (case/space-insensitive). */
+export function defaultAvatarFor(name?: string): string | undefined {
+  if (!name) return undefined
+  return NAME_AVATARS[name.trim().toLowerCase().replace(/\s+/g, ' ')]
+}
+
 function initialsOf(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean)
   if (parts.length === 0) return '?'
@@ -78,6 +92,7 @@ export function Avatar({
   const background = bg ?? pal.bg
   const color = ink ?? pal.ink
   const label = initials ?? (name ? initialsOf(name) : '?')
+  const resolvedSrc = src ?? defaultAvatarFor(name)
   const radius = shape === 'squircle' ? Math.round(size * 0.28) : size
 
   const dotColor =
@@ -93,7 +108,7 @@ export function Avatar({
         height: size,
         flex: '0 0 auto',
         borderRadius: radius,
-        background: src ? `center/cover url(${src})` : background,
+        background: resolvedSrc ? `center/cover url(${resolvedSrc})` : background,
         color,
         display: 'grid',
         placeItems: 'center',
@@ -106,7 +121,7 @@ export function Avatar({
         ...style,
       }}
     >
-      {!src && label}
+      {!resolvedSrc && label}
       {dotColor && (
         <span
           style={{

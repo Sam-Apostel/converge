@@ -21,11 +21,12 @@ import {
 
 /** Everything the talk OS renders for a single session. */
 export const getSessionDetail = createServerFn({ method: 'GET' })
-  .validator((sessionId: string) => sessionId)
-  .handler(async ({ data: sessionId }) => {
+  .validator((slug: string) => slug)
+  .handler(async ({ data: slug }) => {
     const [session] = await db
       .select({
         id: conferenceSession.id,
+        slug: conferenceSession.slug,
         title: conferenceSession.title,
         abstract: conferenceSession.abstract,
         track: conferenceSession.track,
@@ -37,10 +38,13 @@ export const getSessionDetail = createServerFn({ method: 'GET' })
       })
       .from(conferenceSession)
       .leftJoin(room, eq(room.id, conferenceSession.roomId))
-      .where(eq(conferenceSession.id, sessionId))
+      .where(eq(conferenceSession.slug, slug))
       .limit(1)
 
     if (!session) return null
+
+    // Slug resolves the talk; everything woven around it keys off the UUID.
+    const sessionId = session.id
 
     const [speaker] = await db
       .select({

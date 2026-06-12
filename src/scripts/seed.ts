@@ -1604,6 +1604,7 @@ async function seed() {
     sessionIds.set(s.key, id)
     await db.insert(conferenceSession).values({
       id,
+      slug: s.key,
       conferenceId: s.conf,
       roomId: s.room,
       title: s.title,

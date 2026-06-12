@@ -21,6 +21,7 @@ type PersonRow = {
 
 type SessionRow = {
   id: string
+  slug: string
   title: string
   track?: string | null
   startsAt?: string | null
@@ -42,6 +43,7 @@ function formatTime(iso?: string | null): string | null {
     weekday: 'short',
     hour: '2-digit',
     minute: '2-digit',
+    hour12: false,
   })
 }
 
@@ -58,7 +60,7 @@ function ResultShell({
     <div className="mt-2 rounded-2xl border border-line bg-surface p-3 shadow-card">
       <div className="mb-2 flex items-center gap-2 px-1">
         <Mono tone="faint">{label}</Mono>
-        {typeof count === 'number' ? (
+        {count !== undefined ? (
           <span className="font-mono text-tiny text-faint tabular-nums">
             {count}
           </span>
@@ -118,8 +120,8 @@ function SessionsResult({ sessions }: { sessions: Array<SessionRow> }) {
         {sessions.slice(0, 8).map((s) => (
           <li key={s.id}>
             <Link
-              to="/sessions/$sessionId"
-              params={{ sessionId: s.id }}
+              to="/sessions/$slug"
+              params={{ slug: s.slug }}
               className="flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors hover:bg-pillow"
             >
               <span className="min-w-0 flex-1">

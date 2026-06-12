@@ -1,5 +1,5 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { and, eq, ilike, ne, or } from 'drizzle-orm'
+import { and, eq, ilike, ne, or, sql } from 'drizzle-orm'
 import { z } from 'zod'
 
 import { db } from '#/db'
@@ -9,7 +9,20 @@ import { peopleDirectoryResource } from '#/mcp/apps'
 
 import { text } from './util'
 
-/** Free-text people search across user name + profile fields. */
+/**
+ * Match `query` (as a substring) against the `intents` and `interestedTopics`
+ * `text[]` columns — the fields that actually encode what a person is into.
+ * Plain `ilike` can't reach into an array, so we `unnest` and match per element.
+ */
+function topicOrIntentMatch(query: string) {
+  const like = `%${query}%`
+  return or(
+    sql`EXISTS (SELECT 1 FROM unnest(${profile.interestedTopics}) AS topic WHERE topic ILIKE ${like})`,
+    sql`EXISTS (SELECT 1 FROM unnest(${profile.intents}) AS intent WHERE intent ILIKE ${like})`,
+  )
+}
+
+/** Free-text people search across user name, profile fields, topics + intents. */
 async function searchPeople(query: string): Promise<Array<Person>> {
   const like = `%${query}%`
   const rows = await db
@@ -24,6 +37,7 @@ async function searchPeople(query: string): Promise<Array<Person>> {
             ilike(profile.company, like),
             ilike(profile.currentFocus, like),
             ilike(profile.bio, like),
+            topicOrIntentMatch(query),
           )
         : undefined,
     )
@@ -169,35 +183,23 @@ export function register(server: McpServer, userId: string) {
                 ilike(profile.currentFocus, like),
                 ilike(profile.bio, like),
                 ilike(profile.headline, like),
+                topicOrIntentMatch(query),
               )
             : undefined,
         )
         .limit(24)
 
       return text(
-        rows
-          .filter((r) => {
-            if (!query) return true
-            const q = query.toLowerCase()
-            const intents = r.profile?.intents ?? []
-            const topics = r.profile?.interestedTopics ?? []
-            if (
-              intents.some((i) => i.toLowerCase().includes(q)) ||
-              topics.some((t) => t.toLowerCase().includes(q))
-            )
-              return true
-            return true
-          })
-          .map((r) => ({
-            id: r.user.id,
-            name: r.user.name,
-            image: r.user.image,
-            headline: r.profile?.headline ?? null,
-            company: r.profile?.company ?? null,
-            currentFocus: r.profile?.currentFocus ?? null,
-            intents: r.profile?.intents ?? null,
-            interestedTopics: r.profile?.interestedTopics ?? null,
-          })),
+        rows.map((r) => ({
+          id: r.user.id,
+          name: r.user.name,
+          image: r.user.image,
+          headline: r.profile?.headline ?? null,
+          company: r.profile?.company ?? null,
+          currentFocus: r.profile?.currentFocus ?? null,
+          intents: r.profile?.intents ?? null,
+          interestedTopics: r.profile?.interestedTopics ?? null,
+        })),
       )
     },
   )

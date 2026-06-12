@@ -6,6 +6,7 @@ import {
   toServerSentEventsResponse,
 } from '@tanstack/ai'
 
+import { buildRuntimeContext } from '#/lib/concierge/context'
 import { resolveProvider } from '#/lib/concierge/provider'
 import { buildTools } from '#/lib/concierge/tools'
 import { resolveViewerId } from '#/lib/concierge/viewer'
@@ -38,7 +39,10 @@ export const Route = createFileRoute('/api/concierge')({
       POST: async ({ request }) => {
         const userId = await resolveViewerId(request.headers)
         const { messages } = await chatParamsFromRequest(request)
-        const { adapter } = await resolveProvider(userId)
+        const [{ adapter }, runtimeContext] = await Promise.all([
+          resolveProvider(userId),
+          buildRuntimeContext(userId),
+        ])
 
         const abortController = new AbortController()
         request.signal.addEventListener('abort', () => abortController.abort())
@@ -46,7 +50,7 @@ export const Route = createFileRoute('/api/concierge')({
         const stream = chat({
           adapter,
           messages,
-          systemPrompts: [SYSTEM_PROMPT],
+          systemPrompts: [SYSTEM_PROMPT, runtimeContext],
           tools: buildTools(userId),
           agentLoopStrategy: maxIterations(8),
           abortController,

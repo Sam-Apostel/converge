@@ -197,6 +197,7 @@ export const listSessions = createServerFn({ method: 'GET' }).handler(
     db
       .select({
         id: conferenceSession.id,
+        slug: conferenceSession.slug,
         title: conferenceSession.title,
         abstract: conferenceSession.abstract,
         track: conferenceSession.track,

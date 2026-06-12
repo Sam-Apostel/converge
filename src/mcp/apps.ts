@@ -94,6 +94,7 @@ export function peopleDirectoryResource(people: Array<Person>, query: string) {
     uri: `ui://converge/people-directory`,
     content: { type: 'rawHtml', htmlString },
     encoding: 'text',
+    adapters: { mcpApps: { enabled: true } },
   })
 }
 
@@ -180,6 +181,7 @@ export function projectsGridResource(projects: Array<Project>) {
     uri: `ui://converge/projects-grid`,
     content: { type: 'rawHtml', htmlString },
     encoding: 'text',
+    adapters: { mcpApps: { enabled: true } },
   })
 }
 
@@ -303,5 +305,6 @@ export function sessionResource(
     uri: `ui://converge/session`,
     content: { type: 'rawHtml', htmlString },
     encoding: 'text',
+    adapters: { mcpApps: { enabled: true } },
   })
 }

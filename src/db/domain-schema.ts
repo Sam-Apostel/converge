@@ -167,6 +167,7 @@ export const conferenceSession = pgTable(
   'conference_session',
   {
     id: id(),
+    slug: text('slug').notNull().unique(),
     conferenceId: text('conference_id')
       .notNull()
       .references(() => conference.id, { onDelete: 'cascade' }),

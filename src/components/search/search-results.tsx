@@ -93,8 +93,8 @@ function ResultLink({
     case 'session':
       return (
         <Link
-          to="/sessions/$sessionId"
-          params={{ sessionId: result.id }}
+          to="/sessions/$slug"
+          params={{ slug: result.id }}
           className={ROW_CLASS}
         >
           {children}

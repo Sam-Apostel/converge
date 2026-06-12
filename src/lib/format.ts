@@ -12,6 +12,7 @@ export function formatTime(value: string | Date | null): string {
     weekday: 'short',
     hour: '2-digit',
     minute: '2-digit',
+    hour12: false,
   })
 }
 
@@ -22,5 +23,6 @@ export function formatClock(value: string | Date | null): string {
   return date.toLocaleTimeString(undefined, {
     hour: '2-digit',
     minute: '2-digit',
+    hour12: false,
   })
 }

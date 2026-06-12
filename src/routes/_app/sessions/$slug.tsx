@@ -28,7 +28,6 @@ import {
   SLIDES,
   SLIDE_MS,
   formatOffset,
-  talkFraction,
 } from '#/components/session/slides'
 import { momentsCollection } from '#/db-collections/moments'
 import { useEventStream } from '#/hooks/use-event-stream'
@@ -36,9 +35,9 @@ import { useSession } from '#/lib/auth-client'
 import { getDiscussion } from '#/lib/queries/discussions'
 import { getSessionDetail } from '#/lib/queries/sessions'
 
-export const Route = createFileRoute('/_app/sessions/$sessionId')({
+export const Route = createFileRoute('/_app/sessions/$slug')({
   loader: async ({ params }) => {
-    const detail = await getSessionDetail({ data: params.sessionId })
+    const detail = await getSessionDetail({ data: params.slug })
     if (!detail) return null
     // The linked discussion thread (if any) renders inline on the Discussion tab.
     const discussion = detail.discussionId
@@ -50,18 +49,20 @@ export const Route = createFileRoute('/_app/sessions/$sessionId')({
 })
 
 function SessionScreen() {
-  const { sessionId } = Route.useParams()
   const detail = Route.useLoaderData()
   const { data: authSession } = useSession()
+
+  // The URL carries the slug; the moments rail, Q&A and live event channel all
+  // key off the talk's UUID, which the loader resolves for us.
+  const sessionId = detail?.session.id ?? ''
 
   const notify = useNotify()
   const collection = useMemo(() => momentsCollection(sessionId), [sessionId])
   const videoId = detail ? livestreamFor(detail.session.livestreamUrl) : null
 
-  // Livestream is the model: the talk progress bar follows the stream position.
+  // The talk progress bar runs on the session's wall clock (inside LiveProgress).
   // The slide playhead only drives the no-stream fallback (some talks are demos
   // / webapps / canvases with no deck at all).
-  const [streamFraction, setStreamFraction] = useState(0)
   const [playhead, setPlayhead] = useState(INITIAL_SLIDE)
 
   // Collections are client-only — gate the live rail until after mount.
@@ -164,7 +165,6 @@ function SessionScreen() {
         roomName={session.roomName}
         startsAt={session.startsAt}
         endsAt={session.endsAt}
-        fraction={videoId ? streamFraction : talkFraction(playhead)}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr]">
@@ -194,7 +194,6 @@ function SessionScreen() {
               videoId={videoId}
               posterUrl={youtubeThumb(videoId)}
               onBookmark={captureLive}
-              onProgress={setStreamFraction}
             />
           ) : (
             <LiveSlide

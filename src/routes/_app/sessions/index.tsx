@@ -71,8 +71,8 @@ function SessionsPage() {
                   return (
                     <li key={row.id}>
                       <Link
-                        to="/sessions/$sessionId"
-                        params={{ sessionId: row.id }}
+                        to="/sessions/$slug"
+                        params={{ slug: row.slug }}
                         className={
                           live
                             ? 'bg-ink-gradient group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-white shadow-card transition-[transform,box-shadow] duration-150 hover:-translate-y-px hover:shadow-card-hover'

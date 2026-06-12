@@ -43,6 +43,7 @@ type PersonResult = {
 
 type SessionResult = {
   id: string
+  slug: string
   title: string
   track: string | null
   abstract: string | null
@@ -64,6 +65,7 @@ const toSession = (
   s: typeof conferenceSession.$inferSelect,
 ): SessionResult => ({
   id: s.id,
+  slug: s.slug,
   title: s.title,
   track: s.track,
   abstract: s.abstract,

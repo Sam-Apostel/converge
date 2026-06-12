@@ -194,19 +194,6 @@ function Home() {
           </>
         )}
 
-        {/* deep-link Converge's MCP server into Claude */}
-        {empty && (
-          <div className="mt-6 flex flex-col items-center gap-4">
-            <Mono tone="faint" className="!text-tiny !tracking-[0.06em]">
-              Or use your own mcp enabled agent by adding{' '}
-              <pre className="bg-gray-900 text-white inline px-1">
-                {window.location.origin}/mcp
-              </pre>
-            </Mono>
-            <AddToClaudeButton />
-          </div>
-        )}
-
         {/* no model configured — nudge to settings */}
         {empty && !conciergeStatus.ready && (
           <div className="w-full max-w-2xl rounded-2xl border border-line bg-white/70 px-5 py-4 text-note text-slate [backdrop-filter:blur(12px)]">
@@ -217,6 +204,20 @@ function Home() {
             to start chatting. You can use a local Ollama server or bring your
             own Anthropic / OpenAI key.
           </div>
+        )}
+
+        {/* deep-link Converge's MCP server into Claude */}
+        {empty && (
+            <div className="mt-6 flex flex-col items-center gap-4">
+              <AddToClaudeButton />
+              <Mono tone="faint" className="!text-tiny !tracking-[0.06em]">
+                Or use your own mcp enabled agent by adding
+              </Mono>
+              <pre className="bg-gray-900 text-white inline px-1">
+                {window.location.origin}/mcp
+            </pre>
+            </div>
+
         )}
       </div>
 

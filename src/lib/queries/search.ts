@@ -101,6 +101,7 @@ export const searchAll = createServerFn({ method: 'GET' })
       db
         .select({
           id: conferenceSession.id,
+          slug: conferenceSession.slug,
           title: conferenceSession.title,
           track: conferenceSession.track,
         })
@@ -144,10 +145,10 @@ export const searchAll = createServerFn({ method: 'GET' })
 
     const sessionResults: SearchResult[] = sessions.map((s) => ({
       type: 'session',
-      id: s.id,
+      id: s.slug,
       title: s.title,
       subtitle: s.track,
-      href: `/sessions/${s.id}`,
+      href: `/sessions/${s.slug}`,
     }))
 
     const discussionResults: SearchResult[] = discussions.map((d) => ({
