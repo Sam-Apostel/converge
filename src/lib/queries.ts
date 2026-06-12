@@ -182,6 +182,7 @@ export const listProjects = createServerFn({ method: 'GET' }).handler(
         category: project.category,
         techStack: project.techStack,
         lookingFor: project.lookingFor,
+        screenshots: project.screenshots,
         trendingScore: project.trendingScore,
         ownerId: project.ownerId,
         ownerName: user.name,

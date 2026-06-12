@@ -151,6 +151,7 @@ const BOTTOM_NAV = [
 function AppLayout() {
   const { data: session } = useSession()
   const userName = session?.user?.name ?? ''
+  const userImage = session?.user?.image ?? null
 
   return (
     <NotificationProvider>
@@ -203,7 +204,7 @@ function AppLayout() {
               </nav>
 
               <Link to="/profile" className="ml-auto shrink-0 lg:ml-1">
-                <Avatar name={userName} size={36} />
+                <Avatar name={userName} src={userImage} size={36} />
               </Link>
             </div>
           </div>
@@ -266,7 +267,7 @@ function AppLayout() {
             </Link>
           ))}
           <Link to="/profile" className="flex-1 grid place-items-center">
-            <Avatar name={userName} size={36} />
+            <Avatar name={userName} src={userImage} size={36} />
           </Link>
         </nav>
       </div>

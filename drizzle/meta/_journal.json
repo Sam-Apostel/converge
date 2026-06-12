@@ -36,6 +36,13 @@
       "when": 1781278186307,
       "tag": "0004_fast_raider",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1781283753309,
+      "tag": "0005_handy_stark_industries",
+      "breakpoints": true
     }
   ]
 }
