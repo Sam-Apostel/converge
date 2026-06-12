@@ -228,7 +228,6 @@ function Home() {
                 <Button variant="lime" className="flex-1">
                   Save my seat
                 </Button>
-                <Button variant="glass">◎ 4 min walk</Button>
               </div>
             </Spotlight>
           ) : (

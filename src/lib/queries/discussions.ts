@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
-import { asc, desc, eq, inArray } from 'drizzle-orm'
+import { getRequestHeaders } from '@tanstack/react-start/server'
+import { and, asc, desc, eq, inArray } from 'drizzle-orm'
 
 import { db } from '#/db'
 import {
@@ -8,9 +9,11 @@ import {
   discussionPost,
   profile,
   question,
+  questionVote,
   sessionSpeaker,
   user,
 } from '#/db/schema'
+import { auth } from '#/lib/auth'
 
 /* ------------------------------------------------------------------ */
 /* Serialized shapes (safe to read in client components)               */
@@ -40,6 +43,8 @@ export type ThreadQuestion = {
   id: string
   body: string
   upvotes: number
+  /** Whether the current viewer has upvoted (drives the toggle). */
+  hasVoted: boolean
   status: string
   author: DiscussionAuthor | null
 }
@@ -62,8 +67,10 @@ export type TopicChannel = {
 }
 
 export type TrendingQuestion = {
+  id: string
   body: string
   upvotes: number
+  hasVoted: boolean
   sessionTitle: string | null
   followUps: number
 }
@@ -96,6 +103,31 @@ const discussionColumns = {
   createdById: discussion.createdById,
 }
 
+/** The signed-in viewer's user id, or null for anonymous requests. */
+async function viewerId(): Promise<string | null> {
+  const headers = new Headers(getRequestHeaders() as HeadersInit)
+  const session = await auth.api.getSession({ headers })
+  return session?.user.id ?? null
+}
+
+/** Which of `questionIds` the viewer has upvoted — empty when signed out. */
+async function votedQuestionIds(
+  userId: string | null,
+  questionIds: Array<string>,
+): Promise<Set<string>> {
+  if (!userId || questionIds.length === 0) return new Set()
+  const rows = await db
+    .select({ questionId: questionVote.questionId })
+    .from(questionVote)
+    .where(
+      and(
+        eq(questionVote.userId, userId),
+        inArray(questionVote.questionId, questionIds),
+      ),
+    )
+  return new Set(rows.map((r) => r.questionId))
+}
+
 /**
  * Hydrate a set of discussion rows into full threads — posts with authors, the
  * root question, the talk it grew from, and which authors are speakers. One
@@ -103,6 +135,7 @@ const discussionColumns = {
  */
 async function loadThreads(
   rows: Array<DiscussionRow>,
+  viewer: string | null,
 ): Promise<Array<DiscussionThread>> {
   if (rows.length === 0) return []
 
@@ -110,7 +143,7 @@ async function loadThreads(
   const questionIds = rows.map((r) => r.questionId).filter((v): v is string => !!v)
   const sessionIds = rows.map((r) => r.sessionId).filter((v): v is string => !!v)
 
-  const [postRows, questionRows, sessionRows, speakerRows] = await Promise.all([
+  const [postRows, questionRows, sessionRows, speakerRows, voted] = await Promise.all([
     db
       .select({
         id: discussionPost.id,
@@ -159,6 +192,7 @@ async function loadThreads(
           .from(sessionSpeaker)
           .where(inArray(sessionSpeaker.sessionId, sessionIds))
       : Promise.resolve([]),
+    votedQuestionIds(viewer, questionIds),
   ])
 
   const sessionTitle = new Map(sessionRows.map((s) => [s.id, s.title]))
@@ -209,6 +243,7 @@ async function loadThreads(
           id: q.id,
           body: q.body,
           upvotes: q.upvotes,
+          hasVoted: voted.has(q.id),
           status: q.status,
           author: author(q.authorId, q.authorName, q.authorImage, q.authorCompany),
         }
@@ -246,12 +281,13 @@ async function loadThreads(
 /** Index payload: topic channels, the most-active thread, the trending question. */
 export const listDiscussions = createServerFn({ method: 'GET' }).handler(
   async (): Promise<DiscussionsIndex> => {
+    const viewer = await viewerId()
     const rows = await db
       .select(discussionColumns)
       .from(discussion)
       .orderBy(desc(discussion.updatedAt))
 
-    const threads = await loadThreads(rows)
+    const threads = await loadThreads(rows, viewer)
 
     // Channels map to discussion.topic; size them by thread activity.
     const byTopic = new Map<string, number>()
@@ -284,10 +320,16 @@ export const listDiscussions = createServerFn({ method: 'GET' }).handler(
       .orderBy(desc(question.upvotes))
       .limit(1)
 
+    const trendingVoted = await votedQuestionIds(
+      viewer,
+      topQuestion ? [topQuestion.id] : [],
+    )
     const trending: TrendingQuestion | null = topQuestion
       ? {
+          id: topQuestion.id,
           body: topQuestion.body,
           upvotes: topQuestion.upvotes,
+          hasVoted: trendingVoted.has(topQuestion.id),
           sessionTitle: topQuestion.sessionTitle,
           followUps:
             threads.find((t) => t.question?.id === topQuestion.id)?.posts.length ??
@@ -303,12 +345,13 @@ export const listDiscussions = createServerFn({ method: 'GET' }).handler(
 export const getDiscussion = createServerFn({ method: 'GET' })
   .validator((id: string) => id)
   .handler(async ({ data: id }): Promise<DiscussionThread | null> => {
+    const viewer = await viewerId()
     const rows = await db
       .select(discussionColumns)
       .from(discussion)
       .where(eq(discussion.id, id))
       .limit(1)
 
-    const [thread] = await loadThreads(rows)
+    const [thread] = await loadThreads(rows, viewer)
     return thread ?? null
   })

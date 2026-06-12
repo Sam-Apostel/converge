@@ -4,7 +4,6 @@ import { Avatar, Mono, Spotlight } from '#/components/ui'
 import { Billboard } from '#/components/venue/billboard'
 import { RoomList } from '#/components/venue/room-list'
 import { RoomMap } from '#/components/venue/room-map'
-import { WalkChip } from '#/components/venue/walk-chip'
 import { getVenue } from '#/lib/queries/venue'
 import { formatClock } from '#/lib/format'
 
@@ -23,7 +22,7 @@ function VenuePage() {
         Venue — the conference, live
       </h1>
       <p className="mb-5 mt-1 max-w-2xl text-[14.5px] text-mist">
-        Rooms, walking times, and the billboard.{' '}
+        Rooms and the live billboard.{' '}
         {where ? `${where} · ` : ''}where ideas and people are the stars, not
         sponsor logos.
       </p>
@@ -49,7 +48,7 @@ function VenuePage() {
   )
 }
 
-/** "Your next session is in {room} · {walk}" — the wayfinding nudge. */
+/** "Your next session is in {room}" — the wayfinding nudge. */
 function NextUp({
   nextUp,
 }: {
@@ -58,30 +57,27 @@ function NextUp({
   const { room, session } = nextUp
   return (
     <Spotlight glow="top-right" className="mb-6 p-5">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-3.5">
-          {session.speaker && (
-            <Avatar
-              name={session.speaker.name ?? '?'}
-              src={session.speaker.image}
-              size={44}
-              border="#1c1e2e"
-            />
-          )}
-          <div>
-            <Mono tone="lime" className="!text-[10.5px]">
-              Your next session
-            </Mono>
-            <div className="mt-1 text-[16px] font-semibold leading-snug tracking-[-0.01em]">
-              {session.title}
-            </div>
-            <div className="mt-0.5 text-[12.5px] text-white/65">
-              {formatClock(session.startsAt)} · {room.name}
-              {session.speaker?.name ? ` · ${session.speaker.name}` : ''}
-            </div>
+      <div className="flex items-center gap-3.5">
+        {session.speaker && (
+          <Avatar
+            name={session.speaker.name ?? '?'}
+            src={session.speaker.image}
+            size={44}
+            border="#1c1e2e"
+          />
+        )}
+        <div>
+          <Mono tone="lime" className="!text-[10.5px]">
+            Your next session
+          </Mono>
+          <div className="mt-1 text-[16px] font-semibold leading-snug tracking-[-0.01em]">
+            {session.title}
+          </div>
+          <div className="mt-0.5 text-[12.5px] text-white/65">
+            {formatClock(session.startsAt)} · {room.name}
+            {session.speaker?.name ? ` · ${session.speaker.name}` : ''}
           </div>
         </div>
-        <WalkChip room={room} className="!bg-white/12 !text-white" />
       </div>
     </Spotlight>
   )

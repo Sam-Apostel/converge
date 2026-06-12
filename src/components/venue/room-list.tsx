@@ -1,7 +1,6 @@
 import { Avatar, Badge, LiveDot, Mono } from '#/components/ui'
 import type { VenueRoom, VenueSession } from '#/lib/queries/venue'
 import { formatClock } from '#/lib/format'
-import { WalkChip } from './walk-chip'
 
 /** What's-on line for a room — live talk (lime) or the next one queued up. */
 function OnNow({ session, live }: { session: VenueSession; live: boolean }) {
@@ -44,21 +43,18 @@ function OnNow({ session, live }: { session: VenueSession; live: boolean }) {
   )
 }
 
-/** A single room tile: name, floor·capacity, walk chip, and what's on now/next. */
+/** A single room tile: name, floor·capacity, and what's on now/next. */
 export function RoomTile({ room }: { room: VenueRoom }) {
   return (
     <div className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-card">
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <div className="text-[15px] font-semibold tracking-[-0.01em]">
-            {room.name}
-          </div>
-          <div className="mt-0.5 text-[12px] text-muted">
-            {room.floor ? `Floor ${room.floor}` : 'Ground'}
-            {room.capacity ? ` · seats ${room.capacity.toLocaleString()}` : ''}
-          </div>
+      <div>
+        <div className="text-[15px] font-semibold tracking-[-0.01em]">
+          {room.name}
         </div>
-        <WalkChip room={room} />
+        <div className="mt-0.5 text-[12px] text-muted">
+          {room.floor ? `Floor ${room.floor}` : 'Ground'}
+          {room.capacity ? ` · seats ${room.capacity.toLocaleString()}` : ''}
+        </div>
       </div>
 
       <div className="rounded-xl bg-inner p-3">

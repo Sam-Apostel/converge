@@ -1,7 +1,7 @@
 # Converge — Demo Script
 
 Video target: ~90 seconds for the Hyperframes submission.
-Record on mobile viewport (390px) for the app; use a second display for the billboard.
+Record on mobile viewport (390px).
 
 ---
 
@@ -10,7 +10,6 @@ Record on mobile viewport (390px) for the app; use a second display for the bill
 - [ ] Run `bun run db:seed` to reset to clean demo data
 - [ ] Log in with your account (GitHub or passkey)
 - [ ] Configure AI provider in Settings (Anthropic recommended — claude-sonnet-4-6)
-- [ ] Open `/billboard` on a second display, fullscreen
 - [ ] Close all DevTools panels
 - [ ] Set browser to mobile viewport (~390px wide)
 - [ ] Navigate to `http://localhost:3000` (or deployed URL)
@@ -72,7 +71,7 @@ Tap the **Discussion** tab → shows the persistent thread linked to this sessio
 
 ---
 
-## Scene 5 — People discovery (1:10–1:22)
+## Scene 5 — People discovery (1:10–1:30)
 
 **Navigate to:** People  
 **Show:** The "PEOPLE YOU SHOULD MEET" spotlight card  
@@ -82,15 +81,6 @@ The list filters live.
 **Tap Connect** on a person card.
 
 **Say / caption:** *"Leave the conference with real connections, not a pile of business cards."*
-
----
-
-## Scene 6 — Billboard (1:22–1:30)
-
-**Cut to second display showing `/billboard` fullscreen**  
-**Say / caption:** *"And for the room — a live pulse of what's happening intellectually at the conference."*
-
-Show trending projects, active discussions, available people updating in real time.
 
 ---
 
