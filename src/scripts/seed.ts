@@ -584,6 +584,7 @@ async function seed() {
     end: string
     speakers: string[]
     aiSummary?: string
+    livestreamUrl?: string
   }
   const day = (conf: string) => (conf === jsnationId ? JSNATION_DAY : REACT_SUMMIT_DAY)
 
@@ -648,6 +649,8 @@ async function seed() {
       track: 'Keynote', start: '09:15', end: '10:00', speakers: ['mara'],
       aiSummary:
         'The React Compiler removes most manual memoization; RSC moves data-fetching to the server by default. Learn the boundary between server and client — that is the new core skill.',
+      // React Summit 2024 main-stage livestream on YouTube.
+      livestreamUrl: 'https://www.youtube.com/watch?v=C0dnfm48K4Q',
     },
     {
       key: 'rs-compiler',
@@ -658,6 +661,16 @@ async function seed() {
       track: 'React Core', start: '10:15', end: '10:45', speakers: ['mara'],
       aiSummary:
         'The compiler auto-memoizes at build time; bailouts happen on mutation and dynamic access. Keep components pure and the compiler does the rest. Delete most useMemo.',
+    },
+    {
+      key: 'rs-rsc',
+      conf: reactSummitId, room: rooms.rsCommunity,
+      title: 'RSC Data-Fetching Patterns in the Wild',
+      abstract:
+        'How teams are actually using React Server Components for data-fetching: colocation, waterfall avoidance, and the questions nobody answered at the keynote.',
+      track: 'React Core', start: '10:15', end: '10:45', speakers: ['yuki'],
+      aiSummary:
+        'Fetch inside the component tree, not in a global loader. Parallel data-fetching with Promise.all; sequential only when there is a real dependency. Cache at the RSC layer, not the API layer.',
     },
     {
       key: 'rs-localfirst',
@@ -722,6 +735,7 @@ async function seed() {
       track: s.track,
       startsAt: at(day(s.conf), s.start),
       endsAt: at(day(s.conf), s.end),
+      livestreamUrl: s.livestreamUrl ?? null,
       transcriptUrl: s.aiSummary ? `https://cdn.converge.dev/transcripts/${id}.vtt` : null,
       aiSummary: s.aiSummary ?? null,
     })
@@ -828,6 +842,15 @@ async function seed() {
         { author: 'aisha', fromSpeaker: true, body: 'MSW, every time. Mocking fetch leaks implementation details into your tests; intercepting at the network layer means your test does not care how you fetch.' },
       ],
     },
+    {
+      key: 'q-rsc-tanstack-query',
+      session: 'rs-rsc', author: 'devin', upvotes: 34, status: 'answered',
+      body: 'Does this play nicely with TanStack Query, or do RSC and client-side caching just fight each other the whole time?',
+      answers: [
+        { author: 'yuki', fromSpeaker: true, body: 'They are complementary, not competing. RSC handles the initial fetch and server mutations; TanStack Query owns the client cache and real-time invalidation. The boundary is the serialization point — what crosses the RSC / client boundary is data, not cache state.' },
+        { author: 'noa', body: 'We use both in Tidereel. RSC for the page shell, Query for everything that updates without a navigation. The only footgun is deduplication — make sure you are not fetching the same data twice.' },
+      ],
+    },
   ]
   for (const q of questions) {
     const id = uid()
@@ -894,6 +917,25 @@ async function seed() {
           { author: 'sven', body: 'Bundling is usually not the bottleneck — test sharding and a remote cache usually win bigger. But yes, Rolldown helps the build step.' },
           { author: 'aisha', body: 'Parallelise your e2e suite and kill flaky retries. A flaky test that retries 3x is 3x the CI cost.' },
           { author: 'lukas', body: 'Profile the runner itself. We found 40% of our “CI time” was just installing dependencies.' },
+        ] },
+      ],
+    },
+    {
+      title: 'Coffee: RSC data-fetching patterns',
+      topic: 'react-server-components',
+      conf: reactSummitId, session: 'rs-rsc', question: 'q-rsc-tanstack-query',
+      createdBy: 'devin',
+      posts: [
+        { author: 'devin', body: "After Yuki's talk I want to nail down when to reach for RSC vs TanStack Query for data. Anyone settled on a pattern they're happy with?", replies: [
+          { author: 'yuki', body: 'Rule of thumb I use: if the data is only needed for the initial render and does not change while the user is on the page, RSC. If it can be invalidated, refetched, or mutated by the client, TanStack Query. Most pages need both.' },
+          { author: 'noa', body: 'We went further and wrote a decision tree for our team. RSC for page-level queries that depend on URL params, Query for everything inside interactive components. Has basically eliminated the "which one do I use" conversation.', replies: [
+            { author: 'devin', body: 'Would love a link to that decision tree if you are open to sharing it.' },
+            { author: 'noa', body: "I'll clean it up and drop it in the Tidereel repo — will post here when it's up." },
+          ] },
+          { author: 'sasha', body: 'The other thing nobody talks about: prefetching. RSC lets you start the DB query before the component tree renders. With Query you are always one tick late. For above-the-fold content that latency matters.' },
+        ] },
+        { author: 'theo', body: 'Going to cover this in a video this week. The streaming angle is underrated — RSC + Suspense means your shell renders instantly and slots fill in. Query can not do that without a separate skeleton state.', replies: [
+          { author: 'imani', body: 'The skeleton state thing is real. We had a whole pattern for it before RSC. Now it is just Suspense and a fallback.' },
         ] },
       ],
     },

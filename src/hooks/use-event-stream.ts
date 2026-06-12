@@ -33,6 +33,7 @@ export function useEventStream({ channel, onEvent }: EventStreamOptions = {}) {
     const events = [
       'message',
       'ready',
+      'message.created',
       'moment.created',
       'question.created',
       'discussion.post',

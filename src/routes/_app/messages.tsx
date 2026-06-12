@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 
 import { Card, Mono } from '#/components/ui'
@@ -6,6 +6,7 @@ import { ConnectionStrip } from '#/components/messages/connection-strip'
 import { ThreadList } from '#/components/messages/thread-list'
 import { Conversation } from '#/components/messages/conversation'
 import { refetchMessages } from '#/db-collections/messages'
+import { useEventStream } from '#/hooks/use-event-stream'
 import { getMessagesData } from '#/lib/queries/messages'
 
 export const Route = createFileRoute('/_app/messages')({
@@ -69,23 +70,14 @@ function MessagesPage() {
   )
 
   // Realtime: incoming messages refresh unread counts + the open conversation.
-  // NOTE: subscribing with a raw EventSource because the shared `useEventStream`
-  // hook doesn't list `message.created` among its event names. Tracked in #67 —
-  // once that's added, switch this to useEventStream.
-  useEffect(() => {
-    const source = new EventSource(
-      `/api/stream?channel=${encodeURIComponent(`user:${me}`)}`,
-    )
-    const onMessage = () => {
+  useEventStream({
+    channel: `user:${me}`,
+    onEvent: (type) => {
+      if (type !== 'message.created') return
       refetchMessages(me)
       router.invalidate()
-    }
-    source.addEventListener('message.created', onMessage)
-    return () => {
-      source.removeEventListener('message.created', onMessage)
-      source.close()
-    }
-  }, [me, router])
+    },
+  })
 
   const selected = selectedId ? peopleById.get(selectedId) : undefined
 
