@@ -54,7 +54,7 @@ function ProjectsPage() {
       <h1 className="text-2xl font-semibold tracking-[-0.02em]">
         Projects — what people are actually building
       </h1>
-      <p className="mb-5 mt-1 max-w-2xl text-[14.5px] text-mist">
+      <p className="mb-5 mt-1 max-w-2xl text-body text-mist">
         People care less about where you work than what you're building. The
         conference becomes a showcase of ideas, not employers.
       </p>
@@ -71,9 +71,9 @@ function ProjectsPage() {
         {/* Discover carousel */}
         <div className="min-w-0">
           <div className="mb-3 flex items-center justify-between">
-            <div className="text-[14px] font-semibold tracking-[-0.01em]">
+            <div className="text-body font-semibold tracking-[-0.01em]">
               Discover{' '}
-              <span className="text-[13px] font-normal text-faint">
+              <span className="text-note font-normal text-faint">
                 · {projects.length} shipping at the summit
               </span>
             </div>
@@ -127,7 +127,7 @@ function ProjectProfile({
 }) {
   return (
     <div className="rounded-3xl bg-white p-6 shadow-card-lg">
-      <Mono className="mb-3.5 block !text-[11px]">Project profile</Mono>
+      <Mono className="mb-3.5 block !text-tiny">Project profile</Mono>
 
       <div className="mb-4 flex items-center gap-3.5">
         <Avatar
@@ -137,14 +137,14 @@ function ProjectProfile({
           size={54}
         />
         <div>
-          <div className="text-[22px] font-semibold tracking-[-0.02em]">
+          <div className="text-title font-semibold tracking-[-0.02em]">
             {project.name}
           </div>
-          <div className="text-[13px] text-muted">
+          <div className="text-note text-muted">
             by {project.ownerName} · {project.category}
           </div>
         </div>
-        <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-lime/[0.22] px-[11px] py-1.5 font-mono text-[13px] font-medium text-slate">
+        <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-lime/[0.22] px-[11px] py-1.5 font-mono text-note font-medium text-slate">
           <Star size={13} className="fill-current" />{' '}
           {formatCount(project.trendingScore)}
         </span>
@@ -153,18 +153,18 @@ function ProjectProfile({
       <Thumb
         tint="#eef0f8"
         height={140}
-        className="mb-4 flex items-end p-3 [box-shadow:inset_0_0_0_1px_rgba(120,130,180,.12)]"
+        className="mb-4 flex items-end p-3 shadow-hairline"
       >
-        <span className="rounded-md bg-white/[0.86] px-2.5 py-1 font-mono text-[11px] text-muted">
+        <span className="rounded-md bg-white/[0.86] px-2.5 py-1 font-mono text-tiny text-muted">
           project screenshot
         </span>
       </Thumb>
 
-      <p className="mb-4 text-[14px] leading-[1.5] text-slate">
+      <p className="mb-4 text-body leading-[1.5] text-slate">
         {project.description ?? project.tagline}
       </p>
 
-      <Mono className="mb-2 block !text-[12px]">Tech stack</Mono>
+      <Mono className="mb-2 block !text-caption">Tech stack</Mono>
       <div className="mb-[18px] flex flex-wrap gap-1.5">
         {(project.techStack ?? []).map((t) => (
           <Tag key={t}>{t}</Tag>
@@ -173,8 +173,8 @@ function ProjectProfile({
 
       <div className="mb-3.5 flex items-center justify-between rounded-2xl bg-inner px-3.5 py-3">
         <div>
-          <Mono className="!text-[11px]">Looking for</Mono>
-          <div className="mt-0.5 text-[14px] font-semibold">
+          <Mono className="!text-tiny">Looking for</Mono>
+          <div className="mt-0.5 text-body font-semibold">
             {project.lookingFor?.join(' & ') ?? 'Collaborators'}
           </div>
         </div>
@@ -185,7 +185,7 @@ function ProjectProfile({
       </div>
 
       {relatedTalk && (
-        <div className="mb-[18px] flex items-center gap-2 text-[13px] text-slate">
+        <div className="mb-[18px] flex items-center gap-2 text-note text-slate">
           <CornerDownRight size={14} className="text-slate" /> Related session ·
           “{relatedTalk.title}” · {formatClock(relatedTalk.startsAt)}
         </div>
@@ -197,7 +197,7 @@ function ProjectProfile({
         </Button>
         <Badge
           tone="lime-soft"
-          className="!rounded-[13px] !px-4 !py-3 !text-[13.5px]"
+          className="!rounded-[13px] !px-4 !py-3 !text-note"
         >
           <Star size={15} /> Star
         </Badge>

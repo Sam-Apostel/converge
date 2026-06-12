@@ -14,7 +14,7 @@ function ProfilePage() {
   const user = session?.user
 
   if (isPending) {
-    return <p className="text-sm text-muted">Loading…</p>
+    return <p className="text-body text-muted">Loading…</p>
   }
 
   if (!user) {
@@ -22,7 +22,7 @@ function ProfilePage() {
       <div>
         <PageHeader title="Profile" />
         <div className="rounded-2xl border border-black/5 bg-white/70 p-6">
-          <p className="text-sm text-muted">You’re not signed in.</p>
+          <p className="text-body text-muted">You’re not signed in.</p>
           <Link to="/login" className="mt-3 inline-block">
             <Button themeColor="primary">Sign in</Button>
           </Link>
@@ -49,7 +49,7 @@ function ProfilePage() {
         </Avatar>
         <div>
           <p className="text-lg font-semibold">{user.name}</p>
-          <p className="text-sm text-muted">{user.email}</p>
+          <p className="text-body text-muted">{user.email}</p>
         </div>
       </div>
     </div>

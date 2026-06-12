@@ -159,7 +159,7 @@ function AppLayout() {
             <Link to="/" className="flex shrink-0 items-center gap-4">
               <ConvergeLogo size={64} rounded="10px" background={false} />
             </Link>
-            <div className="flex items-center py-[11px] pr-3 [backdrop-filter:blur(28px)_saturate(1.7)] gap-4 rounded-[22px] border border-white/60 bg-white/34 pl-[15px] [box-shadow:0_14px_44px_rgba(40,50,110,.16),inset_0_1px_0_rgba(255,255,255,.75)]">
+            <div className="flex items-center py-[11px] pr-3 [backdrop-filter:blur(28px)_saturate(1.7)] gap-4 rounded-[22px] border border-white/60 bg-white/34 pl-[15px] shadow-glass">
               <Link to="/" className="flex shrink-0 items-center gap-4">
                 <span className="text-[19px] font-semibold tracking-[-0.03em]">
                   converge
@@ -172,10 +172,10 @@ function AppLayout() {
                     key={item.to}
                     to={item.to}
                     activeOptions={{ exact: item.exact }}
-                    className="rounded-full px-[14px] py-[9px] text-[13.5px] font-medium text-slate transition-colors hover:text-ink"
+                    className="rounded-full px-[14px] py-[9px] text-note font-medium text-slate transition-colors hover:text-ink"
                     activeProps={{
                       className:
-                        'rounded-full px-[14px] py-[9px] text-[13.5px] font-semibold text-ink bg-white [box-shadow:0_2px_8px_rgba(40,50,110,.12)]',
+                        'rounded-full px-[14px] py-[9px] text-note font-semibold text-ink bg-white shadow-soft',
                     }}
                   >
                     {item.label}
@@ -193,7 +193,7 @@ function AppLayout() {
           <Link to="/" className="flex shrink-0 items-center gap-4">
             <ConvergeLogo size={32} rounded="5px" background={false} />
           </Link>
-          <div className="flex items-center gap-3 py-1 pl-4 pr-3 [backdrop-filter:blur(12px)_saturate(1.7)] rounded-[22px] border border-white/60 bg-white/34 lg:pl-[15px] [box-shadow:0_14px_44px_rgba(40,50,110,.16),inset_0_1px_0_rgba(255,255,255,.75)]">
+          <div className="flex items-center gap-3 py-1 pl-4 pr-3 [backdrop-filter:blur(12px)_saturate(1.7)] rounded-[22px] border border-white/60 bg-white/34 lg:pl-[15px] shadow-glass">
             <Link to="/" className="flex shrink-0 items-center gap-4">
               <span className="text-[19px] font-semibold tracking-[-0.03em]">
                 converge
@@ -207,16 +207,16 @@ function AppLayout() {
         </main>
 
         {/* Mobile bottom tab bar */}
-        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-[rgba(180,185,220,.22)] bg-[#FFF9] pb-safe [backdrop-filter:blur(12px)_saturate(1.6)] lg:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-edge/22 bg-white/60 pb-safe [backdrop-filter:blur(12px)_saturate(1.6)] lg:hidden">
           {BOTTOM_NAV.map((item) => (
             <Link
               key={item.to}
               to={item.to}
               activeOptions={{ exact: item.exact }}
-              className="flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-gray-800 transition-colors"
+              className="flex flex-1 flex-col items-center gap-1 py-2.5 text-tiny font-medium text-gray-800 transition-colors"
               activeProps={{
                 className:
-                  'flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold text-ink transition-colors',
+                  'flex flex-1 flex-col items-center gap-1 py-2.5 text-tiny font-semibold text-ink transition-colors',
               }}
             >
               {({ isActive }: { isActive: boolean }) => (

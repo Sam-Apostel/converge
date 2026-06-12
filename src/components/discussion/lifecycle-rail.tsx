@@ -20,19 +20,19 @@ const STAGES = [
   {
     Icon: MessageSquare,
     label: 'Answer',
-    chip: 'bg-[#3a3e54] text-white',
+    chip: 'bg-ink-soft text-white',
     strong: true,
   },
   {
     Icon: CornerDownRight,
     label: 'Follow-up',
-    chip: 'bg-inner text-[#52566c]',
+    chip: 'bg-inner text-slate',
     strong: false,
   },
   {
     Icon: Users,
     label: 'Community',
-    chip: 'bg-inner text-[#52566c]',
+    chip: 'bg-inner text-slate',
     strong: false,
   },
   { Icon: Coffee, label: 'Meetup', chip: 'bg-lime text-ink', strong: true },
@@ -40,10 +40,10 @@ const STAGES = [
 
 // Connector fills, left→right. The run into Meetup fades to lime.
 const CONNECTORS = [
-  'linear-gradient(90deg,#13141d,#c9cee0)',
-  '#c9cee0',
-  '#c9cee0',
-  'linear-gradient(90deg,#c9cee0,#99ff00)',
+  'linear-gradient(90deg,#13141d,var(--color-frost))',
+  'var(--color-frost)',
+  'var(--color-frost)',
+  'linear-gradient(90deg,var(--color-frost),#99ff00)',
 ]
 
 /**
@@ -71,10 +71,10 @@ export function LifecycleRail() {
               <stage.Icon size={14} strokeWidth={2.25} />
             </span>
             <span
-              className={`text-[13.5px] ${
+              className={`text-note ${
                 stage.strong
                   ? 'font-semibold text-ink'
-                  : 'font-medium text-[#52566c]'
+                  : 'font-medium text-slate'
               }`}
             >
               {stage.label}

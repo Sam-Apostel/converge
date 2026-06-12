@@ -61,17 +61,17 @@ export function Conversation({
           dot={other.online ? 'online' : 'offline'}
         />
         <div className="min-w-0">
-          <div className="truncate text-[15px] font-semibold text-ink">
+          <div className="truncate text-reading font-semibold text-ink">
             {other.name}
           </div>
           {other.handle && (
-            <div className="truncate font-mono text-[12px] text-mist">
+            <div className="truncate font-mono text-caption text-mist">
               @{other.handle}
             </div>
           )}
         </div>
         <div className="ml-auto">
-          <Mono tone="ghost" className="!text-[10px] !tracking-[0.1em]">
+          <Mono tone="ghost" className="!text-micro !tracking-[0.1em]">
             {other.online ? 'Online' : 'Offline'}
           </Mono>
         </div>
@@ -83,7 +83,7 @@ export function Conversation({
         className="flex-1 space-y-2.5 overflow-y-auto px-5 py-4"
       >
         {messages.length === 0 ? (
-          <div className="grid h-full place-items-center text-center text-[13.5px] text-mist">
+          <div className="grid h-full place-items-center text-center text-note text-mist">
             No messages yet — say hello.
           </div>
         ) : (
@@ -95,18 +95,18 @@ export function Conversation({
                 className={`flex flex-col ${mine ? 'items-end' : 'items-start'}`}
               >
                 {mine ? (
-                  <div className="max-w-[78%] rounded-2xl rounded-br-md bg-ink px-3.5 py-2 text-[14px] leading-snug text-white">
+                  <div className="max-w-[78%] rounded-2xl rounded-br-md bg-ink px-3.5 py-2 text-body leading-snug text-white">
                     {m.body}
                   </div>
                 ) : (
                   <Card
                     surface="inner"
-                    className="max-w-[78%] rounded-bl-md px-3.5 py-2 text-[14px] leading-snug"
+                    className="max-w-[78%] rounded-bl-md px-3.5 py-2 text-body leading-snug"
                   >
                     {m.body}
                   </Card>
                 )}
-                <span className="mt-1 px-1 font-mono text-[10px] text-faint">
+                <span className="mt-1 px-1 font-mono text-micro text-faint">
                   {relativeTime(m.createdAt)}
                 </span>
               </div>
@@ -127,7 +127,7 @@ export function Conversation({
             }
           }}
           placeholder={`Message ${other.name.split(' ')[0]}…`}
-          className="h-11 flex-1 rounded-xl bg-pillow px-4 text-[14px] text-ink outline-none placeholder:text-faint focus:ring-2 focus:ring-lime/40"
+          className="h-11 flex-1 rounded-xl bg-pillow px-4 text-body text-ink outline-none placeholder:text-faint focus:ring-2 focus:ring-lime/40"
         />
         <Button variant="lime" onClick={send} disabled={!draft.trim()}>
           Send

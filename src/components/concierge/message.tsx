@@ -64,7 +64,7 @@ export function ConciergeMessage({ message }: { message: UIMessage }) {
     if (!text) return null
     return (
       <div className="flex justify-end">
-        <div className="max-w-[80%] rounded-2xl rounded-br-md bg-ink px-4 py-2.5 text-[14.5px] leading-relaxed text-white shadow-card">
+        <div className="max-w-[80%] rounded-2xl rounded-br-md bg-ink px-4 py-2.5 text-body leading-relaxed text-white shadow-card">
           {text}
         </div>
       </div>
@@ -77,11 +77,11 @@ export function ConciergeMessage({ message }: { message: UIMessage }) {
         if (part.type === 'thinking') {
           if (!part.content) return null
           return (
-            <details key={i} className="text-[12.5px] text-muted">
+            <details key={i} className="text-caption text-muted">
               <summary className="cursor-pointer select-none">
                 Thinking…
               </summary>
-              <pre className="mt-1 whitespace-pre-wrap font-sans text-[12.5px] text-mist">
+              <pre className="mt-1 whitespace-pre-wrap font-sans text-caption text-mist">
                 {part.content}
               </pre>
             </details>
@@ -92,7 +92,7 @@ export function ConciergeMessage({ message }: { message: UIMessage }) {
           return (
             <div
               key={i}
-              className="max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-bl-md bg-surface px-4 py-2.5 text-[14.5px] leading-relaxed text-ink shadow-card"
+              className="max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-bl-md bg-surface px-4 py-2.5 text-body leading-relaxed text-ink shadow-card"
             >
               {part.content}
             </div>
@@ -108,7 +108,7 @@ export function ConciergeMessage({ message }: { message: UIMessage }) {
                   <Sparkles size={12} /> {humanizeTool(part.name)}
                 </Mono>
                 {part.state !== 'complete' ? (
-                  <span className="text-[11.5px] text-faint">running…</span>
+                  <span className="text-tiny text-faint">running…</span>
                 ) : null}
               </div>
               <ToolResult output={output} />

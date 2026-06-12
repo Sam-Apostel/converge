@@ -48,21 +48,21 @@ function SessionsPage() {
     <div>
       <header className="mb-6">
         <h1 className="text-2xl font-semibold tracking-[-0.02em]">Sessions</h1>
-        <p className="mt-1 max-w-2xl text-[14.5px] text-mist">
+        <p className="mt-1 max-w-2xl text-body text-mist">
           The schedule — tap into any talk to bookmark slides, ask questions,
           and follow the discussion.
         </p>
       </header>
 
       {sessions.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-black/10 bg-white/60 p-6 text-sm text-muted">
+        <p className="rounded-2xl border border-dashed border-black/10 bg-white/60 p-6 text-body text-muted">
           No sessions scheduled yet.
         </p>
       ) : (
         <div className="flex flex-col gap-7">
           {groups.map((group) => (
             <section key={group.label}>
-              <Mono tone="faint" className="mb-3 block text-[12px]">
+              <Mono tone="faint" className="mb-3 block text-caption">
                 {group.label}
               </Mono>
               <ul className="flex flex-col gap-2">
@@ -75,27 +75,19 @@ function SessionsPage() {
                         params={{ sessionId: row.id }}
                         className={
                           live
-                            ? 'group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-white shadow-card transition-[transform,box-shadow] duration-150 hover:-translate-y-px hover:shadow-card-hover'
+                            ? 'bg-ink-gradient group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-white shadow-card transition-[transform,box-shadow] duration-150 hover:-translate-y-px hover:shadow-card-hover'
                             : 'group flex items-center gap-4 rounded-2xl bg-white px-4 py-3.5 shadow-card transition-[transform,box-shadow] duration-150 hover:-translate-y-px hover:shadow-card-hover'
-                        }
-                        style={
-                          live
-                            ? {
-                                background:
-                                  'linear-gradient(135deg,#13141d,#1c1e2e)',
-                              }
-                            : undefined
                         }
                       >
                         <div className="flex w-[68px] shrink-0 flex-col items-start gap-1">
                           <span
-                            className={`font-mono text-[13px] font-semibold tabular-nums ${live ? 'text-white' : 'text-ink'}`}
+                            className={`font-mono text-note font-semibold tabular-nums ${live ? 'text-white' : 'text-ink'}`}
                           >
                             {formatClock(row.startsAt)}
                           </span>
                           {row.endsAt ? (
                             <span
-                              className={`font-mono text-[11px] tabular-nums ${live ? 'text-[#d6d8e6]' : 'text-faint'}`}
+                              className={`font-mono text-tiny tabular-nums ${live ? 'text-frost' : 'text-faint'}`}
                             >
                               {formatClock(row.endsAt)}
                             </span>
@@ -114,7 +106,7 @@ function SessionsPage() {
                             ) : null}
                             {row.roomName ? (
                               <span
-                                className={`text-[12.5px] ${live ? 'text-[#d6d8e6]' : 'text-mist'}`}
+                                className={`text-caption ${live ? 'text-frost' : 'text-mist'}`}
                               >
                                 {row.roomName}
                               </span>
@@ -126,7 +118,7 @@ function SessionsPage() {
                           <div className="hidden shrink-0 items-center gap-2.5 sm:flex">
                             <div className="text-right">
                               <div
-                                className={`text-[13px] font-medium ${live ? 'text-[#d6d8e6]' : 'text-slate'}`}
+                                className={`text-note font-medium ${live ? 'text-frost' : 'text-slate'}`}
                               >
                                 {row.speakerName}
                               </div>

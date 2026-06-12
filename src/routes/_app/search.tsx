@@ -74,9 +74,7 @@ function SearchPage() {
       ) : loading ? (
         <SearchSkeleton />
       ) : (
-        <p className="px-1 text-[14px] text-mist">
-          No matches for “{trimmed}”.
-        </p>
+        <p className="px-1 text-body text-mist">No matches for “{trimmed}”.</p>
       )}
     </div>
   )
@@ -107,7 +105,7 @@ function SearchSkeleton() {
 function EmptyState({ onPick }: { onPick: (q: string) => void }) {
   return (
     <div className="flex flex-col items-center gap-4 py-6 text-center">
-      <p className="text-[14px] text-mist">
+      <p className="text-body text-mist">
         Start typing to search the whole conference — or try one of these:
       </p>
       <div className="flex flex-wrap justify-center gap-2">
@@ -116,7 +114,7 @@ function EmptyState({ onPick }: { onPick: (q: string) => void }) {
             key={s}
             type="button"
             onClick={() => onPick(s)}
-            className="rounded-full border border-[rgba(120,130,180,.16)] bg-white px-3.5 py-2 text-[13px] font-medium text-ink-2 shadow-soft transition-transform hover:scale-[0.98]"
+            className="rounded-full border border-edge/16 bg-white px-3.5 py-2 text-note font-medium text-ink-2 shadow-soft transition-transform hover:scale-[0.98]"
           >
             {s}
           </button>

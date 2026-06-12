@@ -42,7 +42,7 @@ export function MeetupCard({ thread }: { thread: DiscussionThread }) {
     <Spotlight className="mt-5 px-5 py-[18px]">
       <div className="mb-2.5 flex items-center gap-2">
         <Coffee size={15} className="text-lime" />
-        <Mono tone="lime" className="!text-[11px] !tracking-[0.08em]">
+        <Mono tone="lime" className="!text-tiny !tracking-[0.08em]">
           This thread became a meetup
         </Mono>
       </div>
@@ -51,7 +51,7 @@ export function MeetupCard({ thread }: { thread: DiscussionThread }) {
           <div className="text-[17px] font-semibold tracking-[-0.01em]">
             {title}
           </div>
-          <div className="mt-1 font-mono text-[13px] text-[#b9bcd0]">
+          <div className="mt-1 font-mono text-note text-frost">
             Time and place TBC
           </div>
         </div>

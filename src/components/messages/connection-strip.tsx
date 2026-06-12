@@ -21,7 +21,7 @@ export function ConnectionStrip({
     <div className="border-b border-line px-4 py-3.5">
       {pending.length > 0 && (
         <div className="mb-3">
-          <Mono tone="slate" className="!text-[11px] !tracking-[0.08em]">
+          <Mono tone="slate" className="!text-tiny !tracking-[0.08em]">
             Requests · {pending.length}
           </Mono>
           <ul className="mt-2 flex flex-col gap-2">
@@ -34,11 +34,11 @@ export function ConnectionStrip({
                   dot={req.from.online ? 'online' : 'offline'}
                 />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-[13.5px] font-medium text-ink">
+                  <div className="truncate text-note font-medium text-ink">
                     {req.from.name}
                   </div>
                   {req.note && (
-                    <div className="truncate text-[12px] text-mist">
+                    <div className="truncate text-caption text-mist">
                       {req.note}
                     </div>
                   )}
@@ -58,7 +58,7 @@ export function ConnectionStrip({
 
       {accepted.length > 0 && (
         <div className="flex items-center justify-between gap-3">
-          <Mono tone="slate" className="!text-[11px] !tracking-[0.08em]">
+          <Mono tone="slate" className="!text-tiny !tracking-[0.08em]">
             Connections · {accepted.length}
           </Mono>
           <div className="-mr-1 flex">

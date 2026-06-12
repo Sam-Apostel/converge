@@ -48,7 +48,7 @@ function LoginPage() {
         <h1 className="text-xl font-semibold">
           {mode === 'sign-in' ? 'Welcome back' : 'Create your account'}
         </h1>
-        <p className="mt-1 text-sm text-muted">
+        <p className="mt-1 text-body text-muted">
           Sign in to discover people, capture moments, and keep the conversation
           going.
         </p>
@@ -68,7 +68,7 @@ function LoginPage() {
           </Button>
         </div>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-muted">
+        <div className="my-5 flex items-center gap-3 text-caption text-muted">
           <span className="h-px flex-1 bg-black/10" />
           or
           <span className="h-px flex-1 bg-black/10" />
@@ -81,7 +81,7 @@ function LoginPage() {
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="rounded-xl border border-black/10 px-3 py-2 text-sm outline-none focus:border-brand-400"
+              className="rounded-xl border border-black/10 px-3 py-2 text-body outline-none focus:border-brand-400"
             />
           ) : null}
           <input
@@ -90,7 +90,7 @@ function LoginPage() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded-xl border border-black/10 px-3 py-2 text-sm outline-none focus:border-brand-400"
+            className="rounded-xl border border-black/10 px-3 py-2 text-body outline-none focus:border-brand-400"
           />
           <input
             required
@@ -98,9 +98,9 @@ function LoginPage() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="rounded-xl border border-black/10 px-3 py-2 text-sm outline-none focus:border-brand-400"
+            className="rounded-xl border border-black/10 px-3 py-2 text-body outline-none focus:border-brand-400"
           />
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          {error ? <p className="text-body text-red-600">{error}</p> : null}
           <Button type="submit" themeColor="primary" disabled={busy}>
             {mode === 'sign-in' ? 'Sign in' : 'Create account'}
           </Button>
@@ -108,7 +108,7 @@ function LoginPage() {
 
         <button
           onClick={() => setMode(mode === 'sign-in' ? 'sign-up' : 'sign-in')}
-          className="mt-4 w-full text-center text-sm text-brand-600 hover:underline"
+          className="mt-4 w-full text-center text-body text-brand-600 hover:underline"
         >
           {mode === 'sign-in'
             ? 'Need an account? Sign up'

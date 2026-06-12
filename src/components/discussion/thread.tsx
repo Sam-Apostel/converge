@@ -27,10 +27,10 @@ function AuthorLine({
   return (
     <div className="mb-2 flex items-center gap-2.5">
       <Avatar name={author.name} src={author.image} size={30} />
-      <span className="text-[13.5px] font-semibold">{author.name}</span>
+      <span className="text-note font-semibold">{author.name}</span>
       {badge}
       {meta && (
-        <Mono tone="ghost" className="!text-[12px]">
+        <Mono tone="ghost" className="!text-caption">
           {meta}
         </Mono>
       )}
@@ -57,9 +57,7 @@ function Post({
   return (
     <div>
       <AuthorLine author={post.author} meta={meta} badge={badge} />
-      <p className="m-0 text-[14.5px] leading-[1.5] text-[#3a3e54]">
-        {post.body}
-      </p>
+      <p className="m-0 text-body leading-[1.5] text-ink-soft">{post.body}</p>
       {post.replyCount > 0 && others.length > 0 && (
         <div className="mt-3 flex items-center gap-2">
           <AvatarStack
@@ -67,7 +65,7 @@ function Post({
             size={26}
             max={3}
           />
-          <span className="text-[13px] text-[#8186a0]">
+          <span className="text-note text-muted">
             +{post.replyCount} {post.replyCount === 1 ? 'reply' : 'replies'} in
             this thread
           </span>
@@ -107,7 +105,7 @@ export function Thread({
   return (
     <Card surface="white" className="p-6">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <Mono tone="ghost" className="!text-[11.5px]">
+        <Mono tone="ghost" className="!text-tiny">
           {eyebrow}
         </Mono>
         {headerRight}
@@ -135,7 +133,7 @@ export function Thread({
                 }
               />
             )}
-            <p className="m-0 text-[16px] leading-[1.45] tracking-[-0.01em]">
+            <p className="m-0 text-base leading-[1.45] tracking-[-0.01em]">
               {opener.body}
             </p>
           </div>

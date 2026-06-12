@@ -120,9 +120,9 @@ export function VoteControl({
       ) : (
         <ChevronUp size={15} strokeWidth={2.5} className="text-slate" />
       )}
-      <span className="text-[13px] font-semibold tabular-nums">{count}</span>
+      <span className="text-note font-semibold tabular-nums">{count}</span>
       {downvote && (
-        <ChevronDown size={15} strokeWidth={2.5} className="text-[#c2c6d8]" />
+        <ChevronDown size={15} strokeWidth={2.5} className="text-frost" />
       )}
     </div>
   )

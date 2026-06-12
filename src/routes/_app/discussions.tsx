@@ -37,7 +37,7 @@ function DiscussionsIndex() {
       <h1 className="text-2xl font-semibold tracking-[-0.02em]">
         Discussions — questions that don't disappear
       </h1>
-      <p className="mb-6 mt-1 max-w-2xl text-[14.5px] text-mist">
+      <p className="mb-6 mt-1 max-w-2xl text-body text-mist">
         Traditional Q&amp;A answers a handful and drops the rest. Converge turns
         each question into a thread with a life of its own — and the best ones
         end as a real meetup.
@@ -53,14 +53,14 @@ function DiscussionsIndex() {
               <Link
                 to="/discussions/$id"
                 params={{ id: featured.id }}
-                className="inline-flex items-center gap-1 text-[12.5px] font-medium text-[#8186a0] transition-colors hover:text-ink"
+                className="inline-flex items-center gap-1 text-caption font-medium text-muted transition-colors hover:text-ink"
               >
                 Open thread <ArrowRight size={13} />
               </Link>
             }
           />
         ) : (
-          <p className="rounded-2xl border border-dashed border-black/10 bg-white/60 p-6 text-sm text-muted">
+          <p className="rounded-2xl border border-dashed border-black/10 bg-white/60 p-6 text-body text-muted">
             No discussions yet.
           </p>
         )}

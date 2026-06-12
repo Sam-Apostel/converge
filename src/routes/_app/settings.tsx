@@ -112,14 +112,14 @@ function SettingsPage() {
         >
           {/* provider */}
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-medium text-slate">Provider</span>
+            <span className="text-note font-medium text-slate">Provider</span>
             <select
               value={provider}
               onChange={(e) => {
                 setProvider(e.target.value as ProviderId)
                 setTest({ kind: 'idle' })
               }}
-              className="rounded-xl border border-line bg-inner px-3.5 py-2.5 text-[14px] text-ink focus:outline-none focus:ring-2 focus:ring-lime/40"
+              className="rounded-xl border border-line bg-inner px-3.5 py-2.5 text-body text-ink focus:outline-none focus:ring-2 focus:ring-lime/40"
             >
               {PROVIDERS.map((p) => (
                 <option key={p} value={p}>
@@ -131,22 +131,22 @@ function SettingsPage() {
 
           {/* model */}
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-medium text-slate">Model</span>
+            <span className="text-note font-medium text-slate">Model</span>
             <input
               value={model}
               onChange={(e) => setModel(e.target.value)}
               placeholder={MODEL_HINTS[provider]}
-              className="rounded-xl border border-line bg-inner px-3.5 py-2.5 text-[14px] text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-lime/40"
+              className="rounded-xl border border-line bg-inner px-3.5 py-2.5 text-body text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-lime/40"
             />
           </label>
 
           {/* api key — write-only */}
           {needsKey ? (
             <label className="flex flex-col gap-1.5">
-              <span className="flex items-center justify-between text-[13px] font-medium text-slate">
+              <span className="flex items-center justify-between text-note font-medium text-slate">
                 API key
                 {hasKey ? (
-                  <span className="inline-flex items-center gap-1 font-mono text-[11px] text-lime-deep">
+                  <span className="inline-flex items-center gap-1 font-mono text-tiny text-lime-deep">
                     <Check size={12} strokeWidth={2.5} /> key set
                   </span>
                 ) : null}
@@ -159,9 +159,9 @@ function SettingsPage() {
                   hasKey ? 'Enter a new key to replace the stored one' : 'sk-…'
                 }
                 autoComplete="off"
-                className="rounded-xl border border-line bg-inner px-3.5 py-2.5 text-[14px] text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-lime/40"
+                className="rounded-xl border border-line bg-inner px-3.5 py-2.5 text-body text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-lime/40"
               />
-              <span className="text-[12px] text-muted">
+              <span className="text-caption text-muted">
                 Keys are encrypted at rest and never shown again.
                 {hasKey ? (
                   <>
@@ -182,14 +182,14 @@ function SettingsPage() {
           {/* base url — relevant for ollama */}
           {provider === 'ollama' ? (
             <label className="flex flex-col gap-1.5">
-              <span className="text-[13px] font-medium text-slate">
+              <span className="text-note font-medium text-slate">
                 Base URL <span className="text-muted">(optional)</span>
               </span>
               <input
                 value={baseUrl}
                 onChange={(e) => setBaseUrl(e.target.value)}
                 placeholder="http://localhost:11434"
-                className="rounded-xl border border-line bg-inner px-3.5 py-2.5 text-[14px] text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-lime/40"
+                className="rounded-xl border border-line bg-inner px-3.5 py-2.5 text-body text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-lime/40"
               />
             </label>
           ) : null}
@@ -208,17 +208,17 @@ function SettingsPage() {
             </Button>
 
             {saved ? (
-              <span className="text-[13px] font-medium text-lime-deep">
+              <span className="text-note font-medium text-lime-deep">
                 Saved
               </span>
             ) : null}
             {test.kind === 'ok' ? (
-              <span className="inline-flex items-center gap-1 text-[13px] font-medium text-lime-deep">
+              <span className="inline-flex items-center gap-1 text-note font-medium text-lime-deep">
                 <Check size={14} strokeWidth={2.5} /> Connected
               </span>
             ) : null}
             {test.kind === 'error' ? (
-              <span className="inline-flex items-center gap-1 text-[13px] text-slate">
+              <span className="inline-flex items-center gap-1 text-note text-slate">
                 <X size={14} strokeWidth={2.5} /> {test.message}
               </span>
             ) : null}

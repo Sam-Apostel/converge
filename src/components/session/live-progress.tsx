@@ -32,24 +32,24 @@ export function LiveProgress({
       : '--:--'
 
   return (
-    <div className="border-b border-[rgba(120,130,180,.12)] px-6 pb-[17px] pt-[15px]">
+    <div className="border-b border-edge/12 px-6 pb-[17px] pt-[15px]">
       <div className="mb-[13px] flex items-center gap-3">
         <Link to="/sessions">
           <Mono
             tone="ghost"
-            className="text-[12.5px] normal-case tracking-normal"
+            className="text-caption normal-case tracking-normal"
           >
             Sessions
           </Mono>
         </Link>
-        <span className="text-[#c2c6d8]">/</span>
-        <span className="truncate font-mono text-[12.5px] text-ink">
+        <span className="text-frost">/</span>
+        <span className="truncate font-mono text-caption text-ink">
           {title}
         </span>
         {roomName ? (
           <Mono
             tone="ghost"
-            className="ml-auto shrink-0 text-[12px] normal-case tracking-normal"
+            className="ml-auto shrink-0 text-caption normal-case tracking-normal"
           >
             {roomName}
           </Mono>
@@ -59,7 +59,7 @@ export function LiveProgress({
       <div className="flex items-center gap-[11px]">
         <Mono
           tone="ghost"
-          className="w-9 text-[11px] normal-case tracking-normal"
+          className="w-9 text-tiny normal-case tracking-normal"
         >
           {formatClock(startsAt)}
         </Mono>
@@ -75,18 +75,18 @@ export function LiveProgress({
         </div>
         <Mono
           tone="ghost"
-          className="w-9 text-right text-[11px] normal-case tracking-normal"
+          className="w-9 text-right text-tiny normal-case tracking-normal"
         >
           {formatClock(endsAt)}
         </Mono>
       </div>
 
       <div className="mt-2 flex gap-4 pl-[47px]">
-        <span className="flex items-center gap-1.5 text-[11.5px] font-medium text-slate">
+        <span className="flex items-center gap-1.5 text-tiny font-medium text-slate">
           <span className="h-2 w-2 rounded-[3px] bg-ink" />
           Talk · live now
         </span>
-        <span className="flex items-center gap-1.5 text-[11.5px] font-medium text-faint">
+        <span className="flex items-center gap-1.5 text-tiny font-medium text-faint">
           <span className="h-2 w-2 rounded-[3px] [background:repeating-linear-gradient(90deg,#cfd4e4_0_3px,#e7eaf4_3px_6px)]" />
           Q&amp;A · {qaStart}–{formatClock(endsAt)}
         </span>

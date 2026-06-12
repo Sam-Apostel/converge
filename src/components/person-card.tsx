@@ -24,23 +24,23 @@ export function PersonCard({ person }: { person: Person }) {
           />
 
           <div className="mb-2.5 mt-2.5">
-            <div className="text-[14.5px] font-semibold tracking-[-0.01em]">
+            <div className="text-body font-semibold tracking-[-0.01em]">
               {person.name}
             </div>
-            <div className="text-[12px] text-muted">
+            <div className="text-caption text-muted">
               {p?.title}
               {p?.company ? ` · ${p.company}` : ''}
             </div>
           </div>
 
           {p?.location && (
-            <div className="mb-2.5 flex items-center gap-1.5 text-[11.5px] text-slate">
+            <div className="mb-2.5 flex items-center gap-1.5 text-tiny text-slate">
               <MapPin size={12} className="text-muted" /> {p.location}
             </div>
           )}
 
           {p?.intents?.[0] && (
-            <div className="mb-2.5 inline-flex max-w-fit items-center gap-1.5 rounded-lg bg-[#eef1f7] px-2.5 py-1.5 text-[12px] font-medium text-ink-2">
+            <div className="mb-2.5 inline-flex max-w-fit items-center gap-1.5 rounded-lg bg-pillow px-2.5 py-1.5 text-caption font-medium text-ink-2">
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-lime" />
               {p.intents[0]}
             </div>
@@ -48,13 +48,13 @@ export function PersonCard({ person }: { person: Person }) {
 
           <div className="mb-3.5 flex flex-wrap gap-1.5">
             {(p?.interestedTopics ?? []).slice(0, 3).map((t) => (
-              <Tag key={t} className="!px-2 !py-0.5 !text-[11.5px]">
+              <Tag key={t} className="!px-2 !py-0.5 !text-tiny">
                 {t}
               </Tag>
             ))}
           </div>
 
-          <span className="mt-auto rounded-[11px] bg-pillow py-2 text-center text-[13px] font-medium text-slate transition-colors group-hover:bg-[#e6e9f3]">
+          <span className="mt-auto rounded-[11px] bg-pillow py-2 text-center text-note font-medium text-slate transition-colors group-hover:bg-pillow-deep">
             Connect
           </span>
         </div>

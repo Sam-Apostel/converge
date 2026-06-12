@@ -59,7 +59,7 @@ function ResultShell({
       <div className="mb-2 flex items-center gap-2 px-1">
         <Mono tone="faint">{label}</Mono>
         {typeof count === 'number' ? (
-          <span className="font-mono text-[11px] text-faint tabular-nums">
+          <span className="font-mono text-tiny text-faint tabular-nums">
             {count}
           </span>
         ) : null}
@@ -89,10 +89,10 @@ function PeopleResult({ people }: { people: Array<PersonRow> }) {
             >
               <Avatar name={p.name} src={p.image} size={34} />
               <span className="min-w-0">
-                <span className="block truncate text-[14px] font-medium text-ink">
+                <span className="block truncate text-body font-medium text-ink">
                   {p.name}
                 </span>
-                <span className="block truncate text-[12.5px] text-mist">
+                <span className="block truncate text-caption text-mist">
                   {p.headline ?? p.currentFocus ?? p.company ?? '—'}
                 </span>
               </span>
@@ -123,10 +123,10 @@ function SessionsResult({ sessions }: { sessions: Array<SessionRow> }) {
               className="flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors hover:bg-pillow"
             >
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14px] font-medium text-ink">
+                <span className="block truncate text-body font-medium text-ink">
                   {s.title}
                 </span>
-                <span className="block truncate text-[12.5px] text-mist">
+                <span className="block truncate text-caption text-mist">
                   {[formatTime(s.startsAt), s.track]
                     .filter(Boolean)
                     .join(' · ') || '—'}
@@ -159,10 +159,10 @@ function ProjectsResult({ projects }: { projects: Array<ProjectRow> }) {
               className="flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors hover:bg-pillow"
             >
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14px] font-medium text-ink">
+                <span className="block truncate text-body font-medium text-ink">
                   {p.name}
                 </span>
-                <span className="block truncate text-[12.5px] text-mist">
+                <span className="block truncate text-caption text-mist">
                   {p.tagline ?? p.category ?? '—'}
                 </span>
               </span>
@@ -187,15 +187,15 @@ function ProfileResult({
           <Link
             to="/people/$userId"
             params={{ userId: person.id }}
-            className="block truncate text-[15px] font-semibold text-ink hover:underline"
+            className="block truncate text-reading font-semibold text-ink hover:underline"
           >
             {person.name}
           </Link>
           {person.headline ? (
-            <p className="text-[13px] text-mist">{person.headline}</p>
+            <p className="text-note text-mist">{person.headline}</p>
           ) : null}
           {person.bio ? (
-            <p className="mt-1 line-clamp-3 text-[13px] text-slate">
+            <p className="mt-1 line-clamp-3 text-note text-slate">
               {person.bio}
             </p>
           ) : null}
@@ -206,7 +206,7 @@ function ProfileResult({
 }
 
 function EmptyRow({ text }: { text: string }) {
-  return <p className="px-2 py-1 text-[13px] text-muted">{text}</p>
+  return <p className="px-2 py-1 text-note text-muted">{text}</p>
 }
 
 /**

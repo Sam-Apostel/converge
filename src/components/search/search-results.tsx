@@ -22,7 +22,7 @@ export function SearchResults({ results }: { results: SearchResult[] }) {
         if (rows.length === 0) return null
         return (
           <section key={type}>
-            <Mono className="mb-2.5 block !text-[12px] !tracking-[0.12em]">
+            <Mono className="mb-2.5 block !text-caption !tracking-[0.12em]">
               {label}
               <span className="ml-2 text-muted">{rows.length}</span>
             </Mono>
@@ -43,13 +43,11 @@ function ResultRow({ result }: { result: SearchResult }) {
     <ResultLink result={result}>
       <Leading result={result} />
       <div className="min-w-0 flex-1">
-        <div className="truncate text-[15px] font-medium tracking-[-0.01em] text-ink">
+        <div className="truncate text-reading font-medium tracking-[-0.01em] text-ink">
           {result.title}
         </div>
         {result.subtitle ? (
-          <div className="truncate text-[13px] text-mist">
-            {result.subtitle}
-          </div>
+          <div className="truncate text-note text-mist">{result.subtitle}</div>
         ) : null}
       </div>
       <ArrowRight

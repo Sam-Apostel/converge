@@ -61,17 +61,17 @@ export function MomentsRail({
           {moments.length}
         </Badge>
       </div>
-      <p className="mb-4 text-[12.5px] text-[#8186a0]">
+      <p className="mb-4 text-caption text-muted">
         The slides you kept — on your timeline forever.
       </p>
 
       {ready && moments.length === 0 ? (
-        <div className="rounded-[18px] border-[1.5px] border-dashed border-[rgba(120,130,180,.3)] bg-white/50 px-[18px] py-[26px] text-center">
-          <div className="mx-auto mb-3 grid h-[46px] w-[46px] place-items-center rounded-[14px] bg-white text-[#c9cee0] shadow-soft">
+        <div className="rounded-[18px] border-[1.5px] border-dashed border-edge/30 bg-white/50 px-[18px] py-[26px] text-center">
+          <div className="mx-auto mb-3 grid h-[46px] w-[46px] place-items-center rounded-[14px] bg-white text-frost shadow-soft">
             <Star size={22} />
           </div>
-          <div className="mb-1 text-sm font-semibold">No moments yet</div>
-          <div className="text-[13px] leading-[1.45] text-[#8186a0]">
+          <div className="mb-1 text-body font-semibold">No moments yet</div>
+          <div className="text-note leading-[1.45] text-muted">
             Tap{' '}
             <strong className="font-semibold text-slate">
               Bookmark this slide
@@ -103,24 +103,24 @@ export function MomentsRail({
 
       {relatedPeople.length > 0 ? (
         <>
-          <div className="mb-[11px] mt-6 text-[13px] font-semibold text-[#52566c]">
+          <div className="mb-[11px] mt-6 text-note font-semibold text-slate">
             In the room for you
           </div>
           <div className="flex flex-col gap-[9px]">
             {relatedPeople.map((p) => (
               <div
                 key={p.id}
-                className="flex items-center gap-[11px] rounded-[14px] bg-white px-[13px] py-[11px] [box-shadow:0_1px_3px_rgba(40,50,110,.06)]"
+                className="flex items-center gap-[11px] rounded-[14px] bg-white px-[13px] py-[11px] shadow-soft"
               >
                 <Avatar name={p.name} src={p.image} size={34} />
                 <div className="min-w-0 flex-1">
-                  <div className="text-[13.5px] font-semibold">{p.name}</div>
-                  <div className="text-[11.5px] text-[#8186a0]">{p.note}</div>
+                  <div className="text-note font-semibold">{p.name}</div>
+                  <div className="text-tiny text-muted">{p.note}</div>
                 </div>
                 <Link
                   to="/people/$userId"
                   params={{ userId: p.id }}
-                  className="rounded-full bg-pillow px-[11px] py-1.5 text-[12px] font-medium text-slate transition-colors hover:bg-[#e3e7f2]"
+                  className="rounded-full bg-pillow px-[11px] py-1.5 text-caption font-medium text-slate transition-colors hover:bg-pillow-deep"
                 >
                   View profile
                 </Link>
@@ -134,22 +134,22 @@ export function MomentsRail({
         <Link
           to="/projects/$slug"
           params={{ slug: relatedProject.slug }}
-          className="mt-[18px] block overflow-hidden rounded-2xl bg-white [box-shadow:0_1px_3px_rgba(40,50,110,.06),0_8px_18px_rgba(40,50,110,.05)]"
+          className="mt-[18px] block overflow-hidden rounded-2xl bg-white shadow-card"
         >
           <Thumb tint="#e2eef0" height={76} radius={0}>
-            <span className="absolute bottom-2 left-2.5 rounded-md bg-white/[.88] px-2 py-[3px] font-mono text-[10px] text-[#3f6173]">
+            <span className="absolute bottom-2 left-2.5 rounded-md bg-white/[.88] px-2 py-[3px] font-mono text-micro text-[#3f6173]">
               {relatedProject.slug} · live demo
             </span>
           </Thumb>
           <div className="px-3.5 py-[13px]">
-            <Mono tone="ghost" className="mb-[5px] block text-[11px]">
+            <Mono tone="ghost" className="mb-[5px] block text-tiny">
               Related project
             </Mono>
-            <div className="text-[14.5px] font-semibold tracking-[-0.01em]">
+            <div className="text-body font-semibold tracking-[-0.01em]">
               {relatedProject.name}
             </div>
             {relatedProject.tagline ? (
-              <div className="mt-[3px] text-[12.5px] leading-[1.4] text-mist">
+              <div className="mt-[3px] text-caption leading-[1.4] text-mist">
                 {relatedProject.tagline.replace(/\.$/, '')}
                 {relatedProject.ownerName
                   ? `. by ${relatedProject.ownerName}.`

@@ -20,7 +20,7 @@ export function Pill({
   children: ReactNode
 }) {
   const base =
-    'inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-medium transition-colors'
+    'inline-flex items-center gap-2 rounded-full px-4 py-2 text-note font-medium transition-colors'
   const state = active
     ? tone === 'lime'
       ? 'bg-lime text-ink'

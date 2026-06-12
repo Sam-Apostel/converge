@@ -41,7 +41,7 @@ export function AddToClaudeButton({ className = '' }: { className?: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-flex items-center justify-center gap-2 rounded-[13px] bg-[#D97757] px-5 py-3 text-sm font-semibold leading-none text-white shadow-[0_1px_2px_rgba(120,60,40,.18),0_8px_20px_rgba(217,119,87,.28)] transition-[transform,background-color,box-shadow] duration-150 hover:bg-[#C96442] active:scale-[0.97] ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-[13px] bg-[#D97757] px-5 py-3 text-body font-semibold leading-none text-white shadow-[0_1px_2px_rgba(120,60,40,.18),0_8px_20px_rgba(217,119,87,.28)] transition-[transform,background-color,box-shadow] duration-150 hover:bg-[#C96442] active:scale-[0.97] ${className}`}
     >
       <ClaudeMark size={17} />
       Add to Claude

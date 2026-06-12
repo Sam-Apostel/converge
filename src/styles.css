@@ -15,22 +15,46 @@
   /* Ink + text ramp */
   --color-ink: #13141d;
   --color-ink-2: #16172a;
+  /* Reading-weight dark text (thread bodies, active nav). */
+  --color-ink-soft: #3a3e54;
   --color-slate: #52566c;
   --color-mist: #72768e;
   --color-muted: #8186a0;
   --color-faint: #9398b2;
+  /* Muted text on dark surfaces. */
+  --color-frost: #c9cee0;
 
   /* Surfaces */
   --color-canvas: #e9ebf7;
   --color-surface: #ffffff;
   --color-inner: #f6f7fc;
   --color-pillow: #eef0f8;
+  /* Pressed / hovered pillow. */
+  --color-pillow-deep: #e3e7f2;
   --color-tag: #f1f3fa;
   --color-line: rgba(120, 130, 180, 0.16);
+  /* Border base — use with an opacity modifier (border-edge/20). */
+  --color-edge: #7882b4;
 
   /* The one accent — lime. Fills only. */
   --color-lime: #99ff00;
   --color-lime-deep: #7bdb00;
+
+  /* Destructive affordances (delete hovers etc.) */
+  --color-danger: #ff4d3d;
+
+  /*
+   * Type scale — the moodboard's optical sizes, named. No line-height is
+   * baked in: each utility sets font-size only, like the arbitrary values
+   * they replace.
+   */
+  --text-micro: 10px;
+  --text-tiny: 11px;
+  --text-caption: 12px;
+  --text-note: 13px;
+  --text-body: 14px;
+  --text-reading: 15px;
+  --text-title: 22px;
 
   /* Neumorphic elevation */
   --shadow-card:
@@ -41,6 +65,18 @@
     0 1px 3px rgba(40, 50, 110, 0.06), 0 18px 38px rgba(40, 50, 110, 0.12);
   --shadow-soft: 0 1px 3px rgba(40, 50, 110, 0.1);
   --shadow-lime: 0 6px 18px rgba(153, 255, 0, 0.45);
+  /* 1px inset ring — hairline on images / media. */
+  --shadow-hairline: inset 0 0 0 1px rgba(120, 130, 180, 0.12);
+  /* Hover lift for chips and small interactive cards. */
+  --shadow-pop: 0 4px 12px rgba(40, 50, 110, 0.14);
+  /* Frosted-glass panel: deep drop + top highlight. */
+  --shadow-glass:
+    0 14px 44px rgba(40, 50, 110, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+/* Dark ink sheen behind hero / spotlight cards. */
+@utility bg-ink-gradient {
+  background-image: linear-gradient(135deg, #13141d, #1c1e2e);
 }
 
 * {

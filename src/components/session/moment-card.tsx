@@ -90,7 +90,7 @@ export function MomentCard({
 
   return (
     <div>
-      <div className="animate-moment-in overflow-hidden rounded-[14px] bg-white [box-shadow:0_1px_3px_rgba(40,50,110,.07),0_8px_18px_rgba(40,50,110,.06)]">
+      <div className="animate-moment-in overflow-hidden rounded-[14px] bg-white shadow-card">
         <div className="relative h-[84px]">
           {thumbnailUrl ? (
             <img
@@ -106,14 +106,14 @@ export function MomentCard({
               className="absolute inset-0"
             />
           )}
-          <span className="absolute left-[7px] top-[7px] inline-flex items-center gap-1 rounded-md bg-lime/70 px-[7px] py-0.5 font-mono text-[10px] font-semibold text-[#21261a]">
+          <span className="absolute left-[7px] top-[7px] inline-flex items-center gap-1 rounded-md bg-lime/70 px-[7px] py-0.5 font-mono text-micro font-semibold text-ink">
             <Star size={11} className="fill-current" /> {time}
           </span>
           <button
             type="button"
             onClick={remove}
             aria-label="Remove moment"
-            className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-md bg-white/[.92] leading-none text-faint transition-colors hover:text-[#ff4d3d]"
+            className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-md bg-white/[.92] leading-none text-faint transition-colors hover:text-danger"
           >
             <X size={13} strokeWidth={2.5} />
           </button>
@@ -122,12 +122,12 @@ export function MomentCard({
               href={href}
               target="_blank"
               rel="noreferrer"
-              className="absolute bottom-[7px] left-[7px] inline-flex items-center gap-1 rounded-md bg-white/[.86] px-[7px] py-0.5 font-mono text-[10px] text-[#5b6080] transition-colors hover:bg-white"
+              className="absolute bottom-[7px] left-[7px] inline-flex items-center gap-1 rounded-md bg-white/[.86] px-[7px] py-0.5 font-mono text-micro text-slate transition-colors hover:bg-white"
             >
               <Play size={10} className="fill-current" /> Jump
             </a>
           ) : slideRef ? (
-            <span className="absolute bottom-[7px] left-[7px] rounded-md bg-white/[.86] px-[7px] py-0.5 font-mono text-[10px] text-[#5b6080]">
+            <span className="absolute bottom-[7px] left-[7px] rounded-md bg-white/[.86] px-[7px] py-0.5 font-mono text-micro text-slate">
               {slideRef}
             </span>
           ) : null}
@@ -139,16 +139,16 @@ export function MomentCard({
           aria-expanded={expanded}
           className="block w-full px-2.5 pb-[11px] pt-[9px] text-left"
         >
-          <div className="text-[12.5px] font-semibold leading-[1.25] tracking-[-0.01em]">
+          <div className="text-caption font-semibold leading-[1.25] tracking-[-0.01em]">
             {topic}
           </div>
           {!expanded &&
             (preview ? (
-              <div className="mt-1 line-clamp-2 text-[11.5px] leading-[1.35] text-[#6b7090]">
+              <div className="mt-1 line-clamp-2 text-tiny leading-[1.35] text-mist">
                 {preview}
               </div>
             ) : (
-              <div className="mt-1 inline-flex items-center gap-1 text-[11.5px] text-faint">
+              <div className="mt-1 inline-flex items-center gap-1 text-tiny text-faint">
                 <Plus size={11} /> Add a thought…
               </div>
             ))}
@@ -163,7 +163,7 @@ export function MomentCard({
               onBlur={commit}
               placeholder="Add a thought…"
               rows={3}
-              className="w-full resize-none rounded-[10px] bg-inner px-2.5 py-2 text-[12px] leading-[1.4] text-ink outline-none ring-1 ring-inset ring-[rgba(120,130,180,.18)] transition-shadow placeholder:text-faint focus:ring-[rgba(120,130,180,.45)]"
+              className="w-full resize-none rounded-[10px] bg-inner px-2.5 py-2 text-caption leading-[1.4] text-ink outline-none ring-1 ring-inset ring-edge/18 transition-shadow placeholder:text-faint focus:ring-edge/45"
             />
             <div className="mt-1.5 flex justify-end">
               <button
@@ -172,7 +172,7 @@ export function MomentCard({
                   commit()
                   setExpanded(false)
                 }}
-                className="rounded-[9px] bg-ink px-3 py-1.5 text-[11.5px] font-semibold text-white transition-colors hover:bg-ink-2"
+                className="rounded-[9px] bg-ink px-3 py-1.5 text-tiny font-semibold text-white transition-colors hover:bg-ink-2"
               >
                 Save
               </button>
@@ -206,14 +206,14 @@ export function MomentCard({
             ))}
             {overflow > 0 && (
               <span
-                className="grid h-[22px] min-w-[22px] place-items-center rounded-full bg-ink px-1 font-mono text-[10px] font-semibold text-white"
+                className="grid h-[22px] min-w-[22px] place-items-center rounded-full bg-ink px-1 font-mono text-micro font-semibold text-white"
                 style={{ marginLeft: -8 }}
               >
                 +{overflow}
               </span>
             )}
           </div>
-          <span className="text-[10.5px] text-faint">also kept this</span>
+          <span className="text-micro text-faint">also kept this</span>
         </div>
       )}
     </div>
