@@ -172,7 +172,7 @@ function Home() {
         <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
           {/* next session */}
           {nextSession ? (
-            <Spotlight className="flex flex-col p-6">
+            <Spotlight beam className="flex flex-col p-6">
               <div className="mb-3.5 flex items-center justify-between">
                 <Mono tone="lime" className="!tracking-[0.08em] !text-[11.5px]">
                   Next · {formatClock(nextSession.startsAt)}
