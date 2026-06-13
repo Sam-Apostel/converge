@@ -13,6 +13,7 @@ import { asc, eq } from 'drizzle-orm'
 
 import { db } from '#/db'
 import { conference, user } from '#/db/schema'
+import { resolveActiveConferenceId } from '#/lib/queries/active-conference'
 
 /** Format an instant in a given IANA timezone, e.g. "Friday, 13 June 2025, 14:32 CEST". */
 function formatInZone(date: Date, timezone: string): string {
@@ -58,16 +59,20 @@ function describeRange(
 export async function buildRuntimeContext(userId: string): Promise<string> {
   const now = new Date()
 
-  const conferences = await db
-    .select({
-      name: conference.name,
-      timezone: conference.timezone,
-      startsAt: conference.startsAt,
-      endsAt: conference.endsAt,
-      venueName: conference.venueName,
-    })
-    .from(conference)
-    .orderBy(asc(conference.startsAt))
+  const [conferences, activeConferenceId] = await Promise.all([
+    db
+      .select({
+        id: conference.id,
+        name: conference.name,
+        timezone: conference.timezone,
+        startsAt: conference.startsAt,
+        endsAt: conference.endsAt,
+        venueName: conference.venueName,
+      })
+      .from(conference)
+      .orderBy(asc(conference.startsAt)),
+    resolveActiveConferenceId(),
+  ])
 
   // Co-located conferences share a timezone; fall back to Amsterdam.
   const timezone = conferences[0]?.timezone ?? 'Europe/Amsterdam'
@@ -92,10 +97,19 @@ export async function buildRuntimeContext(userId: string): Promise<string> {
       .map((c) => {
         const range = describeRange(c.startsAt, c.endsAt, c.timezone)
         const venue = c.venueName ? ` at ${c.venueName}` : ''
-        return `- ${c.name}: ${range}${venue}`
+        const active = c.id === activeConferenceId ? ' (currently viewing)' : ''
+        return `- ${c.name}: ${range}${venue}${active}`
       })
       .join('\n')
     lines.push(`Conferences:\n${list}`)
+    const activeName = conferences.find(
+      (c) => c.id === activeConferenceId,
+    )?.name
+    if (activeName && conferences.length > 1) {
+      lines.push(
+        `The user is currently viewing ${activeName}. When they say "the conference" or ask what's on without naming one, assume ${activeName}.`,
+      )
+    }
     lines.push(`All session times are in ${timezone}.`)
   }
 

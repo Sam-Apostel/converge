@@ -13,6 +13,8 @@ items marked ✅ were finished there.
 | ✅ Profile screen | `/profile` showed name + email + sign-out only; every `profile` column (headline, bio, intents, topics, availability, socials…) had no edit UI | Full editor for account + profile fields, availability setting, socials, public-profile link, sign out (`src/routes/_app/profile.tsx`, `src/lib/queries/me.ts`) |
 | ✅ Project registration | `POST /api/projects` existed but no UI called it | `/projects/new` form (basics, screenshot upload, tech stack, looking-for, links) with unique-slug handling; entry points on `/projects` and `/profile` |
 | ✅ Project screenshots & links | Detail/featured cards rendered a hard-coded "project screenshot" hatch; `project.links` was never displayed | Real first screenshot rendered when present (placeholder hatch kept as fallback); link chips on the detail page |
+| ✅ Multi-conference navigation | Two conferences were seeded but the whole app assumed one; no way to switch | Active conference persisted in a cookie, header switcher (`ConferenceSwitcher`), `/conferences` overview page; sessions, home counts/next-up, and the concierge context all scope to the active conference (`src/lib/queries/conferences.ts`, `active-conference.ts`) |
+| ✅ Multi-track schedule | `session.track` existed but tracks weren't navigable | Track filter pills on `/sessions` (shareable via `?track=`), grouped by day; conference header with venue/date |
 
 ## Still open
 

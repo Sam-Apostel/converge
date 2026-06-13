@@ -37,6 +37,7 @@ import { Route as Char91DotwellKnownChar93OauthAuthorizationServerRouteImport } 
 import { Route as AppSessionsIndexRouteImport } from './routes/_app/sessions/index'
 import { Route as AppProjectsIndexRouteImport } from './routes/_app/projects/index'
 import { Route as AppPeopleIndexRouteImport } from './routes/_app/people/index'
+import { Route as AppConferencesIndexRouteImport } from './routes/_app/conferences/index'
 import { Route as ApiMomentsSharedRouteImport } from './routes/api/moments/shared'
 import { Route as ApiDocumentsIdRouteImport } from './routes/api/documents.$id'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -189,6 +190,11 @@ const AppPeopleIndexRoute = AppPeopleIndexRouteImport.update({
   path: '/people/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppConferencesIndexRoute = AppConferencesIndexRouteImport.update({
+  id: '/conferences/',
+  path: '/conferences/',
+  getParentRoute: () => AppRoute,
+} as any)
 const ApiMomentsSharedRoute = ApiMomentsSharedRouteImport.update({
   id: '/shared',
   path: '/shared',
@@ -273,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/documents/$id': typeof ApiDocumentsIdRoute
   '/api/moments/shared': typeof ApiMomentsSharedRoute
+  '/conferences/': typeof AppConferencesIndexRoute
   '/people/': typeof AppPeopleIndexRoute
   '/projects/': typeof AppProjectsIndexRoute
   '/sessions/': typeof AppSessionsIndexRoute
@@ -312,6 +319,7 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/documents/$id': typeof ApiDocumentsIdRoute
   '/api/moments/shared': typeof ApiMomentsSharedRoute
+  '/conferences': typeof AppConferencesIndexRoute
   '/people': typeof AppPeopleIndexRoute
   '/projects': typeof AppProjectsIndexRoute
   '/sessions': typeof AppSessionsIndexRoute
@@ -353,6 +361,7 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/documents/$id': typeof ApiDocumentsIdRoute
   '/api/moments/shared': typeof ApiMomentsSharedRoute
+  '/_app/conferences/': typeof AppConferencesIndexRoute
   '/_app/people/': typeof AppPeopleIndexRoute
   '/_app/projects/': typeof AppProjectsIndexRoute
   '/_app/sessions/': typeof AppSessionsIndexRoute
@@ -394,6 +403,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/documents/$id'
     | '/api/moments/shared'
+    | '/conferences/'
     | '/people/'
     | '/projects/'
     | '/sessions/'
@@ -433,6 +443,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/documents/$id'
     | '/api/moments/shared'
+    | '/conferences'
     | '/people'
     | '/projects'
     | '/sessions'
@@ -473,6 +484,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/documents/$id'
     | '/api/moments/shared'
+    | '/_app/conferences/'
     | '/_app/people/'
     | '/_app/projects/'
     | '/_app/sessions/'
@@ -701,6 +713,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPeopleIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/conferences/': {
+      id: '/_app/conferences/'
+      path: '/conferences'
+      fullPath: '/conferences/'
+      preLoaderRoute: typeof AppConferencesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/api/moments/shared': {
       id: '/api/moments/shared'
       path: '/shared'
@@ -797,6 +816,7 @@ interface AppRouteChildren {
   AppProjectsSlugRoute: typeof AppProjectsSlugRoute
   AppProjectsNewRoute: typeof AppProjectsNewRoute
   AppSessionsSlugRoute: typeof AppSessionsSlugRoute
+  AppConferencesIndexRoute: typeof AppConferencesIndexRoute
   AppPeopleIndexRoute: typeof AppPeopleIndexRoute
   AppProjectsIndexRoute: typeof AppProjectsIndexRoute
   AppSessionsIndexRoute: typeof AppSessionsIndexRoute
@@ -813,6 +833,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProjectsSlugRoute: AppProjectsSlugRoute,
   AppProjectsNewRoute: AppProjectsNewRoute,
   AppSessionsSlugRoute: AppSessionsSlugRoute,
+  AppConferencesIndexRoute: AppConferencesIndexRoute,
   AppPeopleIndexRoute: AppPeopleIndexRoute,
   AppProjectsIndexRoute: AppProjectsIndexRoute,
   AppSessionsIndexRoute: AppSessionsIndexRoute,
