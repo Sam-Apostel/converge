@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
-import { asc, desc, eq, ne } from 'drizzle-orm'
+import { and, asc, desc, eq, ne } from 'drizzle-orm'
+import type { SQL } from 'drizzle-orm'
 
 import { db } from '#/db'
 import {
@@ -12,6 +13,7 @@ import {
   user,
 } from '#/db/schema'
 import type { Person } from '#/db/types'
+import { resolveActiveConferenceId } from '#/lib/queries/active-conference'
 import { resolveViewer } from '#/lib/queries/messages'
 
 /** A suggested attendee to meet on the home page. */
@@ -103,11 +105,18 @@ async function suggestPeopleToMeet(limit = 5): Promise<Array<SuggestedPerson>> {
 /** Home dashboard: counts, the next session, people to meet, trending project. */
 export const getHomeSummary = createServerFn({ method: 'GET' }).handler(
   async () => {
+    // Sessions and the "next up" card are scoped to the active conference; the
+    // people/project network spans the whole summit.
+    const activeConferenceId = await resolveActiveConferenceId()
+    const inConference = activeConferenceId
+      ? eq(conferenceSession.conferenceId, activeConferenceId)
+      : undefined
+
     const [people, projects, sessions, next, peopleToMeet, trending] =
       await Promise.all([
         db.$count(profile),
         db.$count(project),
-        db.$count(conferenceSession),
+        db.$count(conferenceSession, inConference),
         db
           .select({
             id: conferenceSession.id,
@@ -125,6 +134,7 @@ export const getHomeSummary = createServerFn({ method: 'GET' }).handler(
             eq(sessionSpeaker.sessionId, conferenceSession.id),
           )
           .leftJoin(user, eq(user.id, sessionSpeaker.userId))
+          .where(inConference)
           .orderBy(asc(conferenceSession.startsAt))
           .limit(1),
         suggestPeopleToMeet(),
@@ -182,6 +192,7 @@ export const listProjects = createServerFn({ method: 'GET' }).handler(
         category: project.category,
         techStack: project.techStack,
         lookingFor: project.lookingFor,
+        screenshots: project.screenshots,
         trendingScore: project.trendingScore,
         ownerId: project.ownerId,
         ownerName: user.name,
@@ -192,12 +203,26 @@ export const listProjects = createServerFn({ method: 'GET' }).handler(
       .limit(100),
 )
 
-export const listSessions = createServerFn({ method: 'GET' }).handler(
-  async () =>
-    db
+/**
+ * Sessions for the schedule. Scoped to the active conference by default; pass
+ * an explicit `conferenceId` (e.g. from a conference landing page) to override,
+ * or `null` to list across every conference.
+ */
+export const listSessions = createServerFn({ method: 'GET' })
+  .validator((conferenceId?: string | null) => conferenceId)
+  .handler(async ({ data }) => {
+    const conferenceId =
+      data === undefined ? await resolveActiveConferenceId() : data
+    const filters: Array<SQL> = []
+    if (conferenceId) {
+      filters.push(eq(conferenceSession.conferenceId, conferenceId))
+    }
+
+    return db
       .select({
         id: conferenceSession.id,
         slug: conferenceSession.slug,
+        conferenceId: conferenceSession.conferenceId,
         title: conferenceSession.title,
         abstract: conferenceSession.abstract,
         track: conferenceSession.track,
@@ -214,6 +239,7 @@ export const listSessions = createServerFn({ method: 'GET' }).handler(
         eq(sessionSpeaker.sessionId, conferenceSession.id),
       )
       .leftJoin(user, eq(user.id, sessionSpeaker.userId))
+      .where(filters.length ? and(...filters) : undefined)
       .orderBy(asc(conferenceSession.startsAt))
-      .limit(200),
-)
+      .limit(200)
+  })

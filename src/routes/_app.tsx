@@ -1,11 +1,14 @@
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
 
 import { Avatar, NotificationProvider } from '#/components/ui'
+import { ConferenceSwitcher } from '#/components/conference-switcher'
 import { ConvergeLogo } from '#/components/converge-logo'
 import { useSession } from '#/lib/auth-client'
+import { getConferenceContext } from '#/lib/queries/conferences'
 import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/_app')({
+  loader: () => getConferenceContext(),
   component: AppLayout,
 })
 
@@ -150,7 +153,9 @@ const BOTTOM_NAV = [
 
 function AppLayout() {
   const { data: session } = useSession()
+  const { conferences, activeId } = Route.useLoaderData()
   const userName = session?.user?.name ?? ''
+  const userImage = session?.user?.image ?? null
 
   return (
     <NotificationProvider>
@@ -202,9 +207,15 @@ function AppLayout() {
                 ))}
               </nav>
 
-              <Link to="/profile" className="ml-auto shrink-0 lg:ml-1">
-                <Avatar name={userName} size={36} />
-              </Link>
+              <div className="ml-auto flex items-center gap-2.5 lg:ml-1">
+                <ConferenceSwitcher
+                  conferences={conferences}
+                  activeId={activeId}
+                />
+                <Link to="/profile" className="shrink-0">
+                  <Avatar name={userName} src={userImage} size={36} />
+                </Link>
+              </div>
             </div>
           </div>
         </header>
@@ -214,7 +225,7 @@ function AppLayout() {
           </Link>
           <div
             className={cn(
-              'flex items-center gap-3 py-1 pl-4 pr-3',
+              'flex flex-1 items-center gap-3 py-1 pl-4 pr-2',
               '[backdrop-filter:blur(12px)_saturate(1.7)]',
               'rounded-[22px] border border-white/60 bg-white/34 lg:pl-[15px] shadow-glass',
             )}
@@ -224,6 +235,13 @@ function AppLayout() {
                 converge
               </span>
             </Link>
+            <div className="ml-auto">
+              <ConferenceSwitcher
+                conferences={conferences}
+                activeId={activeId}
+                compact
+              />
+            </div>
           </div>
         </header>
 
@@ -266,7 +284,7 @@ function AppLayout() {
             </Link>
           ))}
           <Link to="/profile" className="flex-1 grid place-items-center">
-            <Avatar name={userName} size={36} />
+            <Avatar name={userName} src={userImage} size={36} />
           </Link>
         </nav>
       </div>

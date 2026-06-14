@@ -1,6 +1,7 @@
 import {
   type AnyPgColumn,
   boolean,
+  customType,
   index,
   integer,
   jsonb,
@@ -34,6 +35,40 @@ const updatedAt = () =>
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull()
+
+const bytea = customType<{ data: Buffer }>({
+  dataType() {
+    return 'bytea'
+  },
+})
+
+/* ------------------------------------------------------------------ */
+/* Documents — small binary uploads stored in Postgres                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * User-uploaded files (avatars, project screenshots). Bytes live in Postgres
+ * so deploys stay stateless — no blob store to provision. Uploads are
+ * size-capped at the API layer, and rows are immutable: replacing an avatar
+ * uploads a new document, so `/api/documents/$id` can be cached forever.
+ */
+export const document = pgTable(
+  'document',
+  {
+    id: id(),
+    ownerId: text('owner_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    // avatar | project-screenshot
+    kind: text('kind').notNull(),
+    name: text('name').notNull(),
+    mimeType: text('mime_type').notNull(),
+    size: integer('size').notNull(),
+    data: bytea('data').notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [index('document_owner_idx').on(t.ownerId)],
+)
 
 /* ------------------------------------------------------------------ */
 /* Conference + venue                                                  */

@@ -1,12 +1,22 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { CalendarDays, MapPin } from 'lucide-react'
 
-import { Avatar, Mono, Tag } from '#/components/ui'
+import { Avatar, Mono, Pill, Tag } from '#/components/ui'
 import { formatClock } from '#/lib/format'
 import { listSessions } from '#/lib/queries'
+import { getConferenceContext } from '#/lib/queries/conferences'
 import { cn } from '#/lib/utils'
 
+type SessionSearch = { track?: string }
+
 export const Route = createFileRoute('/_app/sessions/')({
-  loader: () => listSessions(),
+  validateSearch: (search: Record<string, unknown>): SessionSearch => ({
+    track: typeof search.track === 'string' ? search.track : undefined,
+  }),
+  loader: async () => ({
+    sessions: await listSessions(),
+    context: await getConferenceContext(),
+  }),
   component: SessionsPage,
 })
 
@@ -31,10 +41,33 @@ function isLiveNow(row: SessionRow): boolean {
 }
 
 function SessionsPage() {
+  const { sessions: allSessions, context } = Route.useLoaderData()
+  const { track: activeTrack } = Route.useSearch()
+  const navigate = Route.useNavigate()
+
+  const active =
+    context.conferences.find((c) => c.id === context.activeId) ??
+    context.conferences[0]
+
   const now = new Date()
-  const sessions = Route.useLoaderData().filter(
+  const upcoming = allSessions.filter(
     (session) => session.endsAt != null && new Date(session.endsAt) > now,
   )
+
+  // Tracks present in the upcoming schedule, with how many talks each holds.
+  const trackCounts = new Map<string, number>()
+  for (const s of upcoming) {
+    if (s.track) trackCounts.set(s.track, (trackCounts.get(s.track) ?? 0) + 1)
+  }
+  const tracks = [...trackCounts.keys()].sort((a, b) => a.localeCompare(b))
+
+  const sessions =
+    activeTrack && tracks.includes(activeTrack)
+      ? upcoming.filter((s) => s.track === activeTrack)
+      : upcoming
+
+  const selectTrack = (track: string | undefined) =>
+    void navigate({ search: track ? { track } : {} })
 
   // Preserve the start-time order while grouping into day sections.
   const groups: Array<{ label: string; rows: Array<SessionRow> }> = []
@@ -48,16 +81,61 @@ function SessionsPage() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Sessions</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          {active ? `${active.name} — schedule` : 'Sessions'}
+        </h1>
         <p className="mt-1 max-w-2xl text-body text-mist">
-          The schedule — tap into any talk to bookmark slides, ask questions,
-          and follow the discussion.
+          Tap into any talk to bookmark slides, ask questions, and follow the
+          discussion.
         </p>
+        {active ? (
+          <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-caption text-slate">
+            <span className="inline-flex items-center gap-1.5">
+              <CalendarDays size={13} className="text-muted" />
+              {dayLabel(active.startsAt)}
+            </span>
+            {active.venueName ? (
+              <span className="inline-flex items-center gap-1.5">
+                <MapPin size={13} className="text-muted" />
+                {active.venueName}
+              </span>
+            ) : null}
+          </div>
+        ) : null}
       </header>
+
+      {tracks.length > 1 ? (
+        <div className="mb-6 flex flex-wrap gap-2">
+          <button type="button" onClick={() => selectTrack(undefined)}>
+            <Pill active={!activeTrack} elevated>
+              All tracks
+              <span className="text-tiny font-normal opacity-70">
+                {upcoming.length}
+              </span>
+            </Pill>
+          </button>
+          {tracks.map((track) => (
+            <button
+              key={track}
+              type="button"
+              onClick={() => selectTrack(track)}
+            >
+              <Pill active={activeTrack === track} elevated>
+                {track}
+                <span className="text-tiny font-normal opacity-70">
+                  {trackCounts.get(track)}
+                </span>
+              </Pill>
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       {sessions.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-black/10 bg-white/60 p-6 text-body text-muted">
-          No sessions scheduled yet.
+          {activeTrack
+            ? `No upcoming talks on the ${activeTrack} track.`
+            : 'No sessions scheduled yet.'}
         </p>
       ) : (
         <div className="flex flex-col gap-7">

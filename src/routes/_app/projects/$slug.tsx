@@ -1,5 +1,5 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { ChevronLeft, CornerDownRight, Star } from 'lucide-react'
+import { ArrowUpRight, ChevronLeft, CornerDownRight, Star } from 'lucide-react'
 
 import {
   Avatar,
@@ -76,15 +76,23 @@ function ProjectDetail() {
         </span>
       </div>
 
-      <Thumb
-        tint="#eef0f8"
-        height={200}
-        className="mb-5 flex items-end p-3.5 shadow-hairline"
-      >
-        <span className="rounded-md bg-white/[0.86] px-2.5 py-1 font-mono text-tiny text-muted">
-          project screenshot
-        </span>
-      </Thumb>
+      {project.screenshots?.[0] ? (
+        <img
+          src={project.screenshots[0]}
+          alt={`${project.name} screenshot`}
+          className="mb-5 max-h-[320px] w-full rounded-[14px] object-cover shadow-hairline"
+        />
+      ) : (
+        <Thumb
+          tint="#eef0f8"
+          height={200}
+          className="mb-5 flex items-end p-3.5 shadow-hairline"
+        >
+          <span className="rounded-md bg-white/[0.86] px-2.5 py-1 font-mono text-tiny text-muted">
+            project screenshot
+          </span>
+        </Thumb>
+      )}
 
       <p className="mb-5 text-reading leading-[1.55] text-slate">
         {project.description ?? project.tagline}
@@ -110,6 +118,22 @@ function ProjectDetail() {
         </div>
         {stack.length > 0 && <AvatarStack size={32} people={stack} />}
       </div>
+
+      {project.links && Object.keys(project.links).length > 0 ? (
+        <div className="mb-5 flex flex-wrap gap-2">
+          {Object.entries(project.links).map(([label, href]) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-pillow px-3.5 py-2 text-note font-medium text-slate transition-colors hover:bg-pillow-deep hover:text-ink"
+            >
+              {label} <ArrowUpRight size={13} />
+            </a>
+          ))}
+        </div>
+      ) : null}
 
       {relatedTalk && (
         <div className="mb-6 flex items-center gap-2 text-note text-slate">

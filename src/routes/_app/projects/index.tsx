@@ -1,6 +1,12 @@
 import { useRef } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
-import { ChevronLeft, ChevronRight, CornerDownRight, Star } from 'lucide-react'
+import { Link, createFileRoute } from '@tanstack/react-router'
+import {
+  ChevronLeft,
+  ChevronRight,
+  CornerDownRight,
+  Plus,
+  Star,
+} from 'lucide-react'
 
 import {
   Avatar,
@@ -52,13 +58,22 @@ function ProjectsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight">
-        Projects — what people are actually building
-      </h1>
-      <p className="mb-5 mt-1 max-w-2xl text-body text-mist">
-        People care less about where you work than what you're building. The
-        conference becomes a showcase of ideas, not employers.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Projects — what people are actually building
+          </h1>
+          <p className="mb-5 mt-1 max-w-2xl text-body text-mist">
+            People care less about where you work than what you're building. The
+            conference becomes a showcase of ideas, not employers.
+          </p>
+        </div>
+        <Link to="/projects/new">
+          <Button variant="lime" size="sm">
+            <Plus size={14} strokeWidth={2.5} /> Register a project
+          </Button>
+        </Link>
+      </div>
 
       <div className="mb-[22px] flex flex-wrap gap-2">
         {CATEGORIES.map((c, i) => (
@@ -164,15 +179,23 @@ function ProjectProfile({
         </span>
       </div>
 
-      <Thumb
-        tint="#eef0f8"
-        height={140}
-        className="mb-4 flex items-end p-3 shadow-hairline"
-      >
-        <span className="rounded-md bg-white/[0.86] px-2.5 py-1 font-mono text-tiny text-muted">
-          project screenshot
-        </span>
-      </Thumb>
+      {project.screenshots?.[0] ? (
+        <img
+          src={project.screenshots[0]}
+          alt={`${project.name} screenshot`}
+          className="mb-4 h-[140px] w-full rounded-[14px] object-cover shadow-hairline"
+        />
+      ) : (
+        <Thumb
+          tint="#eef0f8"
+          height={140}
+          className="mb-4 flex items-end p-3 shadow-hairline"
+        >
+          <span className="rounded-md bg-white/[0.86] px-2.5 py-1 font-mono text-tiny text-muted">
+            project screenshot
+          </span>
+        </Thumb>
+      )}
 
       <p className="mb-4 text-body leading-normal text-slate">
         {project.description ?? project.tagline}
