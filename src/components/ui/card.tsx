@@ -1,43 +1,52 @@
+import { cva } from 'cva'
+import type { VariantProps } from 'cva'
 import type { CSSProperties, ReactNode } from 'react'
+
+import { cn } from '#/lib/utils'
 
 /**
  * Animated lime beam that sweeps around the border of a dark card.
- * Parent must be `position:relative overflow-hidden`.
+ * Parent must be `position:relative overflow-hidden`. The sweep duration is
+ * driven by the `--beam-speed` custom property (the one genuinely dynamic bit).
  */
 export function BorderBeam({ speed = 4.8 }: { speed?: number }) {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-[inherit]"
-      style={{
-        padding: '1.5px',
-        WebkitMask:
-          'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
-        WebkitMaskComposite: 'xor',
-        maskComposite: 'exclude',
-      }}
+      className={cn(
+        'pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-[inherit] p-[1.5px]',
+        '[-webkit-mask-composite:xor] [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude]',
+      )}
     >
       <div
-        className="absolute left-1/2 top-1/2 aspect-square w-[220%]"
-        style={{
-          background:
-            'conic-gradient(from 0deg, transparent 0 74%, #99ff00 84%, #eaffc4 90%, #99ff00 96%, transparent 100%)',
-          animation: `beamRot ${speed}s linear infinite`,
-        }}
+        style={{ '--beam-speed': `${speed}s` } as CSSProperties}
+        className={cn(
+          'absolute left-1/2 top-1/2 aspect-square w-[220%]',
+          'animate-[beamRot_var(--beam-speed)_linear_infinite]',
+          '[background:conic-gradient(from_0deg,transparent_0_74%,#99ff00_84%,#eaffc4_90%,#99ff00_96%,transparent_100%)]',
+        )}
       />
     </div>
   )
 }
 
-type Surface = 'white' | 'inner' | 'dark' | 'glass'
+const cardVariants = cva({
+  base: 'rounded-2xl',
+  variants: {
+    surface: {
+      white: 'bg-white text-ink shadow-card',
+      inner: 'bg-inner text-ink',
+      dark: 'bg-ink text-white',
+      glass: cn(
+        'border border-white/60 bg-white/30 backdrop-blur-2xl',
+        '[box-shadow:0_18px_50px_rgba(40,50,110,.18),inset_0_1px_0_rgba(255,255,255,.7)]',
+      ),
+    },
+  },
+  defaultVariants: { surface: 'white' },
+})
 
-const SURFACE: Record<Surface, string> = {
-  white: 'bg-white text-ink shadow-card',
-  inner: 'bg-inner text-ink',
-  dark: 'bg-ink text-white',
-  glass:
-    'border border-white/60 bg-white/30 backdrop-blur-2xl [box-shadow:0_18px_50px_rgba(40,50,110,.18),inset_0_1px_0_rgba(255,255,255,.7)]',
-}
+type Surface = NonNullable<VariantProps<typeof cardVariants>['surface']>
 
 /**
  * The dark "hero" surface with a lime radial glow — the recurring spotlight
@@ -45,7 +54,7 @@ const SURFACE: Record<Surface, string> = {
  * Override the gradient via `style.background` when a screen needs a tint.
  */
 export function Spotlight({
-  className = '',
+  className,
   beam = false,
   children,
   style,
@@ -58,7 +67,10 @@ export function Spotlight({
 }) {
   return (
     <div
-      className={`bg-ink-gradient relative overflow-hidden rounded-[22px] text-white ${className}`}
+      className={cn(
+        'bg-ink-gradient relative overflow-hidden rounded-[22px] text-white',
+        className,
+      )}
       style={style}
     >
       {beam && <BorderBeam speed={4.8} />}
@@ -73,8 +85,8 @@ export function Spotlight({
  * the ambient periwinkle background.
  */
 export function GlassCard({
-  className = '',
-  innerClassName = '',
+  className,
+  innerClassName,
   children,
   style,
 }: {
@@ -85,10 +97,14 @@ export function GlassCard({
 }) {
   return (
     <div
-      className={`rounded-[26px] border border-white/60 bg-white/32 p-2 [backdrop-filter:blur(22px)_saturate(1.7)] shadow-card ${className}`}
+      className={cn(
+        'rounded-[26px] border border-white/60 bg-white/32 p-2 shadow-card',
+        '[backdrop-filter:blur(22px)_saturate(1.7)]',
+        className,
+      )}
       style={style}
     >
-      <div className={`rounded-[18px] bg-white ${innerClassName}`}>
+      <div className={cn('rounded-[18px] bg-white', innerClassName)}>
         {children}
       </div>
     </div>
@@ -97,8 +113,8 @@ export function GlassCard({
 
 /** The neumorphic surface that nearly every screen is built from. */
 export function Card({
-  surface = 'white',
-  className = '',
+  surface,
+  className,
   children,
   style,
 }: {
@@ -108,10 +124,7 @@ export function Card({
   style?: CSSProperties
 }) {
   return (
-    <div
-      className={`rounded-2xl ${SURFACE[surface]} ${className}`}
-      style={style}
-    >
+    <div className={cn(cardVariants({ surface }), className)} style={style}>
       {children}
     </div>
   )

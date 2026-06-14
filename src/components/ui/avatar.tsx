@@ -1,4 +1,6 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties } from 'react'
+
+import { cn } from '#/lib/utils'
 
 /** The moodboard avatar palette — soft tints with a matching ink. */
 const AVATAR_PALETTE: Array<{ bg: string; ink: string }> = [
@@ -63,10 +65,6 @@ export type AvatarProps = {
   dot?: boolean | 'online' | 'offline'
   /** Ring border color (used in stacks to separate overlaps). */
   border?: string
-  /** Lime match-ring (0–100) wrapping the avatar, e.g. the top-match hero. */
-  ring?: number
-  /** Small badge pinned to the bottom of the ring (e.g. "96%"). */
-  ringLabel?: ReactNode
   className?: string
   title?: string
   style?: CSSProperties
@@ -82,8 +80,6 @@ export function Avatar({
   shape = 'circle',
   dot,
   border,
-  ring,
-  ringLabel,
   className,
   title,
   style,
@@ -98,84 +94,42 @@ export function Avatar({
   const dotColor =
     dot === 'offline' ? '#cfd4e2' : dot ? 'var(--color-lime-deep)' : null
 
-  const inner = (
+  // Runtime geometry/colors ride in on custom properties; the rest is classes.
+  const customProperties = {
+    '--avatar-size': `${size}px`,
+    '--avatar-radius': `${radius}px`,
+    '--avatar-background': resolvedSrc
+      ? `center/cover url(${resolvedSrc})`
+      : background,
+    '--avatar-ink': color,
+    '--avatar-font-size': `${Math.max(10, Math.round(size * 0.36))}px`,
+    '--avatar-border': border
+      ? `${Math.max(2, size * 0.06)}px solid ${border}`
+      : 'none',
+    '--avatar-dot': dotColor ?? 'transparent',
+    '--avatar-dot-size': `${Math.max(9, size * 0.23)}px`,
+  } as CSSProperties
+
+  return (
     <span
-      className={ring ? undefined : className}
+      className={cn(
+        'relative grid size-(--avatar-size) flex-none place-items-center rounded-(--avatar-radius)',
+        'text-(length:--avatar-font-size) font-semibold tracking-snug text-(color:--avatar-ink)',
+        '[background:var(--avatar-background)] [border:var(--avatar-border)]',
+        className,
+      )}
       title={title}
-      style={{
-        position: 'relative',
-        width: size,
-        height: size,
-        flex: '0 0 auto',
-        borderRadius: radius,
-        background: resolvedSrc ? `center/cover url(${resolvedSrc})` : background,
-        color,
-        display: 'grid',
-        placeItems: 'center',
-        fontWeight: 600,
-        fontSize: Math.max(10, Math.round(size * 0.36)),
-        letterSpacing: '-0.01em',
-        border: border
-          ? `${Math.max(2, size * 0.06)}px solid ${border}`
-          : undefined,
-        ...style,
-      }}
+      style={{ ...customProperties, ...style }}
     >
       {!resolvedSrc && label}
       {dotColor && (
         <span
-          style={{
-            position: 'absolute',
-            bottom: shape === 'circle' ? 1 : 2,
-            right: shape === 'circle' ? 0 : 2,
-            width: Math.max(9, size * 0.23),
-            height: Math.max(9, size * 0.23),
-            borderRadius: '50%',
-            background: dotColor,
-            border: '2px solid #fff',
-          }}
+          className={cn(
+            'absolute size-(--avatar-dot-size)',
+            'rounded-full border-2 border-white bg-(--avatar-dot)',
+            shape === 'circle' ? 'bottom-px right-0' : 'bottom-0.5 right-0.5',
+          )}
         />
-      )}
-    </span>
-  )
-
-  if (ring == null) return inner
-
-  const ringSize = size + 12
-  return (
-    <span
-      className={className}
-      style={{
-        position: 'relative',
-        width: ringSize,
-        height: ringSize,
-        flex: '0 0 auto',
-        borderRadius: '50%',
-        display: 'grid',
-        placeItems: 'center',
-        background: `conic-gradient(var(--color-lime) 0% ${ring}%, rgba(255,255,255,.16) ${ring}% 100%)`,
-      }}
-    >
-      {inner}
-      {ringLabel != null && (
-        <span
-          style={{
-            position: 'absolute',
-            bottom: -7,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: 'var(--color-lime)',
-            color: '#13141d',
-            fontFamily: 'var(--font-mono)',
-            fontSize: 10,
-            fontWeight: 600,
-            padding: '2px 7px',
-            borderRadius: 99,
-            border: '2px solid #181b2b',
-          }}
-        >
-          {ringLabel}
-        </span>
       )}
     </span>
   )
@@ -211,7 +165,7 @@ export function AvatarStack({
   const overlap = Math.round(size * 0.32)
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
+    <div className="flex items-center">
       {shown.map((p, i) => (
         <Avatar
           key={i}

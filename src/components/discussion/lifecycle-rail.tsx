@@ -7,35 +7,46 @@ import {
   Users,
 } from 'lucide-react'
 
+import type { CSSProperties } from 'react'
+
 import { Card } from '#/components/ui'
 
-/** The five stages a question travels through, with the connectors between them. */
+/**
+ * The five stages a question travels through, with the connectors between them.
+ * `chip` styles the icon badge; `label` styles the caption (strong stages read
+ * dark + semibold, passive ones slate + medium).
+ */
 const STAGES = [
   {
     Icon: HelpCircle,
     label: 'Question',
     chip: 'bg-ink text-white',
-    strong: true,
+    labelClass: 'font-semibold text-ink',
   },
   {
     Icon: MessageSquare,
     label: 'Answer',
     chip: 'bg-ink-soft text-white',
-    strong: true,
+    labelClass: 'font-semibold text-ink',
   },
   {
     Icon: CornerDownRight,
     label: 'Follow-up',
     chip: 'bg-inner text-slate',
-    strong: false,
+    labelClass: 'font-medium text-slate',
   },
   {
     Icon: Users,
     label: 'Community',
     chip: 'bg-inner text-slate',
-    strong: false,
+    labelClass: 'font-medium text-slate',
   },
-  { Icon: Coffee, label: 'Meetup', chip: 'bg-lime text-ink', strong: true },
+  {
+    Icon: Coffee,
+    label: 'Meetup',
+    chip: 'bg-lime text-ink',
+    labelClass: 'font-semibold text-ink',
+  },
 ] as const
 
 // Connector fills, left→right. The run into Meetup fades to lime.
@@ -60,8 +71,8 @@ export function LifecycleRail() {
         <Fragment key={stage.label}>
           {i > 0 && (
             <span
-              className="mx-3.5 h-0.5 min-w-6 flex-1"
-              style={{ background: CONNECTORS[i - 1] }}
+              className="mx-3.5 h-0.5 min-w-6 flex-1 [background:var(--connector)]"
+              style={{ '--connector': CONNECTORS[i - 1] } as CSSProperties}
             />
           )}
           <span className="flex shrink-0 items-center gap-2">
@@ -70,13 +81,7 @@ export function LifecycleRail() {
             >
               <stage.Icon size={14} strokeWidth={2.25} />
             </span>
-            <span
-              className={`text-note ${
-                stage.strong
-                  ? 'font-semibold text-ink'
-                  : 'font-medium text-slate'
-              }`}
-            >
+            <span className={`text-note ${stage.labelClass}`}>
               {stage.label}
             </span>
           </span>

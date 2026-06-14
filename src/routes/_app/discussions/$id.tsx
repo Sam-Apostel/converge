@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 
 import { LifecycleRail, Thread } from '#/components/discussion'
 import { getDiscussion } from '#/lib/queries/discussions'
+import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/_app/discussions/$id')({
   loader: ({ params }) => getDiscussion({ data: params.id }),
@@ -16,14 +17,18 @@ function DiscussionDetail() {
     <div className="mx-auto max-w-[860px]">
       <Link
         to="/discussions"
-        className="inline-flex items-center gap-1 text-note font-medium text-mist transition-colors hover:text-ink"
+        className={cn(
+          'inline-flex items-center gap-1',
+          'text-note font-medium text-mist',
+          'transition-colors hover:text-ink',
+        )}
       >
         <ArrowLeft size={15} /> Discussions
       </Link>
 
       {thread ? (
         <>
-          <h1 className="mb-1 mt-3 text-2xl font-semibold tracking-[-0.02em]">
+          <h1 className="mb-1 mt-3 text-2xl font-semibold tracking-tight">
             {thread.title}
           </h1>
           <p className="mb-6 text-body text-mist">

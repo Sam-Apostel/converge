@@ -12,6 +12,7 @@ import {
 } from '#/components/ui'
 import { getProjectBySlug } from '#/lib/queries/profiles'
 import { formatCount, formatTime } from '#/lib/format'
+import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/_app/projects/$slug')({
   loader: ({ params }) => getProjectBySlug({ data: params.slug }),
@@ -37,7 +38,11 @@ function ProjectDetail() {
     <div className="max-w-3xl">
       <Link
         to="/projects"
-        className="mb-5 inline-flex items-center gap-1 text-note text-mist transition-colors hover:text-slate"
+        className={cn(
+          'mb-5 inline-flex items-center gap-1',
+          'text-note text-mist',
+          'transition-colors hover:text-slate',
+        )}
       >
         <ChevronLeft size={15} /> Projects
       </Link>
@@ -51,7 +56,7 @@ function ProjectDetail() {
           size={64}
         />
         <div className="flex-1">
-          <h1 className="text-2xl font-semibold tracking-[-0.02em]">
+          <h1 className="text-2xl font-semibold tracking-tight">
             {project.name}
           </h1>
           <div className="mt-1 text-body text-muted">
@@ -59,7 +64,13 @@ function ProjectDetail() {
             {project.category ? ` · ${project.category}` : ''}
           </div>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-lime/[0.22] px-3 py-1.5 font-mono text-note font-medium text-slate">
+        <span
+          className={cn(
+            'inline-flex items-center gap-1 px-3 py-1.5',
+            'font-mono text-note font-medium text-slate',
+            'rounded-full bg-lime/[0.22]',
+          )}
+        >
           <Star size={13} className="fill-current" />{' '}
           {formatCount(project.trendingScore)}
         </span>

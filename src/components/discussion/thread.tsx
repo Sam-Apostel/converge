@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { Avatar, AvatarStack, Badge, Card, Mono } from '#/components/ui'
+import { cn } from '#/lib/utils'
 import type {
   DiscussionAuthor,
   DiscussionThread,
@@ -57,7 +58,7 @@ function Post({
   return (
     <div>
       <AuthorLine author={post.author} meta={meta} badge={badge} />
-      <p className="m-0 text-body leading-[1.5] text-ink-soft">{post.body}</p>
+      <p className="m-0 text-body leading-normal text-ink-soft">{post.body}</p>
       {post.replyCount > 0 && others.length > 0 && (
         <div className="mt-3 flex items-center gap-2">
           <AvatarStack
@@ -133,7 +134,7 @@ export function Thread({
                 }
               />
             )}
-            <p className="m-0 text-base leading-[1.45] tracking-[-0.01em]">
+            <p className="m-0 text-base leading-body tracking-snug">
               {opener.body}
             </p>
           </div>
@@ -141,7 +142,12 @@ export function Thread({
       )}
 
       {spine.length > 0 && (
-        <div className="ml-[11px] mt-3.5 flex flex-col gap-[18px] border-l-2 border-inner pl-[25px]">
+        <div
+          className={cn(
+            'ml-[11px] mt-3.5 flex flex-col gap-[18px] pl-[25px]',
+            'border-l-2 border-inner',
+          )}
+        >
           {spine.map((post) => (
             <Post
               key={post.id}

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useLiveQuery } from '@tanstack/react-db'
 
 import { Avatar, Button, Card, Mono } from '#/components/ui'
+import { cn } from '#/lib/utils'
 import { messagesCollection } from '#/db-collections/messages'
 import {
   conversationOf,
@@ -92,10 +93,17 @@ export function Conversation({
             return (
               <div
                 key={m.id}
-                className={`flex flex-col ${mine ? 'items-end' : 'items-start'}`}
+                data-mine={mine || undefined}
+                className="flex flex-col items-start data-mine:items-end"
               >
                 {mine ? (
-                  <div className="max-w-[78%] rounded-2xl rounded-br-md bg-ink px-3.5 py-2 text-body leading-snug text-white">
+                  <div
+                    className={cn(
+                      'max-w-[78%] px-3.5 py-2',
+                      'text-body leading-snug text-white',
+                      'rounded-2xl rounded-br-md bg-ink',
+                    )}
+                  >
                     {m.body}
                   </div>
                 ) : (
@@ -127,7 +135,13 @@ export function Conversation({
             }
           }}
           placeholder={`Message ${other.name.split(' ')[0]}…`}
-          className="h-11 flex-1 rounded-xl bg-pillow px-4 text-body text-ink outline-none placeholder:text-faint focus:ring-2 focus:ring-lime/40"
+          className={cn(
+            'h-11 flex-1 px-4',
+            'text-body text-ink',
+            'rounded-xl bg-pillow outline-none',
+            'placeholder:text-faint',
+            'focus:ring-2 focus:ring-lime/40',
+          )}
         />
         <Button variant="lime" onClick={send} disabled={!draft.trim()}>
           Send

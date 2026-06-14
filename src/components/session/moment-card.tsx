@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import type { MouseEvent } from 'react'
+import type { CSSProperties, MouseEvent } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Play, Plus, Star, X } from 'lucide-react'
 
 import { Avatar, Thumb } from '#/components/ui'
+import { cn } from '#/lib/utils'
 import type { SharedMomentPerson } from '#/routes/api/moments/shared'
 
 /**
@@ -90,7 +91,12 @@ export function MomentCard({
 
   return (
     <div>
-      <div className="animate-moment-in overflow-hidden rounded-[14px] bg-white shadow-card">
+      <div
+        className={cn(
+          'animate-moment-in overflow-hidden',
+          'rounded-[14px] bg-white shadow-card',
+        )}
+      >
         <div className="relative h-[84px]">
           {thumbnailUrl ? (
             <img
@@ -106,14 +112,25 @@ export function MomentCard({
               className="absolute inset-0"
             />
           )}
-          <span className="absolute left-[7px] top-[7px] inline-flex items-center gap-1 rounded-md bg-lime/70 px-[7px] py-0.5 font-mono text-micro font-semibold text-ink">
+          <span
+            className={cn(
+              'absolute left-[7px] top-[7px] inline-flex items-center gap-1',
+              'font-mono text-micro font-semibold text-ink',
+              'rounded-md bg-lime/70 px-[7px] py-0.5',
+            )}
+          >
             <Star size={11} className="fill-current" /> {time}
           </span>
           <button
             type="button"
             onClick={remove}
             aria-label="Remove moment"
-            className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-md bg-white/[.92] leading-none text-faint transition-colors hover:text-danger"
+            className={cn(
+              'absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center',
+              'leading-none text-faint',
+              'rounded-md bg-white/[.92]',
+              'transition-colors hover:text-danger',
+            )}
           >
             <X size={13} strokeWidth={2.5} />
           </button>
@@ -122,12 +139,23 @@ export function MomentCard({
               href={href}
               target="_blank"
               rel="noreferrer"
-              className="absolute bottom-[7px] left-[7px] inline-flex items-center gap-1 rounded-md bg-white/[.86] px-[7px] py-0.5 font-mono text-micro text-slate transition-colors hover:bg-white"
+              className={cn(
+                'absolute bottom-[7px] left-[7px] inline-flex items-center gap-1',
+                'font-mono text-micro text-slate',
+                'rounded-md bg-white/[.86] px-[7px] py-0.5',
+                'transition-colors hover:bg-white',
+              )}
             >
               <Play size={10} className="fill-current" /> Jump
             </a>
           ) : slideRef ? (
-            <span className="absolute bottom-[7px] left-[7px] rounded-md bg-white/[.86] px-[7px] py-0.5 font-mono text-micro text-slate">
+            <span
+              className={cn(
+                'absolute bottom-[7px] left-[7px]',
+                'font-mono text-micro text-slate',
+                'rounded-md bg-white/[.86] px-[7px] py-0.5',
+              )}
+            >
               {slideRef}
             </span>
           ) : null}
@@ -139,7 +167,7 @@ export function MomentCard({
           aria-expanded={expanded}
           className="block w-full px-2.5 pb-[11px] pt-[9px] text-left"
         >
-          <div className="text-caption font-semibold leading-[1.25] tracking-[-0.01em]">
+          <div className="text-caption font-semibold leading-[1.25] tracking-snug">
             {topic}
           </div>
           {!expanded &&
@@ -163,7 +191,13 @@ export function MomentCard({
               onBlur={commit}
               placeholder="Add a thought…"
               rows={3}
-              className="w-full resize-none rounded-[10px] bg-inner px-2.5 py-2 text-caption leading-[1.4] text-ink outline-none ring-1 ring-inset ring-edge/18 transition-shadow placeholder:text-faint focus:ring-edge/45"
+              className={cn(
+                'w-full resize-none px-2.5 py-2',
+                'text-caption leading-[1.4] text-ink',
+                'rounded-[10px] bg-inner outline-none ring-1 ring-inset ring-edge/18',
+                'transition-shadow',
+                'placeholder:text-faint focus:ring-edge/45',
+              )}
             />
             <div className="mt-1.5 flex justify-end">
               <button
@@ -172,7 +206,11 @@ export function MomentCard({
                   commit()
                   setExpanded(false)
                 }}
-                className="rounded-[9px] bg-ink px-3 py-1.5 text-tiny font-semibold text-white transition-colors hover:bg-ink-2"
+                className={cn(
+                  'px-3 py-1.5 text-tiny font-semibold text-white',
+                  'rounded-[9px] bg-ink',
+                  'transition-colors hover:bg-ink-2',
+                )}
               >
                 Save
               </button>
@@ -190,11 +228,13 @@ export function MomentCard({
                 to="/people/$userId"
                 params={{ userId: p.userId }}
                 title={p.name}
-                className="rounded-full transition-transform hover:-translate-y-0.5"
-                style={{
-                  marginLeft: i === 0 ? 0 : -8,
-                  zIndex: shownShared.length - i,
-                }}
+                className={cn(
+                  '-ml-2 z-(--stack-index) rounded-full',
+                  'transition-transform first:ml-0 hover:-translate-y-0.5',
+                )}
+                style={
+                  { '--stack-index': shownShared.length - i } as CSSProperties
+                }
               >
                 <Avatar
                   name={p.name}
@@ -206,8 +246,11 @@ export function MomentCard({
             ))}
             {overflow > 0 && (
               <span
-                className="grid h-[22px] min-w-[22px] place-items-center rounded-full bg-ink px-1 font-mono text-micro font-semibold text-white"
-                style={{ marginLeft: -8 }}
+                className={cn(
+                  '-ml-2 grid h-[22px] min-w-[22px] place-items-center px-1',
+                  'font-mono text-micro font-semibold text-white',
+                  'rounded-full bg-ink',
+                )}
               >
                 +{overflow}
               </span>

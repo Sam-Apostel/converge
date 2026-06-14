@@ -13,6 +13,7 @@ import {
   TrendingQuestionCard,
 } from '#/components/discussion'
 import { listDiscussions } from '#/lib/queries/discussions'
+import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/_app/discussions')({
   loader: () => listDiscussions(),
@@ -34,7 +35,7 @@ function DiscussionsIndex() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-[-0.02em]">
+      <h1 className="text-2xl font-semibold tracking-tight">
         Discussions — questions that don't disappear
       </h1>
       <p className="mb-6 mt-1 max-w-2xl text-body text-mist">
@@ -53,7 +54,11 @@ function DiscussionsIndex() {
               <Link
                 to="/discussions/$id"
                 params={{ id: featured.id }}
-                className="inline-flex items-center gap-1 text-caption font-medium text-muted transition-colors hover:text-ink"
+                className={cn(
+                  'inline-flex items-center gap-1',
+                  'text-caption font-medium text-muted',
+                  'transition-colors hover:text-ink',
+                )}
               >
                 Open thread <ArrowRight size={13} />
               </Link>

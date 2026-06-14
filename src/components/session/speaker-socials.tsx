@@ -4,8 +4,14 @@
  * the person behind the talk. Only renders the links that exist.
  */
 
-const ICON_BUTTON =
-  'flex h-[34px] w-[34px] place-items-center rounded-[10px] bg-pillow text-slate transition-colors hover:bg-ink hover:text-white'
+import { cn } from '#/lib/utils'
+
+const ICON_BUTTON = cn(
+  'flex h-[34px] w-[34px] place-items-center',
+  'text-slate',
+  'rounded-[10px] bg-pillow',
+  'transition-colors hover:bg-ink hover:text-white',
+)
 
 function hostOf(url: string): string {
   try {
@@ -61,7 +67,12 @@ export function SpeakerSocials({
           target="_blank"
           rel="noreferrer"
           title="Website"
-          className="flex h-[34px] items-center gap-1.5 rounded-[10px] bg-pillow px-[13px] text-caption font-medium text-slate transition-colors hover:bg-pillow-deep"
+          className={cn(
+            'flex h-[34px] items-center gap-1.5 px-[13px]',
+            'text-caption font-medium text-slate',
+            'rounded-[10px] bg-pillow',
+            'transition-colors hover:bg-pillow-deep',
+          )}
         >
           <svg
             viewBox="0 0 24 24"

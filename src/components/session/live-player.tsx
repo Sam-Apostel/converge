@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
+import { cn } from '#/lib/utils'
+
 import { CaptureDock } from './capture-dock'
 
 /**
@@ -84,7 +86,13 @@ export function LivePlayer({
 
   return (
     <div>
-      <div className="relative aspect-video overflow-hidden rounded-[18px] bg-ink shadow-hairline [&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:h-full [&_iframe]:w-full">
+      <div
+        className={cn(
+          'relative aspect-video overflow-hidden',
+          'rounded-[18px] bg-ink shadow-hairline',
+          '[&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:h-full [&_iframe]:w-full',
+        )}
+      >
         <div ref={mountRef} className="absolute inset-0" />
         {!ready ? (
           <img
@@ -93,7 +101,13 @@ export function LivePlayer({
             className="absolute inset-0 h-full w-full object-cover"
           />
         ) : null}
-        <div className="absolute right-3.5 top-3.5 z-[2] flex items-center gap-1.5 rounded-[7px] bg-white/90 px-2.5 py-[5px] font-mono text-tiny text-slate">
+        <div
+          className={cn(
+            'absolute right-3.5 top-3.5 z-[2] flex items-center gap-1.5',
+            'font-mono text-tiny text-slate',
+            'rounded-[7px] bg-white/90 px-2.5 py-[5px]',
+          )}
+        >
           <span className="animate-live-pulse h-1.5 w-1.5 rounded-full bg-lime" />
           live now
         </div>

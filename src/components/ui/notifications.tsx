@@ -11,6 +11,8 @@ import {
   NotificationGroup,
 } from '@progress/kendo-react-notification'
 
+import { cn } from '#/lib/utils'
+
 type NotifyFn = (
   message: string,
   opts?: { icon?: ReactNode; duration?: number },
@@ -45,18 +47,10 @@ export function NotificationProvider({
       {children}
       {mounted && (
         <NotificationGroup
-          style={{
-            position: 'fixed',
-            bottom: 24,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 9999,
-            display: 'flex',
-            flexDirection: 'column-reverse',
-            alignItems: 'center',
-            gap: 8,
-            pointerEvents: 'none',
-          }}
+          className={cn(
+            'pointer-events-none fixed bottom-6 left-1/2 z-[9999]',
+            'flex -translate-x-1/2 flex-col-reverse items-center gap-2',
+          )}
         >
           {items.map((n) => (
             <Notification

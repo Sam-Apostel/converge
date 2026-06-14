@@ -3,6 +3,7 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Button } from '@progress/kendo-react-buttons'
 
 import { authClient } from '#/lib/auth-client'
+import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
@@ -37,9 +38,20 @@ function LoginPage() {
 
   return (
     <div className="grid min-h-screen place-items-center bg-brand-50 p-6">
-      <div className="w-full max-w-sm rounded-2xl border border-black/5 bg-white p-7 shadow-sm">
+      <div
+        className={cn(
+          'w-full max-w-sm p-7',
+          'rounded-2xl border border-black/5 bg-white shadow-sm',
+        )}
+      >
         <div className="mb-6 flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-xl bg-brand-500 font-bold text-white">
+          <span
+            className={cn(
+              'grid h-8 w-8 place-items-center',
+              'rounded-xl bg-brand-500',
+              'font-bold text-white',
+            )}
+          >
             C
           </span>
           <span className="text-lg font-semibold">Converge</span>
@@ -81,7 +93,11 @@ function LoginPage() {
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="rounded-xl border border-black/10 px-3 py-2 text-body outline-none focus:border-brand-400"
+              className={cn(
+                'px-3 py-2 text-body',
+                'rounded-xl border border-black/10 outline-none',
+                'focus:border-brand-400',
+              )}
             />
           ) : null}
           <input
@@ -90,7 +106,11 @@ function LoginPage() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded-xl border border-black/10 px-3 py-2 text-body outline-none focus:border-brand-400"
+            className={cn(
+              'px-3 py-2 text-body',
+              'rounded-xl border border-black/10 outline-none',
+              'focus:border-brand-400',
+            )}
           />
           <input
             required
@@ -98,7 +118,11 @@ function LoginPage() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="rounded-xl border border-black/10 px-3 py-2 text-body outline-none focus:border-brand-400"
+            className={cn(
+              'px-3 py-2 text-body',
+              'rounded-xl border border-black/10 outline-none',
+              'focus:border-brand-400',
+            )}
           />
           {error ? <p className="text-body text-red-600">{error}</p> : null}
           <Button type="submit" themeColor="primary" disabled={busy}>

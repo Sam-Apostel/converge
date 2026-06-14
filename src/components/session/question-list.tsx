@@ -12,6 +12,7 @@ import {
   type SessionQuestion,
 } from '#/db-collections/questions'
 import { useEventStream } from '#/hooks/use-event-stream'
+import { cn } from '#/lib/utils'
 import type { DiscussionThread } from '#/lib/queries/discussions'
 
 /** Upvotes at which a question earns the "keep this going" promote affordance. */
@@ -116,11 +117,12 @@ function TabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`pb-[11px] text-body transition-colors ${
-        active
-          ? 'border-b-2 border-ink font-semibold text-ink'
-          : 'font-medium text-faint hover:text-ink'
-      }`}
+      data-active={active || undefined}
+      className={cn(
+        'pb-[11px] text-body font-medium text-faint',
+        'transition-colors hover:text-ink',
+        'data-active:border-b-2 data-active:border-ink data-active:font-semibold data-active:text-ink',
+      )}
     >
       {children}
     </button>
@@ -233,7 +235,7 @@ function LiveQuestions({
           No questions yet — be the first to ask.
         </p>
       ) : (
-        <div className="mt-3.5 flex flex-col gap-[16px]">
+        <div className="mt-3.5 flex flex-col gap-4">
           {questions.map((q) => (
             <QuestionRow
               key={q.id}
@@ -273,7 +275,12 @@ function AskBox({
         onChange={(e) => onChange(e.target.value)}
         placeholder="Ask a question…"
         aria-label="Ask a question"
-        className="flex-1 rounded-[11px] border border-edge/22 bg-white px-3.5 py-2 text-body outline-none transition-colors placeholder:text-faint focus:border-ink/40"
+        className={cn(
+          'flex-1 px-3.5 py-2 text-body',
+          'rounded-[11px] border border-edge/22 bg-white outline-none',
+          'transition-colors',
+          'placeholder:text-faint focus:border-ink/40',
+        )}
       />
       <Button type="submit" size="sm" variant="dark" disabled={!value.trim()}>
         Ask
@@ -371,7 +378,11 @@ function QuestionRow({
             type="button"
             onClick={promote}
             disabled={promoting}
-            className="mt-2 inline-flex items-center gap-1 text-note font-semibold text-ink/75 transition-colors hover:text-ink disabled:opacity-50"
+            className={cn(
+              'mt-2 inline-flex items-center gap-1',
+              'text-note font-semibold text-ink/75',
+              'transition-colors hover:text-ink disabled:opacity-50',
+            )}
           >
             Keep this conversation going <ArrowRight size={14} />
           </button>
@@ -384,9 +395,12 @@ function QuestionRow({
 function AnswerRow({ answer }: { answer: QuestionAnswer }) {
   return (
     <div
-      className={`rounded-[11px] px-3 py-2 ${
-        answer.fromSpeaker ? 'border border-lime/40 bg-lime/15' : 'bg-inner'
-      }`}
+      data-from-speaker={answer.fromSpeaker || undefined}
+      className={cn(
+        'px-3 py-2',
+        'rounded-[11px] bg-inner',
+        'data-from-speaker:border data-from-speaker:border-lime/40 data-from-speaker:bg-lime/15',
+      )}
     >
       <div className="mb-0.5 flex items-center gap-2">
         <span className="text-note font-semibold">{answer.authorName}</span>
@@ -395,7 +409,7 @@ function AnswerRow({ answer }: { answer: QuestionAnswer }) {
           {timeAgo(answer.createdAt)}
         </span>
       </div>
-      <p className="text-note leading-[1.45] text-ink-soft">{answer.body}</p>
+      <p className="text-note leading-body text-ink-soft">{answer.body}</p>
     </div>
   )
 }
@@ -424,7 +438,12 @@ function ReplyBox({
         onChange={(e) => onChange(e.target.value)}
         placeholder={isSpeaker ? 'Answer as speaker…' : 'Reply…'}
         aria-label="Reply to question"
-        className="flex-1 rounded-[10px] border border-edge/22 bg-white px-3 py-1.5 text-note outline-none transition-colors placeholder:text-faint focus:border-ink/40"
+        className={cn(
+          'flex-1 px-3 py-1.5 text-note',
+          'rounded-[10px] border border-edge/22 bg-white outline-none',
+          'transition-colors',
+          'placeholder:text-faint focus:border-ink/40',
+        )}
       />
       <Button type="submit" size="sm" variant="soft" disabled={!value.trim()}>
         {isSpeaker ? 'Answer' : 'Reply'}
@@ -453,7 +472,11 @@ function DiscussionTab({
         <Link
           to="/discussions/$id"
           params={{ id: discussion.id }}
-          className="inline-flex items-center gap-1 text-note font-semibold text-mist transition-colors hover:text-ink"
+          className={cn(
+            'inline-flex items-center gap-1',
+            'text-note font-semibold text-mist',
+            'transition-colors hover:text-ink',
+          )}
         >
           Open full thread <ArrowRight size={14} />
         </Link>

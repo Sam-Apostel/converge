@@ -56,6 +56,19 @@
   --text-reading: 15px;
   --text-title: 22px;
 
+  /*
+   * Letter-spacing — the display headings tighten in three steps; mono
+   * eyebrows widen. (Retunes Tailwind's tracking-tight/-tighter to the
+   * moodboard's optical values.)
+   */
+  --tracking-snug: -0.01em;
+  --tracking-tight: -0.02em;
+  --tracking-tighter: -0.03em;
+  --tracking-eyebrow: 0.12em;
+
+  /* Line-height — the body/reading flow. (1.5 is Tailwind's leading-normal.) */
+  --leading-body: 1.45;
+
   /* Neumorphic elevation */
   --shadow-card:
     0 1px 3px rgba(40, 50, 110, 0.06), 0 10px 26px rgba(40, 50, 110, 0.07);

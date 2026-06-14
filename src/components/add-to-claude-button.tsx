@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import { cn } from '#/lib/utils'
+
 /** Claude's official logomark (Anthropic brand asset, simple-icons). */
 function ClaudeMark({ size = 18 }: { size?: number }) {
   return (
@@ -22,7 +24,7 @@ function ClaudeMark({ size = 18 }: { size?: number }) {
  * The MCP endpoint lives at `<origin>/mcp`; we resolve the origin on the client
  * so the link is correct in every environment. Styled with Claude's brand coral.
  */
-export function AddToClaudeButton({ className = '' }: { className?: string }) {
+export function AddToClaudeButton({ className }: { className?: string }) {
   const [href, setHref] = useState(
     'https://claude.ai/install-mcp?name=Converge',
   )
@@ -40,7 +42,14 @@ export function AddToClaudeButton({ className = '' }: { className?: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-flex items-center justify-center gap-2 rounded-[13px] bg-[#D97757] px-5 py-3 text-body font-semibold leading-none text-white shadow-[0_1px_2px_rgba(120,60,40,.18),0_8px_20px_rgba(217,119,87,.28)] transition-[transform,background-color,box-shadow] duration-150 hover:bg-[#C96442] active:scale-[0.97] ${className}`}
+      className={cn(
+        'inline-flex items-center justify-center gap-2 px-5 py-3',
+        'text-body font-semibold leading-none text-white',
+        'rounded-[13px] bg-[#D97757] shadow-[0_1px_2px_rgba(120,60,40,.18),0_8px_20px_rgba(217,119,87,.28)]',
+        'transition-[transform,background-color,box-shadow] duration-150',
+        'hover:bg-[#C96442] active:scale-[0.97]',
+        className,
+      )}
     >
       <ClaudeMark size={17} />
       Add to Claude

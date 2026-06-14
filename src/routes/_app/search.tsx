@@ -7,6 +7,7 @@ import { SearchInput } from '#/components/search/search-input'
 import { SearchResults } from '#/components/search/search-results'
 import { searchAll } from '#/lib/queries/search'
 import type { SearchResult } from '#/lib/queries/search'
+import { cn } from '#/lib/utils'
 
 /** A few starter queries for the empty state. */
 const SUGGESTIONS = ['AI', 'React', 'co-founder', 'design', 'open-source']
@@ -88,13 +89,10 @@ function SearchSkeleton() {
           key={i}
           className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-soft"
         >
-          <Skeleton
-            shape="circle"
-            style={{ width: 40, height: 40, flexShrink: 0 }}
-          />
+          <Skeleton shape="circle" className="h-10 w-10 shrink-0" />
           <div className="flex flex-1 flex-col gap-2">
-            <Skeleton shape="text" style={{ width: '60%', height: 14 }} />
-            <Skeleton shape="text" style={{ width: '38%', height: 12 }} />
+            <Skeleton shape="text" className="h-3.5 w-3/5" />
+            <Skeleton shape="text" className="h-3 w-[38%]" />
           </div>
         </div>
       ))}
@@ -114,7 +112,12 @@ function EmptyState({ onPick }: { onPick: (q: string) => void }) {
             key={s}
             type="button"
             onClick={() => onPick(s)}
-            className="rounded-full border border-edge/16 bg-white px-3.5 py-2 text-note font-medium text-ink-2 shadow-soft transition-transform hover:scale-[0.98]"
+            className={cn(
+              'px-3.5 py-2',
+              'text-note font-medium text-ink-2',
+              'rounded-full border border-edge/16 bg-white shadow-soft',
+              'transition-transform hover:scale-[0.98]',
+            )}
           >
             {s}
           </button>

@@ -4,6 +4,7 @@ import { ArrowUpRight, Check, ChevronLeft, MapPin } from 'lucide-react'
 
 import { Avatar, Button, Mono, Tag } from '#/components/ui'
 import { getPersonById } from '#/lib/queries/profiles'
+import { cn } from '#/lib/utils'
 import type { ConnectionState, ProfileProject } from '#/lib/queries/profiles'
 
 export const Route = createFileRoute('/_app/people/$userId')({
@@ -23,7 +24,11 @@ function PersonDetail() {
     <div className="max-w-3xl">
       <Link
         to="/people"
-        className="mb-5 inline-flex items-center gap-1 text-note text-mist transition-colors hover:text-slate"
+        className={cn(
+          'mb-5 inline-flex items-center gap-1',
+          'text-note text-mist',
+          'transition-colors hover:text-slate',
+        )}
       >
         <ChevronLeft size={15} /> People
       </Link>
@@ -32,7 +37,7 @@ function PersonDetail() {
       <div className="mb-6 flex flex-wrap items-start gap-[18px]">
         <Avatar name={person.name} src={person.image} size={84} />
         <div className="flex-1">
-          <h1 className="text-2xl font-semibold tracking-[-0.02em]">
+          <h1 className="text-2xl font-semibold tracking-tight">
             {person.name}
           </h1>
           <div className="mt-1 text-body text-muted">
@@ -49,11 +54,16 @@ function PersonDetail() {
       </div>
 
       {p?.bio && (
-        <div className="mb-[18px] rounded-2xl p-4 [background:linear-gradient(135deg,#f3ffe0,#eef0f8)]">
+        <div
+          className={cn(
+            'mb-[18px] p-4',
+            'rounded-2xl [background:linear-gradient(135deg,#f3ffe0,#eef0f8)]',
+          )}
+        >
           <Mono tone="slate" className="mb-1.5 block !text-tiny">
             Why I'm here
           </Mono>
-          <p className="text-reading font-medium leading-[1.45] text-ink-2">
+          <p className="text-reading font-medium leading-body text-ink-2">
             {p.bio}
           </p>
         </div>
@@ -62,7 +72,9 @@ function PersonDetail() {
       {p?.currentFocus && (
         <div className="mb-5">
           <Mono className="mb-2 block !text-tiny">Current focus</Mono>
-          <p className="text-body leading-[1.5] text-slate">{p.currentFocus}</p>
+          <p className="text-body leading-normal text-slate">
+            {p.currentFocus}
+          </p>
         </div>
       )}
 
@@ -168,7 +180,11 @@ function ProjectRow({ project }: { project: ProfileProject }) {
     <Link
       to="/projects/$slug"
       params={{ slug: project.slug }}
-      className="group flex items-center gap-3 rounded-[13px] bg-inner px-3.5 py-3 transition-colors hover:bg-pillow"
+      className={cn(
+        'group flex items-center gap-3 px-3.5 py-3',
+        'rounded-[13px] bg-inner',
+        'transition-colors hover:bg-pillow',
+      )}
     >
       <Avatar
         name={project.name}

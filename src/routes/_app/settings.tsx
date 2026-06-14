@@ -4,6 +4,7 @@ import { Check, X } from 'lucide-react'
 
 import { PageHeader } from '#/components/page-header'
 import { Button } from '#/components/ui'
+import { cn } from '#/lib/utils'
 import {
   PROVIDERS,
   PROVIDER_LABELS,
@@ -119,7 +120,11 @@ function SettingsPage() {
                 setProvider(e.target.value as ProviderId)
                 setTest({ kind: 'idle' })
               }}
-              className="rounded-xl border border-line bg-inner px-3.5 py-2.5 text-body text-ink focus:outline-none focus:ring-2 focus:ring-lime/40"
+              className={cn(
+                'px-3.5 py-2.5 text-body text-ink',
+                'rounded-xl border border-line bg-inner',
+                'focus:outline-none focus:ring-2 focus:ring-lime/40',
+              )}
             >
               {PROVIDERS.map((p) => (
                 <option key={p} value={p}>
@@ -136,7 +141,11 @@ function SettingsPage() {
               value={model}
               onChange={(e) => setModel(e.target.value)}
               placeholder={MODEL_HINTS[provider]}
-              className="rounded-xl border border-line bg-inner px-3.5 py-2.5 text-body text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-lime/40"
+              className={cn(
+                'px-3.5 py-2.5 text-body text-ink placeholder:text-muted',
+                'rounded-xl border border-line bg-inner',
+                'focus:outline-none focus:ring-2 focus:ring-lime/40',
+              )}
             />
           </label>
 
@@ -159,7 +168,11 @@ function SettingsPage() {
                   hasKey ? 'Enter a new key to replace the stored one' : 'sk-…'
                 }
                 autoComplete="off"
-                className="rounded-xl border border-line bg-inner px-3.5 py-2.5 text-body text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-lime/40"
+                className={cn(
+                  'px-3.5 py-2.5 text-body text-ink placeholder:text-muted',
+                  'rounded-xl border border-line bg-inner',
+                  'focus:outline-none focus:ring-2 focus:ring-lime/40',
+                )}
               />
               <span className="text-caption text-muted">
                 Keys are encrypted at rest and never shown again.
@@ -189,7 +202,11 @@ function SettingsPage() {
                 value={baseUrl}
                 onChange={(e) => setBaseUrl(e.target.value)}
                 placeholder="http://localhost:11434"
-                className="rounded-xl border border-line bg-inner px-3.5 py-2.5 text-body text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-lime/40"
+                className={cn(
+                  'px-3.5 py-2.5 text-body text-ink placeholder:text-muted',
+                  'rounded-xl border border-line bg-inner',
+                  'focus:outline-none focus:ring-2 focus:ring-lime/40',
+                )}
               />
             </label>
           ) : null}
