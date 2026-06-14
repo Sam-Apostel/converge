@@ -223,6 +223,45 @@ src/
 
 Every major object is exposed over MCP at `/mcp` (Streamable HTTP). The server is the **OAuth 2.1 resource server**; better-auth is the **authorization server** (`/.well-known/oauth-*` advertise the endpoints). Tools are scoped to the authenticated user. `*_app` tools return an interactive MCP Apps UI (SEP-1865) via `@mcp-ui/server`; plain variants return JSON.
 
+### Endpoints
+
+| Path | Purpose |
+| ---- | ------- |
+| `POST/GET/DELETE /mcp` | Streamable HTTP MCP transport (stateless — a fresh server per request) |
+| `GET /.well-known/oauth-protected-resource` | RFC 9728 resource metadata (points clients at the auth server) |
+| `GET /.well-known/oauth-authorization-server` | RFC 8414 authorization-server metadata (token / authorize / DCR endpoints) |
+
+Unauthenticated requests get a `401` with a `WWW-Authenticate` challenge pointing at the protected-resource metadata, so spec-compliant clients can discover the auth server and run the OAuth flow (Dynamic Client Registration + PKCE) automatically.
+
+### Tools
+
+Scoped to the signed-in user. Each `*_app` tool has a plain JSON twin.
+
+| Surface | Tools |
+| ------- | ----- |
+| Conference | `list_conferences`, `list_sessions`, `get_session`, `get_schedule`, `list_rooms`, `list_speakers`, `get_session_summary`, `get_moment_matches`, `session_app` |
+| People | `search_people`, `find_people`, `suggest_people`, `get_profile`, `list_connections`, `search_people_app` |
+| Projects | `list_projects`, `search_projects`, `get_project`, `get_trending_projects`, `project_discussions`, `list_projects_app` |
+| Personal | `my_schedule`, `my_moments`, `get_my_moments`, `my_bookmarks`, `my_notes`, `my_messages`, `my_tasks`, `add_task` |
+
+### Client config
+
+Most MCP clients don't speak OAuth + Streamable HTTP directly yet — bridge with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote), which runs the browser OAuth flow and proxies stdio↔HTTP. For Claude Desktop (`claude_desktop_config.json`), Cursor, or any client that reads an `mcpServers` map:
+
+```jsonc
+{
+  "mcpServers": {
+    "converge": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://converge.sams.land/mcp"]
+      // local dev: replace the URL with http://localhost:3000/mcp
+    }
+  }
+}
+```
+
+On first connect a browser window opens to sign in to Converge and authorize the client; the token is cached for subsequent calls. Clients that support remote MCP servers natively can instead point straight at `https://converge.sams.land/mcp`.
+
 ---
 
 ## Deployment (Railway)

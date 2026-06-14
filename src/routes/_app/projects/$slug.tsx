@@ -1,15 +1,8 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { ArrowUpRight, ChevronLeft, CornerDownRight, Star } from 'lucide-react'
 
-import {
-  Avatar,
-  AvatarStack,
-  Badge,
-  Button,
-  Mono,
-  Tag,
-  Thumb,
-} from '#/components/ui'
+import { Avatar, AvatarStack, Mono, Tag, Thumb } from '#/components/ui'
+import { MessageOwnerButton, StarButton } from '#/components/project-actions'
 import { getProjectBySlug } from '#/lib/queries/profiles'
 import { formatCount, formatTime } from '#/lib/format'
 import { cn } from '#/lib/utils'
@@ -25,7 +18,6 @@ function ProjectDetail() {
   if (!data) return <NotFound />
 
   const { project, ownerName, members, relatedTalk } = data
-  const ownerFirst = ownerName?.split(' ')[0] ?? 'creator'
 
   // The "looking for" stack: members, falling back to the owner.
   const stack = members.length
@@ -143,13 +135,11 @@ function ProjectDetail() {
       )}
 
       <div className="flex flex-wrap gap-2.5">
-        <Button variant="dark">Message {ownerFirst}</Button>
-        <Badge
-          tone="lime-soft"
-          className="!rounded-[13px] !px-4 !py-3 !text-note"
-        >
-          <Star size={15} /> Star
-        </Badge>
+        <MessageOwnerButton
+          ownerId={project.ownerId}
+          ownerName={ownerName}
+        />
+        <StarButton count={project.trendingScore ?? 0} />
       </div>
     </div>
   )

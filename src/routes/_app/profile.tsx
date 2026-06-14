@@ -103,7 +103,9 @@ function ProfilePage() {
                 variant="soft"
                 size="sm"
                 onClick={() =>
-                  void authClient.signOut().then(() => router.invalidate())
+                  void authClient
+                    .signOut()
+                    .then(() => router.navigate({ to: '/login' }))
                 }
               >
                 Sign out
