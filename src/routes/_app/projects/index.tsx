@@ -5,6 +5,7 @@ import {
   ChevronRight,
   CornerDownRight,
   Plus,
+  Search,
   Star,
 } from 'lucide-react'
 
@@ -48,15 +49,28 @@ function ProjectsPage() {
     return [ALL, TRENDING, ...(real as Array<string>)]
   }, [projects])
   const [category, setCategory] = useState<string>(ALL)
+  const [query, setQuery] = useState('')
 
   const visibleProjects = useMemo(() => {
-    if (category === ALL) return projects
-    if (category === TRENDING)
-      return [...projects].sort(
-        (a, b) => (b.trendingScore ?? 0) - (a.trendingScore ?? 0),
-      )
-    return projects.filter((p) => p.category === category)
-  }, [projects, category])
+    const byCategory =
+      category === ALL
+        ? projects
+        : category === TRENDING
+          ? [...projects].sort(
+              (a, b) => (b.trendingScore ?? 0) - (a.trendingScore ?? 0),
+            )
+          : projects.filter((p) => p.category === category)
+
+    const q = query.trim().toLowerCase()
+    if (!q) return byCategory
+    return byCategory.filter((p) =>
+      [p.name, p.tagline, p.description, p.ownerName, ...(p.techStack ?? [])]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+        .includes(q),
+    )
+  }, [projects, category, query])
 
   const featured =
     projects.reduce<(typeof projects)[0] | undefined>(
@@ -85,6 +99,26 @@ function ProjectsPage() {
             <Plus size={14} strokeWidth={2.5} /> Register a project
           </Button>
         </Link>
+      </div>
+
+      <div className="relative mb-3 max-w-md">
+        <Search
+          size={16}
+          className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-faint"
+        />
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search projects, tech, makers…"
+          aria-label="Search projects"
+          className={cn(
+            'w-full py-2.5 pl-10 pr-3.5',
+            'text-body text-ink placeholder:text-faint',
+            'rounded-full border border-edge/40 bg-white shadow-soft outline-none',
+            'transition-colors focus:border-ink/30',
+          )}
+        />
       </div>
 
       <div className="mb-[22px] flex flex-wrap gap-2">
@@ -132,7 +166,9 @@ function ProjectsPage() {
             ))}
             {visibleProjects.length === 0 && (
               <p className="px-1 py-6 text-note text-muted">
-                No projects in {category} yet.
+                {query
+                  ? `No projects match "${query}".`
+                  : `No projects in ${category} yet.`}
               </p>
             )}
           </div>
