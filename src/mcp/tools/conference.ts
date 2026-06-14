@@ -9,6 +9,7 @@ import {
   moment,
   question,
   room,
+  sessionResource as sessionResourceTable,
   sessionSpeaker,
   user,
 } from '#/db/schema'
@@ -81,6 +82,28 @@ export function register(server: McpServer, userId: string) {
       inputSchema: { sessionId: z.string().describe('Session id') },
     },
     async ({ sessionId }) => text(await loadSession(sessionId)),
+  )
+
+  server.registerTool(
+    'get_session_resources',
+    {
+      title: 'Get session resources',
+      description:
+        'List the links, slide decks and references a speaker shared for a session.',
+      inputSchema: { sessionId: z.string().describe('Session id') },
+    },
+    async ({ sessionId }) =>
+      text(
+        await db
+          .select({
+            id: sessionResourceTable.id,
+            label: sessionResourceTable.label,
+            url: sessionResourceTable.url,
+          })
+          .from(sessionResourceTable)
+          .where(eq(sessionResourceTable.sessionId, sessionId))
+          .orderBy(sessionResourceTable.sortOrder),
+      ),
   )
 
   server.registerTool(

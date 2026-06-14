@@ -28,6 +28,7 @@ import {
   projectMember,
   question,
   room,
+  sessionResource,
   sessionSpeaker,
   task,
 } from '#/db/domain-schema'
@@ -860,7 +861,7 @@ async function seed() {
     truncate table
       ${task}, ${connection}, ${message}, ${discussionPost},
       ${discussion}, ${answer}, ${question}, ${note}, ${moment},
-      ${sessionSpeaker}, ${conferenceSession}, ${room},
+      ${sessionResource}, ${sessionSpeaker}, ${conferenceSession}, ${room},
       ${projectMember}, ${project}, ${conferenceMember}, ${profile},
       ${conference}, ${user}
     restart identity cascade
@@ -1627,6 +1628,43 @@ async function seed() {
   }
   const S = (key: string) => sessionIds.get(key)!
   console.log(`  ✓ ${sessions.length} sessions`)
+
+  /* --- session resources (links a speaker shared) --- */
+  const resources: Array<{
+    session: string
+    label: string
+    url: string
+  }> = [
+    {
+      session: 'rs-compiler',
+      label: 'Slides — The React Compiler in practice',
+      url: 'https://example.com/react-compiler-slides',
+    },
+    {
+      session: 'rs-compiler',
+      label: 'eslint-plugin-react-compiler',
+      url: 'https://github.com/facebook/react/tree/main/compiler',
+    },
+    {
+      session: 'rs-rsc',
+      label: 'RSC data-fetching patterns repo',
+      url: 'https://github.com/example/rsc-patterns',
+    },
+    {
+      session: 'js-mcp-apps',
+      label: 'MCP Apps (SEP-1865) spec',
+      url: 'https://modelcontextprotocol.io',
+    },
+  ]
+  for (const [i, r] of resources.entries()) {
+    await db.insert(sessionResource).values({
+      sessionId: S(r.session),
+      label: r.label,
+      url: r.url,
+      sortOrder: i,
+    })
+  }
+  console.log(`  ✓ ${resources.length} session resources`)
 
   /* --- moments (bookmarked highlights within talks) --- */
   const moments: Array<{

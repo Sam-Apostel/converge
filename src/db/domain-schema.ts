@@ -239,6 +239,25 @@ export const sessionSpeaker = pgTable(
   (t) => [uniqueIndex('session_speaker_unique').on(t.sessionId, t.userId)],
 )
 
+/**
+ * Links, slide decks and references a speaker shared during a talk — surfaced on
+ * the session page and in a captured moment's replay context.
+ */
+export const sessionResource = pgTable(
+  'session_resource',
+  {
+    id: id(),
+    sessionId: text('session_id')
+      .notNull()
+      .references(() => conferenceSession.id, { onDelete: 'cascade' }),
+    label: text('label').notNull(),
+    url: text('url').notNull(),
+    sortOrder: integer('sort_order').default(0).notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [index('session_resource_session_idx').on(t.sessionId)],
+)
+
 /** One-tap bookmarked moment within a talk. */
 export const moment = pgTable(
   'moment',

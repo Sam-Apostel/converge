@@ -10,6 +10,7 @@ import {
   project,
   question,
   room,
+  sessionResource,
   sessionSpeaker,
   user,
 } from '#/db/schema'
@@ -160,6 +161,17 @@ export const getSessionDetail = createServerFn({ method: 'GET' })
       .orderBy(desc(moment.timestampMs))
       .limit(5)
 
+    // Links / decks the speaker shared (rendered in a "Resources" section).
+    const resources = await db
+      .select({
+        id: sessionResource.id,
+        label: sessionResource.label,
+        url: sessionResource.url,
+      })
+      .from(sessionResource)
+      .where(eq(sessionResource.sessionId, sessionId))
+      .orderBy(sessionResource.sortOrder)
+
     return {
       session,
       speaker: speaker ?? null,
@@ -168,5 +180,21 @@ export const getSessionDetail = createServerFn({ method: 'GET' })
       relatedProject,
       relatedPeople,
       highlights,
+      resources,
     }
   })
+
+/** Just the shared resources for a session — used by the MCP tool. */
+export const getSessionResources = createServerFn({ method: 'GET' })
+  .validator((sessionId: string) => sessionId)
+  .handler(async ({ data: sessionId }) =>
+    db
+      .select({
+        id: sessionResource.id,
+        label: sessionResource.label,
+        url: sessionResource.url,
+      })
+      .from(sessionResource)
+      .where(eq(sessionResource.sessionId, sessionId))
+      .orderBy(sessionResource.sortOrder),
+  )

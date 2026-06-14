@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { useLiveQuery } from '@tanstack/react-db'
-import { FileText, Sparkles, Star } from 'lucide-react'
+import {
+  ArrowUpRight,
+  FileText,
+  Link as LinkIcon,
+  Sparkles,
+  Star,
+} from 'lucide-react'
 
 import { Avatar, Skeleton, useNotify } from '#/components/ui'
 import { LivePlayer } from '#/components/session/live-player'
@@ -242,6 +248,29 @@ function SessionScreen() {
                 </a>
               )}
             </div>
+          )}
+
+          {detail.resources.length > 0 && (
+            <details className="mb-6 rounded-2xl bg-white p-5 shadow-soft">
+              <summary className="flex cursor-pointer items-center gap-1.5 text-note font-semibold tracking-snug marker:content-['']">
+                <LinkIcon size={14} className="text-ink" /> Resources ·{' '}
+                {detail.resources.length}
+              </summary>
+              <ul className="mt-3 flex flex-col gap-2">
+                {detail.resources.map((r) => (
+                  <li key={r.id}>
+                    <a
+                      href={r.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 text-note font-medium text-ink transition-colors hover:text-ink-soft"
+                    >
+                      {r.label} <ArrowUpRight size={13} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
           )}
 
           {detail.highlights.length > 0 && (
