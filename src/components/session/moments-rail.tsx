@@ -93,7 +93,7 @@ export function MomentsRail({
       ) : null}
 
       {moments.length > 0 ? (
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-1 gap-2.5 min-[400px]:grid-cols-2">
           {moments.map((m) => (
             <MomentCard
               key={m.id}

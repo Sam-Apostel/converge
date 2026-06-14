@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { ArrowLeft } from 'lucide-react'
 
 import { Card, Mono } from '#/components/ui'
 import { ConnectionStrip } from '#/components/messages/connection-strip'
@@ -32,11 +33,18 @@ function MessagesPage() {
   )
 
   // A `?dm=` deep link wins; otherwise the most recent thread, then a contact.
+  const deepLinked = dm && peopleById.has(dm)
   const [selectedId, setSelectedId] = useState<string | null>(
-    (dm && peopleById.has(dm) ? dm : null) ??
+    (deepLinked ? dm : null) ??
       threads[0]?.otherId ??
       connections.accepted[0]?.id ??
       null,
+  )
+
+  // On narrow viewports the list and the conversation can't share the screen —
+  // navigate between them like a stack. A `?dm=` deep link opens the thread.
+  const [mobilePane, setMobilePane] = useState<'list' | 'thread'>(
+    deepLinked ? 'thread' : 'list',
   )
 
   // The collection (and thus the conversation pane) is client-only.
@@ -58,6 +66,7 @@ function MessagesPage() {
   const handleSelect = useCallback(
     (otherId: string) => {
       setSelectedId(otherId)
+      setMobilePane('thread')
       const thread = threads.find((t) => t.otherId === otherId)
       if (thread && thread.unread > 0) markRead(otherId)
     },
@@ -103,7 +112,13 @@ function MessagesPage() {
         )}
       >
         {/* left — connections + threads */}
-        <Card surface="white" className="flex flex-col overflow-hidden">
+        <Card
+          surface="white"
+          className={cn(
+            'flex-col overflow-hidden',
+            mobilePane === 'thread' ? 'hidden lg:flex' : 'flex',
+          )}
+        >
           <ConnectionStrip
             connections={connections}
             onAccept={handleAccept}
@@ -120,14 +135,35 @@ function MessagesPage() {
         </Card>
 
         {/* right — conversation */}
-        <Card surface="white" className="overflow-hidden">
+        <Card
+          surface="white"
+          className={cn(
+            'flex-col overflow-hidden',
+            mobilePane === 'list' ? 'hidden lg:flex' : 'flex',
+          )}
+        >
           {mounted && selected ? (
-            <Conversation
-              key={selected.id}
-              me={me}
-              other={selected}
-              onSent={() => router.invalidate()}
-            />
+            <>
+              <button
+                type="button"
+                onClick={() => setMobilePane('list')}
+                className={cn(
+                  'flex items-center gap-1.5 border-b border-edge/15 px-4 py-3',
+                  'text-note font-medium text-slate lg:hidden',
+                  'transition-colors hover:text-ink',
+                )}
+              >
+                <ArrowLeft size={16} /> Conversations
+              </button>
+              <div className="min-h-0 flex-1">
+                <Conversation
+                  key={selected.id}
+                  me={me}
+                  other={selected}
+                  onSent={() => router.invalidate()}
+                />
+              </div>
+            </>
           ) : (
             <div className="grid h-full place-items-center">
               <Mono tone="ghost" className="!text-caption !tracking-[0.06em]">

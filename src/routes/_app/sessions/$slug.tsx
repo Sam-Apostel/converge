@@ -180,7 +180,7 @@ function SessionScreen() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr]">
         {/* Left — the talk */}
-        <div className="border-r border-edge/12 px-[26px] pb-[30px] pt-[26px]">
+        <div className="border-edge/12 px-[26px] pb-[30px] pt-[26px] lg:border-r">
           <h1 className="mb-3.5 text-[28px] font-semibold leading-[1.08] tracking-tighter">
             {session.title}
           </h1>
