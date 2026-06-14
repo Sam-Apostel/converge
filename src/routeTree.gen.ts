@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as BillboardRouteImport } from './routes/billboard'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as ApiTasksRouteImport } from './routes/api/tasks'
@@ -58,6 +59,11 @@ const McpRoute = McpRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BillboardRoute = BillboardRouteImport.update({
+  id: '/billboard',
+  path: '/billboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -254,6 +260,7 @@ const ApiDiscussionsIdPostsRoute = ApiDiscussionsIdPostsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/billboard': typeof BillboardRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
@@ -294,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
 }
 export interface FileRoutesByTo {
+  '/billboard': typeof BillboardRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
@@ -337,6 +345,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/billboard': typeof BillboardRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
@@ -381,6 +390,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/billboard'
     | '/login'
     | '/mcp'
     | '/.well-known/oauth-authorization-server'
@@ -421,6 +431,7 @@ export interface FileRouteTypes {
     | '/api/questions/$id/vote'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/billboard'
     | '/login'
     | '/mcp'
     | '/.well-known/oauth-authorization-server'
@@ -463,6 +474,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_app'
+    | '/billboard'
     | '/login'
     | '/mcp'
     | '/.well-known/oauth-authorization-server'
@@ -506,6 +518,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
+  BillboardRoute: typeof BillboardRoute
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
   Char91DotwellKnownChar93OauthAuthorizationServerRoute: typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
@@ -542,6 +555,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/billboard': {
+      id: '/billboard'
+      path: '/billboard'
+      fullPath: '/billboard'
+      preLoaderRoute: typeof BillboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app': {
@@ -901,6 +921,7 @@ const ApiQuestionsRouteWithChildren = ApiQuestionsRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
+  BillboardRoute: BillboardRoute,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
   Char91DotwellKnownChar93OauthAuthorizationServerRoute:
