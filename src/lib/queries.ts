@@ -205,6 +205,43 @@ export const listHighlightMoments = createServerFn({ method: 'GET' })
     return rows
   })
 
+/** One of the viewer's bookmarked moments, with the talk it belongs to. */
+export type MyMoment = {
+  id: string
+  sessionSlug: string
+  sessionTitle: string
+  timestampMs: number
+  transcriptSnippet: string | null
+  slideRef: string | null
+  note: string | null
+  aiHighlight: boolean
+}
+
+/**
+ * The viewer's moments across every session, newest first — the data behind the
+ * cross-session "My moments" review page. Each row links back to its talk.
+ */
+export const listMyMoments = createServerFn({ method: 'GET' }).handler(
+  async (): Promise<Array<MyMoment>> => {
+    const viewer = await resolveViewer()
+    return db
+      .select({
+        id: moment.id,
+        sessionSlug: conferenceSession.slug,
+        sessionTitle: conferenceSession.title,
+        timestampMs: moment.timestampMs,
+        transcriptSnippet: moment.transcriptSnippet,
+        slideRef: moment.slideRef,
+        note: moment.note,
+        aiHighlight: moment.aiHighlight,
+      })
+      .from(moment)
+      .innerJoin(conferenceSession, eq(conferenceSession.id, moment.sessionId))
+      .where(eq(moment.userId, viewer))
+      .orderBy(desc(moment.createdAt))
+  },
+)
+
 export const listPeople = createServerFn({ method: 'GET' }).handler(
   async (): Promise<Array<Person>> => {
     const rows = await db

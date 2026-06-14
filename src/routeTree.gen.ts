@@ -31,6 +31,7 @@ import { Route as ApiAnswersRouteImport } from './routes/api/answers'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppSearchRouteImport } from './routes/_app/search'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
+import { Route as AppMomentsRouteImport } from './routes/_app/moments'
 import { Route as AppMessagesRouteImport } from './routes/_app/messages'
 import { Route as AppDiscussionsRouteImport } from './routes/_app/discussions'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -161,6 +162,11 @@ const AppProfileRoute = AppProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AppRoute,
 } as any)
+const AppMomentsRoute = AppMomentsRouteImport.update({
+  id: '/moments',
+  path: '/moments',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppMessagesRoute = AppMessagesRouteImport.update({
   id: '/messages',
   path: '/messages',
@@ -273,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/discussions': typeof AppDiscussionsRouteWithChildren
   '/messages': typeof AppMessagesRoute
+  '/moments': typeof AppMomentsRoute
   '/profile': typeof AppProfileRoute
   '/search': typeof AppSearchRoute
   '/settings': typeof AppSettingsRoute
@@ -315,6 +322,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/discussions': typeof AppDiscussionsRouteWithChildren
   '/messages': typeof AppMessagesRoute
+  '/moments': typeof AppMomentsRoute
   '/profile': typeof AppProfileRoute
   '/search': typeof AppSearchRoute
   '/settings': typeof AppSettingsRoute
@@ -360,6 +368,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_app/discussions': typeof AppDiscussionsRouteWithChildren
   '/_app/messages': typeof AppMessagesRoute
+  '/_app/moments': typeof AppMomentsRoute
   '/_app/profile': typeof AppProfileRoute
   '/_app/search': typeof AppSearchRoute
   '/_app/settings': typeof AppSettingsRoute
@@ -406,6 +415,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/discussions'
     | '/messages'
+    | '/moments'
     | '/profile'
     | '/search'
     | '/settings'
@@ -448,6 +458,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/discussions'
     | '/messages'
+    | '/moments'
     | '/profile'
     | '/search'
     | '/settings'
@@ -492,6 +503,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_app/discussions'
     | '/_app/messages'
+    | '/_app/moments'
     | '/_app/profile'
     | '/_app/search'
     | '/_app/settings'
@@ -709,6 +721,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/moments': {
+      id: '/_app/moments'
+      path: '/moments'
+      fullPath: '/moments'
+      preLoaderRoute: typeof AppMomentsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/messages': {
       id: '/_app/messages'
       path: '/messages'
@@ -879,6 +898,7 @@ const AppProjectsSlugRouteWithChildren = AppProjectsSlugRoute._addFileChildren(
 interface AppRouteChildren {
   AppDiscussionsRoute: typeof AppDiscussionsRouteWithChildren
   AppMessagesRoute: typeof AppMessagesRoute
+  AppMomentsRoute: typeof AppMomentsRoute
   AppProfileRoute: typeof AppProfileRoute
   AppSearchRoute: typeof AppSearchRoute
   AppSettingsRoute: typeof AppSettingsRoute
@@ -896,6 +916,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppDiscussionsRoute: AppDiscussionsRouteWithChildren,
   AppMessagesRoute: AppMessagesRoute,
+  AppMomentsRoute: AppMomentsRoute,
   AppProfileRoute: AppProfileRoute,
   AppSearchRoute: AppSearchRoute,
   AppSettingsRoute: AppSettingsRoute,

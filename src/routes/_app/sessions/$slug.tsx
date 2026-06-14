@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { useLiveQuery } from '@tanstack/react-db'
-import { Star } from 'lucide-react'
+import { FileText, Sparkles, Star } from 'lucide-react'
 
 import { Avatar, Skeleton, useNotify } from '#/components/ui'
 import { LivePlayer } from '#/components/session/live-player'
@@ -212,6 +212,36 @@ function SessionScreen() {
               total={SLIDES.length}
               onBookmark={captureSlide}
             />
+          )}
+
+          {(detail.session.aiSummary || detail.session.transcriptUrl) && (
+            <div className="mb-6 rounded-2xl bg-white p-5 shadow-soft">
+              <div className="mb-2 flex items-center gap-1.5">
+                <Sparkles size={14} className="text-ink" />
+                <span className="text-note font-semibold tracking-snug">
+                  AI summary
+                </span>
+              </div>
+              {detail.session.aiSummary ? (
+                <p className="text-body leading-normal text-slate">
+                  {detail.session.aiSummary}
+                </p>
+              ) : (
+                <p className="text-note text-muted">
+                  A summary will appear here after the talk.
+                </p>
+              )}
+              {detail.session.transcriptUrl && (
+                <a
+                  href={detail.session.transcriptUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-flex items-center gap-1.5 text-note font-medium text-ink transition-colors hover:text-ink-soft"
+                >
+                  <FileText size={14} /> Read the full transcript
+                </a>
+              )}
+            </div>
           )}
 
           {detail.highlights.length > 0 && (

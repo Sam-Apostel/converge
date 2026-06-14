@@ -35,6 +35,7 @@ export const getSessionDetail = createServerFn({ method: 'GET' })
         endsAt: conferenceSession.endsAt,
         livestreamUrl: conferenceSession.livestreamUrl,
         aiSummary: conferenceSession.aiSummary,
+        transcriptUrl: conferenceSession.transcriptUrl,
         roomName: room.name,
       })
       .from(conferenceSession)
