@@ -11,11 +11,9 @@
         "@progress/kendo-licensing": "^1.11.2",
         "@progress/kendo-react-buttons": "^15.0.0",
         "@progress/kendo-react-dialogs": "^15.0.0",
-        "@progress/kendo-react-indicators": "^15.0.0",
         "@progress/kendo-react-inputs": "^15.0.0",
         "@progress/kendo-react-labels": "^15.0.0",
         "@progress/kendo-react-layout": "^15.0.0",
-        "@progress/kendo-react-notification": "^15.0.0",
         "@progress/kendo-react-progressbars": "^15.0.0",
         "@progress/kendo-svg-icons": "^5.1.0",
         "@progress/kendo-theme-default": "^14.1.0",
@@ -487,8 +485,6 @@
 
     "@progress/kendo-react-dialogs": ["@progress/kendo-react-dialogs@15.0.0", "", { "dependencies": { "prop-types": "^15.6.0" }, "peerDependencies": { "@progress/kendo-licensing": "^1.7.2", "@progress/kendo-react-buttons": "15.0.0", "@progress/kendo-react-common": "15.0.0", "@progress/kendo-react-intl": "15.0.0", "@progress/kendo-svg-icons": "^4.9.0 || ^5.0.0", "react": "^18.0.0 || ^19.0.0", "react-dom": "^18.0.0 || ^19.0.0" }, "optionalPeers": ["@progress/kendo-svg-icons"] }, "sha512-NXRC7cZjOevHm/XfJv2PFpndP1e855Pd34wN/HkhCDxTIDHHOQfEAY9HXXp4+5qoLgUA2FZkVx0Jv6rROdnVnw=="],
 
-    "@progress/kendo-react-indicators": ["@progress/kendo-react-indicators@15.0.0", "", { "dependencies": { "prop-types": "^15.6.0" }, "peerDependencies": { "@progress/kendo-licensing": "^1.7.2", "@progress/kendo-react-common": "15.0.0", "react": "^18.0.0 || ^19.0.0", "react-dom": "^18.0.0 || ^19.0.0" } }, "sha512-Wq+AbnV/9Cl5y1lJmXbO0G+/m0b9A7gbG94/5gwlLB1Y+Jg8jvaBeBrouh05D98SRSki5ZkROWZUeQ7yexvkSg=="],
-
     "@progress/kendo-react-inputs": ["@progress/kendo-react-inputs@15.0.0", "", { "dependencies": { "prop-types": "^15.6.0" }, "peerDependencies": { "@progress/kendo-drawing": "^1.21.2", "@progress/kendo-inputs-common": "^3.1.0", "@progress/kendo-licensing": "^1.7.2", "@progress/kendo-react-animation": "15.0.0", "@progress/kendo-react-buttons": "15.0.0", "@progress/kendo-react-common": "15.0.0", "@progress/kendo-react-dialogs": "15.0.0", "@progress/kendo-react-intl": "15.0.0", "@progress/kendo-react-labels": "15.0.0", "@progress/kendo-react-layout": "15.0.0", "@progress/kendo-react-popup": "15.0.0", "@progress/kendo-svg-icons": "^4.9.0 || ^5.0.0", "react": "^18.0.0 || ^19.0.0", "react-dom": "^18.0.0 || ^19.0.0" }, "optionalPeers": ["@progress/kendo-svg-icons"] }, "sha512-Nf+LGKhOYsXxLJ8q8Xm6rOGfvV583yydSjWr4M0fe+P+Q+F/AgNqtGo7QU9IHWAd22bEJ/cG6ZkDWEs99eGGmw=="],
 
     "@progress/kendo-react-intl": ["@progress/kendo-react-intl@15.0.0", "", { "dependencies": { "prop-types": "^15.6.0" }, "peerDependencies": { "@progress/kendo-intl": "^3.2.1", "@progress/kendo-licensing": "^1.7.2", "@progress/kendo-react-common": "15.0.0", "react": "^18.0.0 || ^19.0.0", "react-dom": "^18.0.0 || ^19.0.0" } }, "sha512-be3id7GrCHiKqar1EMhSP95IDmj7Sq0s0joFn5i+pBk0Rlw3+Y7tyLxttOwcpMLmkcxPmTSlw08ksws16PuSXw=="],
@@ -496,8 +492,6 @@
     "@progress/kendo-react-labels": ["@progress/kendo-react-labels@15.0.0", "", { "dependencies": { "prop-types": "^15.6.0" }, "peerDependencies": { "@progress/kendo-licensing": "^1.7.2", "@progress/kendo-react-common": "15.0.0", "@progress/kendo-react-intl": "15.0.0", "react": "^18.0.0 || ^19.0.0", "react-dom": "^18.0.0 || ^19.0.0" } }, "sha512-6JtDCEpPcsyjYMyApjJ4eKMNDD2AZvx3iGOqBpFKp/709qbRa0ZWs476daGSheLRDhAUa4gCsw+3h1NtQH/k2g=="],
 
     "@progress/kendo-react-layout": ["@progress/kendo-react-layout@15.0.0", "", { "dependencies": { "prop-types": "^15.6.0" }, "peerDependencies": { "@progress/kendo-licensing": "^1.7.2", "@progress/kendo-react-animation": "15.0.0", "@progress/kendo-react-buttons": "15.0.0", "@progress/kendo-react-common": "15.0.0", "@progress/kendo-react-intl": "15.0.0", "@progress/kendo-react-popup": "15.0.0", "@progress/kendo-react-progressbars": "15.0.0", "@progress/kendo-svg-icons": "^4.9.0 || ^5.0.0", "react": "^18.0.0 || ^19.0.0", "react-dom": "^18.0.0 || ^19.0.0" }, "optionalPeers": ["@progress/kendo-svg-icons"] }, "sha512-7Kf+E0iQDshBoe2GgxYVRww4SIzK865orf8r33H6r6qXRTgJx+n66YBExrhs0iWPLDcxtj6aZ7CDjTWg22Pxqg=="],
-
-    "@progress/kendo-react-notification": ["@progress/kendo-react-notification@15.0.0", "", { "dependencies": { "prop-types": "^15.6.0" }, "peerDependencies": { "@progress/kendo-licensing": "^1.7.2", "@progress/kendo-react-common": "15.0.0", "@progress/kendo-svg-icons": "^4.9.0 || ^5.0.0", "react": "^18.0.0 || ^19.0.0", "react-dom": "^18.0.0 || ^19.0.0" }, "optionalPeers": ["@progress/kendo-svg-icons"] }, "sha512-glIuucFtw129YEAZCDu7d3dB3bdiwXcaOZgkPumgf4W1FWhGXbo2ERN8qhnGl4o3IuP1v4WOrEZM/6EyZGE4BQ=="],
 
     "@progress/kendo-react-popup": ["@progress/kendo-react-popup@15.0.0", "", { "dependencies": { "prop-types": "^15.6.0" }, "peerDependencies": { "@progress/kendo-licensing": "^1.7.2", "@progress/kendo-popup-common": "^1.9.5", "@progress/kendo-react-common": "15.0.0", "react": "^18.0.0 || ^19.0.0", "react-dom": "^18.0.0 || ^19.0.0" } }, "sha512-eXOm1G7+sJACx0FeDlOcYv4hgjVYaQgHUOOpAB3qVQ/D0A88mt/uOdDWAf5MClbvfNbqDB+vXSg4fPjQjnYLAA=="],
 

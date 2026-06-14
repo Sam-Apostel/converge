@@ -3,9 +3,7 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 import { useLiveQuery } from '@tanstack/react-db'
 import { Star } from 'lucide-react'
 
-import { Skeleton } from '@progress/kendo-react-indicators'
-
-import { Avatar, useNotify } from '#/components/ui'
+import { Avatar, Skeleton, useNotify } from '#/components/ui'
 import { LivePlayer } from '#/components/session/live-player'
 import { LiveProgress } from '#/components/session/live-progress'
 import { LiveSlide } from '#/components/session/live-slide'

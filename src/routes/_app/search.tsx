@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
-import { Skeleton } from '@progress/kendo-react-indicators'
 
+import { Skeleton } from '#/components/ui'
 import { PageHeader } from '#/components/page-header'
 import { SearchInput } from '#/components/search/search-input'
 import { SearchResults } from '#/components/search/search-results'

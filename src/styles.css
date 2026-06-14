@@ -206,33 +206,18 @@ body {
   animation: caretBlink 1.1s steps(1) infinite;
 }
 
-/* ── Kendo component overrides ──────────────────────────────────────────── */
+/* ── Kendo theming ──────────────────────────────────────────────────────── */
 
-/* NotificationGroup: strip Kendo chrome so .converge-toast provides the look */
-.k-notification-group .k-notification {
-  padding: 0;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  animation: toastIn 0.3s ease both;
-}
-.k-notification-group .k-notification-wrap,
-.k-notification-group .k-notification-content {
-  padding: 0;
-}
-.converge-toast {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  border-radius: 9999px;
-  background: var(--color-ink);
-  padding: 12px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  color: white;
-  box-shadow: 0 12px 32px rgba(20, 20, 40, 0.3);
-  pointer-events: auto;
-  white-space: nowrap;
+/*
+ * Map Kendo's design tokens onto the Converge theme so the widgets we keep
+ * (ProgressBar, TextArea, ChipList, Button) inherit our font + accent without
+ * us touching Kendo internals. The scoped `.converge-*` rules below cover only
+ * the shape bits Kendo doesn't expose as tokens. (Toast + Skeleton are now pure
+ * Tailwind — see components/ui/notifications.tsx and skeleton.tsx.)
+ */
+:root {
+  --kendo-font-family: var(--font-sans);
+  --kendo-color-primary: var(--color-ink);
 }
 
 /* ProgressBar → session live-progress talk segment */
@@ -272,7 +257,6 @@ body {
   border: none;
   padding: 0;
   font-size: 14.5px;
-  font-family: var(--font-sans);
   color: var(--color-ink);
   resize: none;
   line-height: 1.5;
@@ -312,14 +296,7 @@ body {
   display: none;
 }
 
-/* Skeleton → match app surface palette */
-.k-skeleton-text,
-.k-skeleton {
-  background-color: #e3e6f4;
-  border-radius: 6px;
-}
-
-/* ── end Kendo overrides ─────────────────────────────────────────────────── */
+/* ── end Kendo theming ───────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   *,
