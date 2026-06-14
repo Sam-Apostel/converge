@@ -214,6 +214,29 @@ function SessionScreen() {
             />
           )}
 
+          {detail.highlights.length > 0 && (
+            <div className="mb-6 rounded-2xl bg-lime/[0.12] p-4">
+              <div className="mb-2.5 flex items-center gap-1.5">
+                <Star size={14} className="fill-lime text-lime" />
+                <span className="text-note font-semibold tracking-snug">
+                  AI highlights from this talk
+                </span>
+              </div>
+              <ul className="flex flex-col gap-2">
+                {detail.highlights.map((h) => (
+                  <li key={h.id} className="flex gap-2.5 text-note">
+                    <span className="shrink-0 font-mono text-caption text-slate">
+                      {formatOffset(h.timestampMs)}
+                    </span>
+                    <span className="text-ink-soft">
+                      {h.transcriptSnippet ?? 'Key moment'}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <QuestionList
             sessionId={sessionId}
             questions={questions}

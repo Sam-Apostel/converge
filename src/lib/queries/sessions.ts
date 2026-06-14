@@ -1,10 +1,11 @@
 import { createServerFn } from '@tanstack/react-start'
-import { desc, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 
 import { db } from '#/db'
 import {
   conferenceSession,
   discussion,
+  moment,
   profile,
   project,
   question,
@@ -144,6 +145,20 @@ export const getSessionDetail = createServerFn({ method: 'GET' })
       if (relatedPeople.length >= 2) break
     }
 
+    // AI-flagged highlight moments from this talk (any attendee), newest first.
+    const highlights = await db
+      .select({
+        id: moment.id,
+        timestampMs: moment.timestampMs,
+        transcriptSnippet: moment.transcriptSnippet,
+        capturedByName: user.name,
+      })
+      .from(moment)
+      .innerJoin(user, eq(user.id, moment.userId))
+      .where(and(eq(moment.sessionId, sessionId), eq(moment.aiHighlight, true)))
+      .orderBy(desc(moment.timestampMs))
+      .limit(5)
+
     return {
       session,
       speaker: speaker ?? null,
@@ -151,5 +166,6 @@ export const getSessionDetail = createServerFn({ method: 'GET' })
       discussionId,
       relatedProject,
       relatedPeople,
+      highlights,
     }
   })

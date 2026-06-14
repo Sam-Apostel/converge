@@ -6,6 +6,7 @@ import { db } from '#/db'
 import {
   conferenceSession,
   connection,
+  moment,
   profile,
   project,
   room,
@@ -160,6 +161,49 @@ export const getHomeSummary = createServerFn({ method: 'GET' }).handler(
     }
   },
 )
+
+/** An AI-flagged highlight moment, with the talk + who captured it. */
+export type HighlightMoment = {
+  id: string
+  sessionSlug: string
+  sessionTitle: string
+  timestampMs: number
+  transcriptSnippet: string | null
+  capturedByName: string
+}
+
+/**
+ * Recent AI-flagged highlight moments (`moment.aiHighlight`), newest first.
+ * Optionally scope to one session. Surfaced on home, the billboard, and the
+ * session page so the auto-detected highlights don't stay buried.
+ */
+export const listHighlightMoments = createServerFn({ method: 'GET' })
+  .validator((opts?: { sessionId?: string; limit?: number }) => opts ?? {})
+  .handler(async ({ data }): Promise<Array<HighlightMoment>> => {
+    const filters: Array<SQL> = [eq(moment.aiHighlight, true)]
+    if (data.sessionId) filters.push(eq(moment.sessionId, data.sessionId))
+
+    const rows = await db
+      .select({
+        id: moment.id,
+        sessionSlug: conferenceSession.slug,
+        sessionTitle: conferenceSession.title,
+        timestampMs: moment.timestampMs,
+        transcriptSnippet: moment.transcriptSnippet,
+        capturedByName: user.name,
+      })
+      .from(moment)
+      .innerJoin(
+        conferenceSession,
+        eq(conferenceSession.id, moment.sessionId),
+      )
+      .innerJoin(user, eq(user.id, moment.userId))
+      .where(and(...filters))
+      .orderBy(desc(moment.createdAt))
+      .limit(data.limit ?? 8)
+
+    return rows
+  })
 
 export const listPeople = createServerFn({ method: 'GET' }).handler(
   async (): Promise<Array<Person>> => {

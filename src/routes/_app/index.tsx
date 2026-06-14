@@ -13,7 +13,7 @@ import {
   LiveDot,
   Mono,
 } from '#/components/ui'
-import { getHomeSummary } from '#/lib/queries'
+import { getHomeSummary, listHighlightMoments } from '#/lib/queries'
 import { listDiscussions } from '#/lib/queries/discussions'
 import { getConciergeStatus } from '#/lib/concierge/settings'
 import { cn } from '#/lib/utils'
@@ -26,12 +26,14 @@ import { TextArea } from '@progress/kendo-react-inputs'
 
 export const Route = createFileRoute('/_app/')({
   loader: async () => {
-    const [summary, conciergeStatus, discussions] = await Promise.all([
-      getHomeSummary(),
-      getConciergeStatus(),
-      listDiscussions(),
-    ])
-    return { ...summary, conciergeStatus, discussions }
+    const [summary, conciergeStatus, discussions, highlights] =
+      await Promise.all([
+        getHomeSummary(),
+        getConciergeStatus(),
+        listDiscussions(),
+        listHighlightMoments({ data: { limit: 4 } }),
+      ])
+    return { ...summary, conciergeStatus, discussions, highlights }
   },
   component: Home,
 })
@@ -89,6 +91,7 @@ function Home() {
     trendingProject,
     conciergeStatus,
     discussions,
+    highlights,
   } = Route.useLoaderData()
   const { data: session } = useSession()
   const firstName = session?.user?.name?.split(' ')[0] ?? null
@@ -481,6 +484,35 @@ function Home() {
                 </div>
               </GlassCard>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* ── AI highlights ─────────────────────────────────────────── */}
+      {highlights.length > 0 && (
+        <div>
+          <div className="mb-3 flex items-center gap-2 mt-8">
+            <Star size={15} className="fill-lime text-lime" />
+            <Mono className="!text-note !tracking-[0.1em]">AI highlights</Mono>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {highlights.map((h) => (
+              <Link
+                key={h.id}
+                to="/sessions/$slug"
+                params={{ slug: h.sessionSlug }}
+              >
+                <GlassCard innerClassName="flex flex-col gap-1.5 p-[15px_18px]">
+                  <div className="text-caption text-muted">{h.sessionTitle}</div>
+                  <div className="line-clamp-2 text-note font-medium leading-[1.35] text-ink-soft">
+                    {h.transcriptSnippet ?? 'Key moment'}
+                  </div>
+                  <div className="text-caption text-mist">
+                    flagged from {h.capturedByName}'s capture
+                  </div>
+                </GlassCard>
+              </Link>
+            ))}
           </div>
         </div>
       )}

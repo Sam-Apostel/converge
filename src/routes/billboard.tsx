@@ -1,7 +1,12 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 
 import { Avatar, Mono, Tag } from '#/components/ui'
-import { listPeople, listProjects, listSessions } from '#/lib/queries'
+import {
+  listHighlightMoments,
+  listPeople,
+  listProjects,
+  listSessions,
+} from '#/lib/queries'
 import { listDiscussions } from '#/lib/queries/discussions'
 import { useEventStream } from '#/hooks/use-event-stream'
 import { formatClock, formatCount } from '#/lib/format'
@@ -15,19 +20,22 @@ import { cn } from '#/lib/utils'
  */
 export const Route = createFileRoute('/billboard')({
   loader: async () => {
-    const [projects, people, sessions, discussions] = await Promise.all([
-      listProjects(),
-      listPeople(),
-      listSessions(),
-      listDiscussions(),
-    ])
-    return { projects, people, sessions, discussions }
+    const [projects, people, sessions, discussions, highlights] =
+      await Promise.all([
+        listProjects(),
+        listPeople(),
+        listSessions(),
+        listDiscussions(),
+        listHighlightMoments({ data: { limit: 5 } }),
+      ])
+    return { projects, people, sessions, discussions, highlights }
   },
   component: Billboard,
 })
 
 function Billboard() {
-  const { projects, people, sessions, discussions } = Route.useLoaderData()
+  const { projects, people, sessions, discussions, highlights } =
+    Route.useLoaderData()
   const router = useRouter()
 
   // Any conference activity (new moment, question, discussion post…) re-loads
@@ -152,6 +160,25 @@ function Billboard() {
               ))}
             </div>
           </section>
+
+          {/* Live moment activity */}
+          {highlights.length > 0 && (
+            <section>
+              <SectionLabel>Moments people are saving</SectionLabel>
+              <div className="flex flex-col gap-[0.9vw]">
+                {highlights.map((h) => (
+                  <div key={h.id} className="min-w-0">
+                    <div className="truncate text-[1.1vw] font-medium leading-tight">
+                      {h.transcriptSnippet ?? 'Key moment'}
+                    </div>
+                    <div className="truncate text-[0.85vw] text-frost">
+                      {h.sessionTitle} · {h.capturedByName}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Active discussions */}
           {channels.length > 0 && (
