@@ -11,11 +11,6 @@ import type {
 import { MeetupCard } from './meetup-card'
 import { QuestionVote } from './question-vote'
 
-/** A thread is "live" enough to have spun out a meetup once a few people join. */
-function becameMeetup(thread: DiscussionThread) {
-  return thread.participants.length >= 3
-}
-
 function AuthorLine({
   author,
   meta,
@@ -158,7 +153,7 @@ export function Thread({
         </div>
       )}
 
-      {becameMeetup(thread) && <MeetupCard thread={thread} />}
+      {thread.meetup && <MeetupCard meetup={thread.meetup} />}
     </Card>
   )
 }

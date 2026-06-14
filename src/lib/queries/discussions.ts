@@ -1,12 +1,14 @@
 import { createServerFn } from '@tanstack/react-start'
 import { getRequestHeaders } from '@tanstack/react-start/server'
-import { and, asc, desc, eq, inArray } from 'drizzle-orm'
+import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm'
 
 import { db } from '#/db'
 import {
   conferenceSession,
   discussion,
   discussionPost,
+  meetup,
+  meetupAttendee,
   profile,
   question,
   questionVote,
@@ -49,6 +51,17 @@ type ThreadQuestion = {
   author: DiscussionAuthor | null
 }
 
+/** A real-world meetup a thread spun out (replaces the old derived placeholder). */
+export type ThreadMeetup = {
+  id: string
+  title: string
+  startsAt: string | null
+  location: string | null
+  attendees: Array<{ id: string; name: string; image: string | null }>
+  /** Whether the current viewer has RSVP'd. */
+  viewerAttending: boolean
+}
+
 export type DiscussionThread = {
   id: string
   title: string
@@ -58,6 +71,7 @@ export type DiscussionThread = {
   question: ThreadQuestion | null
   posts: Array<ThreadPost>
   participants: Array<DiscussionAuthor>
+  meetup: ThreadMeetup | null
 }
 
 export type TopicChannel = {
@@ -203,6 +217,52 @@ async function loadThreads(
       votedQuestionIds(viewer, questionIds),
     ])
 
+  // Real meetups spun out of these threads, with their RSVP'd attendees.
+  const meetupRows = await db
+    .select({
+      id: meetup.id,
+      discussionId: meetup.discussionId,
+      title: meetup.title,
+      startsAt: meetup.startsAt,
+      location: meetup.location,
+    })
+    .from(meetup)
+    .where(inArray(meetup.discussionId, ids))
+  const meetupIds = meetupRows.map((m) => m.id)
+  const attendeeRows = meetupIds.length
+    ? await db
+        .select({
+          meetupId: meetupAttendee.meetupId,
+          userId: user.id,
+          name: user.name,
+          image: user.image,
+        })
+        .from(meetupAttendee)
+        .innerJoin(user, eq(user.id, meetupAttendee.userId))
+        .where(inArray(meetupAttendee.meetupId, meetupIds))
+    : []
+  const attendeesByMeetup = new Map<
+    string,
+    Array<{ id: string; name: string; image: string | null }>
+  >()
+  for (const a of attendeeRows) {
+    const list = attendeesByMeetup.get(a.meetupId) ?? []
+    list.push({ id: a.userId, name: a.name, image: a.image })
+    attendeesByMeetup.set(a.meetupId, list)
+  }
+  const meetupByDiscussion = new Map<string, ThreadMeetup>()
+  for (const m of meetupRows) {
+    const attendees = attendeesByMeetup.get(m.id) ?? []
+    meetupByDiscussion.set(m.discussionId, {
+      id: m.id,
+      title: m.title,
+      startsAt: m.startsAt ? m.startsAt.toISOString() : null,
+      location: m.location,
+      attendees,
+      viewerAttending: viewer ? attendees.some((a) => a.id === viewer) : false,
+    })
+  }
+
   const sessionTitle = new Map(sessionRows.map((s) => [s.id, s.title]))
   const questionById = new Map(questionRows.map((q) => [q.id, q]))
   const speakersBySession = new Map<string, Set<string>>()
@@ -286,6 +346,7 @@ async function loadThreads(
       question: threadQuestion,
       posts,
       participants,
+      meetup: meetupByDiscussion.get(row.id) ?? null,
     }
   })
 }
@@ -371,3 +432,38 @@ export const getDiscussion = createServerFn({ method: 'GET' })
     const [thread] = await loadThreads(rows, viewer)
     return thread ?? null
   })
+
+/** A real-world meetup that grew out of a thread, with its RSVP count. */
+export type UpcomingMeetup = {
+  id: string
+  discussionId: string
+  title: string
+  startsAt: string | null
+  location: string | null
+  attendeeCount: number
+}
+
+/** Upcoming meetups across the conference, soonest first — for the billboard. */
+export const listUpcomingMeetups = createServerFn({ method: 'GET' }).handler(
+  async (): Promise<Array<UpcomingMeetup>> => {
+    const rows = await db
+      .select({
+        id: meetup.id,
+        discussionId: meetup.discussionId,
+        title: meetup.title,
+        startsAt: meetup.startsAt,
+        location: meetup.location,
+        attendeeCount: sql<number>`count(${meetupAttendee.id})::int`,
+      })
+      .from(meetup)
+      .leftJoin(meetupAttendee, eq(meetupAttendee.meetupId, meetup.id))
+      .groupBy(meetup.id)
+      .orderBy(asc(meetup.startsAt))
+      .limit(8)
+
+    return rows.map((r) => ({
+      ...r,
+      startsAt: r.startsAt ? r.startsAt.toISOString() : null,
+    }))
+  },
+)

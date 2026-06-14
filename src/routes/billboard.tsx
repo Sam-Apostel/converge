@@ -7,7 +7,10 @@ import {
   listProjects,
   listSessions,
 } from '#/lib/queries'
-import { listDiscussions } from '#/lib/queries/discussions'
+import {
+  listDiscussions,
+  listUpcomingMeetups,
+} from '#/lib/queries/discussions'
 import { useEventStream } from '#/hooks/use-event-stream'
 import { formatClock, formatCount } from '#/lib/format'
 import { cn } from '#/lib/utils'
@@ -20,21 +23,22 @@ import { cn } from '#/lib/utils'
  */
 export const Route = createFileRoute('/billboard')({
   loader: async () => {
-    const [projects, people, sessions, discussions, highlights] =
+    const [projects, people, sessions, discussions, highlights, meetups] =
       await Promise.all([
         listProjects(),
         listPeople(),
         listSessions(),
         listDiscussions(),
         listHighlightMoments({ data: { limit: 5 } }),
+        listUpcomingMeetups(),
       ])
-    return { projects, people, sessions, discussions, highlights }
+    return { projects, people, sessions, discussions, highlights, meetups }
   },
   component: Billboard,
 })
 
 function Billboard() {
-  const { projects, people, sessions, discussions, highlights } =
+  const { projects, people, sessions, discussions, highlights, meetups } =
     Route.useLoaderData()
   const router = useRouter()
 
@@ -160,6 +164,32 @@ function Billboard() {
               ))}
             </div>
           </section>
+
+          {/* Meetups forming out of discussions */}
+          {meetups.length > 0 && (
+            <section>
+              <SectionLabel>Meetups forming</SectionLabel>
+              <div className="flex flex-col gap-[1vw]">
+                {meetups.map((m) => (
+                  <div key={m.id} className="flex items-baseline gap-[1vw]">
+                    <Mono tone="lime" className="!text-[1vw] shrink-0">
+                      {m.startsAt ? formatClock(m.startsAt) : 'TBC'}
+                    </Mono>
+                    <div className="min-w-0">
+                      <div className="truncate text-[1.2vw] font-semibold leading-tight">
+                        {m.title}
+                      </div>
+                      <div className="truncate text-[0.9vw] text-frost">
+                        {[m.location, `${m.attendeeCount} going`]
+                          .filter(Boolean)
+                          .join(' · ')}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Live moment activity */}
           {highlights.length > 0 && (

@@ -419,6 +419,43 @@ export const discussionPost = pgTable(
   (t) => [index('discussion_post_discussion_idx').on(t.discussionId)],
 )
 
+/**
+ * A real-world meetup that grew out of a discussion thread — the "this thread
+ * became a meetup" payoff. Attendees RSVP via `meetupAttendee`.
+ */
+export const meetup = pgTable(
+  'meetup',
+  {
+    id: id(),
+    discussionId: text('discussion_id')
+      .notNull()
+      .references(() => discussion.id, { onDelete: 'cascade' }),
+    title: text('title').notNull(),
+    startsAt: timestamp('starts_at'),
+    location: text('location'),
+    createdById: text('created_by_id').references(() => user.id, {
+      onDelete: 'set null',
+    }),
+    createdAt: createdAt(),
+  },
+  (t) => [index('meetup_discussion_idx').on(t.discussionId)],
+)
+
+export const meetupAttendee = pgTable(
+  'meetup_attendee',
+  {
+    id: id(),
+    meetupId: text('meetup_id')
+      .notNull()
+      .references(() => meetup.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    createdAt: createdAt(),
+  },
+  (t) => [uniqueIndex('meetup_attendee_unique').on(t.meetupId, t.userId)],
+)
+
 /* ------------------------------------------------------------------ */
 /* Messaging + connections (the network that remains)                  */
 /* ------------------------------------------------------------------ */

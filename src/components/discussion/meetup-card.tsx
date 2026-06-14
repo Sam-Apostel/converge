@@ -1,41 +1,53 @@
 import { Check, Coffee } from 'lucide-react'
 import { useState } from 'react'
+import { useRouter } from '@tanstack/react-router'
 
 import { AvatarStack, Button, Mono, Spotlight } from '#/components/ui'
 import { useSession } from '#/lib/auth-client'
-import type { DiscussionThread } from '#/lib/queries/discussions'
-
-function humanizeTopic(topic: string): string {
-  return topic
-    .split('-')
-    .map((w) =>
-      w.length <= 2 ? w.toUpperCase() : w[0].toUpperCase() + w.slice(1),
-    )
-    .join(' ')
-}
+import { formatClock } from '#/lib/format'
+import type { ThreadMeetup } from '#/lib/queries/discussions'
 
 /**
  * The "this thread became a meetup" outcome card — the lime-glow payoff at the
- * bottom of an active thread. Attendees are the thread's real participants.
+ * bottom of a thread that spun out a real meetup. Title, time, place and
+ * attendees come from the `meetup` row; "Join" RSVPs the viewer.
  */
-export function MeetupCard({ thread }: { thread: DiscussionThread }) {
+export function MeetupCard({ meetup }: { meetup: ThreadMeetup }) {
   const { data: session } = useSession()
-  const [joined, setJoined] = useState(false)
+  const router = useRouter()
+  const [joined, setJoined] = useState(meetup.viewerAttending)
+  const [busy, setBusy] = useState(false)
 
-  const title = thread.topic
-    ? `Coffee: ${humanizeTopic(thread.topic)}`
-    : `Coffee: ${thread.title}`
-
-  // Attendees are the thread's participants; once you join, you slot in too —
-  // unless you're already in the thread (then Join just confirms your spot).
   const me = session?.user
-  const alreadyIn = me ? thread.participants.some((p) => p.id === me.id) : false
-  const attendees = thread.participants.map((p) => ({
-    name: p.name,
-    src: p.image,
+  const alreadyListed = me
+    ? meetup.attendees.some((a) => a.id === me.id)
+    : false
+  const attendees = meetup.attendees.map((a) => ({
+    name: a.name,
+    src: a.image,
   }))
-  if (joined && me && !alreadyIn) {
+  if (joined && me && !alreadyListed) {
     attendees.push({ name: me.name, src: me.image ?? null })
+  }
+
+  const when = meetup.startsAt ? formatClock(meetup.startsAt) : null
+  const place = meetup.location
+
+  const join = async () => {
+    if (!me || joined || busy) return
+    setBusy(true)
+    setJoined(true) // optimistic
+    try {
+      const res = await fetch(`/api/meetups/${meetup.id}/rsvp`, {
+        method: 'POST',
+      })
+      if (!res.ok) throw new Error(`rsvp -> ${res.status}`)
+      router.invalidate()
+    } catch {
+      setJoined(false)
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
@@ -48,22 +60,27 @@ export function MeetupCard({ thread }: { thread: DiscussionThread }) {
       </div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div className="text-[17px] font-semibold tracking-snug">{title}</div>
+          <div className="text-[17px] font-semibold tracking-snug">
+            {meetup.title}
+          </div>
           <div className="mt-1 font-mono text-note text-frost">
-            Time and place TBC
+            {[when, place].filter(Boolean).join(' · ') || 'Time and place TBC'}
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <AvatarStack
-            people={attendees}
-            size={32}
-            max={5}
-            border="#15172a"
-            overflowBg="#2a2d40"
-          />
+          {attendees.length > 0 && (
+            <AvatarStack
+              people={attendees}
+              size={32}
+              max={5}
+              border="#15172a"
+              overflowBg="#2a2d40"
+            />
+          )}
           <Button
             variant="lime"
-            onClick={() => setJoined((v) => !v)}
+            onClick={() => void join()}
+            disabled={!me || busy}
             aria-pressed={joined}
           >
             {joined ? (

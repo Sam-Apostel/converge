@@ -50,6 +50,7 @@ import { Route as AppPeopleUserIdRouteImport } from './routes/_app/people/$userI
 import { Route as AppDiscussionsIdRouteImport } from './routes/_app/discussions/$id'
 import { Route as ApiQuestionsIdVoteRouteImport } from './routes/api/questions.$id.vote'
 import { Route as ApiQuestionsIdPromoteRouteImport } from './routes/api/questions.$id.promote'
+import { Route as ApiMeetupsIdRsvpRouteImport } from './routes/api/meetups.$id.rsvp'
 import { Route as ApiDiscussionsIdPostsRouteImport } from './routes/api/discussions.$id.posts'
 import { Route as AppProjectsSlugEditRouteImport } from './routes/_app/projects/$slug.edit'
 
@@ -259,6 +260,11 @@ const ApiQuestionsIdPromoteRoute = ApiQuestionsIdPromoteRouteImport.update({
   path: '/$id/promote',
   getParentRoute: () => ApiQuestionsRoute,
 } as any)
+const ApiMeetupsIdRsvpRoute = ApiMeetupsIdRsvpRouteImport.update({
+  id: '/api/meetups/$id/rsvp',
+  path: '/api/meetups/$id/rsvp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiDiscussionsIdPostsRoute = ApiDiscussionsIdPostsRouteImport.update({
   id: '/api/discussions/$id/posts',
   path: '/api/discussions/$id/posts',
@@ -311,6 +317,7 @@ export interface FileRoutesByFullPath {
   '/sessions/': typeof AppSessionsIndexRoute
   '/projects/$slug/edit': typeof AppProjectsSlugEditRoute
   '/api/discussions/$id/posts': typeof ApiDiscussionsIdPostsRoute
+  '/api/meetups/$id/rsvp': typeof ApiMeetupsIdRsvpRoute
   '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
   '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
 }
@@ -355,6 +362,7 @@ export interface FileRoutesByTo {
   '/sessions': typeof AppSessionsIndexRoute
   '/projects/$slug/edit': typeof AppProjectsSlugEditRoute
   '/api/discussions/$id/posts': typeof ApiDiscussionsIdPostsRoute
+  '/api/meetups/$id/rsvp': typeof ApiMeetupsIdRsvpRoute
   '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
   '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
 }
@@ -401,6 +409,7 @@ export interface FileRoutesById {
   '/_app/sessions/': typeof AppSessionsIndexRoute
   '/_app/projects/$slug/edit': typeof AppProjectsSlugEditRoute
   '/api/discussions/$id/posts': typeof ApiDiscussionsIdPostsRoute
+  '/api/meetups/$id/rsvp': typeof ApiMeetupsIdRsvpRoute
   '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
   '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
 }
@@ -447,6 +456,7 @@ export interface FileRouteTypes {
     | '/sessions/'
     | '/projects/$slug/edit'
     | '/api/discussions/$id/posts'
+    | '/api/meetups/$id/rsvp'
     | '/api/questions/$id/promote'
     | '/api/questions/$id/vote'
   fileRoutesByTo: FileRoutesByTo
@@ -491,6 +501,7 @@ export interface FileRouteTypes {
     | '/sessions'
     | '/projects/$slug/edit'
     | '/api/discussions/$id/posts'
+    | '/api/meetups/$id/rsvp'
     | '/api/questions/$id/promote'
     | '/api/questions/$id/vote'
   id:
@@ -536,6 +547,7 @@ export interface FileRouteTypes {
     | '/_app/sessions/'
     | '/_app/projects/$slug/edit'
     | '/api/discussions/$id/posts'
+    | '/api/meetups/$id/rsvp'
     | '/api/questions/$id/promote'
     | '/api/questions/$id/vote'
   fileRoutesById: FileRoutesById
@@ -563,6 +575,7 @@ export interface RootRouteChildren {
   ApiTasksRoute: typeof ApiTasksRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiDiscussionsIdPostsRoute: typeof ApiDiscussionsIdPostsRoute
+  ApiMeetupsIdRsvpRoute: typeof ApiMeetupsIdRsvpRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -854,6 +867,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiQuestionsIdPromoteRouteImport
       parentRoute: typeof ApiQuestionsRoute
     }
+    '/api/meetups/$id/rsvp': {
+      id: '/api/meetups/$id/rsvp'
+      path: '/api/meetups/$id/rsvp'
+      fullPath: '/api/meetups/$id/rsvp'
+      preLoaderRoute: typeof ApiMeetupsIdRsvpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/discussions/$id/posts': {
       id: '/api/discussions/$id/posts'
       path: '/api/discussions/$id/posts'
@@ -996,6 +1016,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTasksRoute: ApiTasksRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiDiscussionsIdPostsRoute: ApiDiscussionsIdPostsRoute,
+  ApiMeetupsIdRsvpRoute: ApiMeetupsIdRsvpRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

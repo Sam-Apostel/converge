@@ -20,6 +20,8 @@ import {
   connection,
   discussion,
   discussionPost,
+  meetup,
+  meetupAttendee,
   message,
   moment,
   note,
@@ -859,9 +861,10 @@ async function seed() {
   // Clean slate (cascade clears all domain rows referencing users/conferences).
   await db.execute(sql`
     truncate table
-      ${task}, ${connection}, ${message}, ${discussionPost},
-      ${discussion}, ${answer}, ${question}, ${note}, ${moment},
-      ${sessionResource}, ${sessionSpeaker}, ${conferenceSession}, ${room},
+      ${task}, ${connection}, ${message}, ${meetupAttendee}, ${meetup},
+      ${discussionPost}, ${discussion}, ${answer}, ${question}, ${note},
+      ${moment}, ${sessionResource}, ${sessionSpeaker}, ${conferenceSession},
+      ${room},
       ${projectMember}, ${project}, ${conferenceMember}, ${profile},
       ${conference}, ${user}
     restart identity cascade
@@ -2183,8 +2186,10 @@ async function seed() {
     },
   ]
   let postCount = 0
+  const discussionIds: Array<string> = []
   for (const d of discussions) {
     const did = uid()
+    discussionIds.push(did)
     await db.insert(discussion).values({
       id: did,
       conferenceId: d.conf ?? null,
@@ -2212,6 +2217,26 @@ async function seed() {
     await insertPosts(d.posts, null)
   }
   console.log(`  ✓ ${discussions.length} discussions, ${postCount} posts`)
+
+  /* --- meetups (a thread that became a real-world meetup) --- */
+  if (discussionIds[0]) {
+    const meetupId = uid()
+    await db.insert(meetup).values({
+      id: meetupId,
+      discussionId: discussionIds[0],
+      title: 'Coffee: RSC data-fetching patterns',
+      startsAt: new Date(Date.now() + 2 * 60 * 60_000),
+      location: 'Coffee bar, level 1',
+      createdById: U('sasha'),
+    })
+    for (const who of ['sasha', 'theo', 'imani']) {
+      await db
+        .insert(meetupAttendee)
+        .values({ meetupId, userId: U(who) })
+        .onConflictDoNothing()
+    }
+    console.log('  ✓ 1 meetup')
+  }
 
   /* --- direct messages --- */
   const dms: Array<{ from: string; to: string; body: string; read?: boolean }> =
