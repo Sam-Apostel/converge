@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '#/db'
 import { discussion, discussionPost } from '#/db/schema'
 import { publish } from '#/lib/events'
+import { recomputeTrendingScore } from '#/lib/queries/trending'
 import { requireUser } from '#/lib/server-auth'
 
 /**
@@ -25,7 +26,7 @@ export const Route = createFileRoute('/api/discussions/$id/posts')({
         if (!text) return new Response('Missing body', { status: 400 })
 
         const [thread] = await db
-          .select({ id: discussion.id })
+          .select({ id: discussion.id, projectId: discussion.projectId })
           .from(discussion)
           .where(eq(discussion.id, discussionId))
           .limit(1)
@@ -46,6 +47,11 @@ export const Route = createFileRoute('/api/discussions/$id/posts')({
           channel: `discussion:${discussionId}`,
           data: { discussionId, postId: row.id },
         })
+
+        // A project-linked thread getting busier bumps that project's score.
+        if (thread.projectId) {
+          await recomputeTrendingScore(thread.projectId)
+        }
 
         return Response.json(row, { status: 201 })
       },

@@ -1,8 +1,15 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { ArrowUpRight, ChevronLeft, CornerDownRight, Star } from 'lucide-react'
+import {
+  ArrowUpRight,
+  ChevronLeft,
+  CornerDownRight,
+  Pencil,
+  Star,
+} from 'lucide-react'
 
-import { Avatar, AvatarStack, Mono, Tag, Thumb } from '#/components/ui'
+import { Avatar, AvatarStack, Button, Mono, Tag, Thumb } from '#/components/ui'
 import { MessageOwnerButton, StarButton } from '#/components/project-actions'
+import { useSession } from '#/lib/auth-client'
 import { getProjectBySlug } from '#/lib/queries/profiles'
 import { formatCount, formatTime } from '#/lib/format'
 import { cn } from '#/lib/utils'
@@ -14,10 +21,12 @@ export const Route = createFileRoute('/_app/projects/$slug')({
 
 function ProjectDetail() {
   const data = Route.useLoaderData()
+  const { data: session } = useSession()
 
   if (!data) return <NotFound />
 
   const { project, ownerName, members, relatedTalk } = data
+  const isOwner = session?.user?.id === project.ownerId
 
   // The "looking for" stack: members, falling back to the owner.
   const stack = members.length
@@ -135,10 +144,15 @@ function ProjectDetail() {
       )}
 
       <div className="flex flex-wrap gap-2.5">
-        <MessageOwnerButton
-          ownerId={project.ownerId}
-          ownerName={ownerName}
-        />
+        {isOwner ? (
+          <Link to="/projects/$slug/edit" params={{ slug: project.slug }}>
+            <Button variant="dark">
+              <Pencil size={14} /> Edit project
+            </Button>
+          </Link>
+        ) : (
+          <MessageOwnerButton ownerId={project.ownerId} ownerName={ownerName} />
+        )}
         <StarButton count={project.trendingScore ?? 0} />
       </div>
     </div>

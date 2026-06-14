@@ -1,16 +1,29 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
-import { Skeleton } from '#/components/ui'
+import { Pill, Skeleton } from '#/components/ui'
 import { PageHeader } from '#/components/page-header'
 import { SearchInput } from '#/components/search/search-input'
 import { SearchResults } from '#/components/search/search-results'
 import { searchAll } from '#/lib/queries/search'
-import type { SearchResult } from '#/lib/queries/search'
+import type { SearchResult, SearchResultType } from '#/lib/queries/search'
 import { cn } from '#/lib/utils'
 
 /** A few starter queries for the empty state. */
 const SUGGESTIONS = ['AI', 'React', 'co-founder', 'design', 'open-source']
+
+const TYPE_LABELS: Record<SearchResultType, string> = {
+  person: 'People',
+  project: 'Projects',
+  session: 'Sessions',
+  discussion: 'Discussions',
+}
+const TYPE_ORDER: Array<SearchResultType> = [
+  'person',
+  'project',
+  'session',
+  'discussion',
+]
 
 export const Route = createFileRoute('/_app/search')({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -29,6 +42,7 @@ function SearchPage() {
   const [query, setQuery] = useState(initialQuery)
   const [results, setResults] = useState<SearchResult[]>(initialResults)
   const [loading, setLoading] = useState(false)
+  const [typeFilter, setTypeFilter] = useState<SearchResultType | 'all'>('all')
   // Track what the current `results` reflect, so we don't refetch the SSR query.
   const lastFetched = useRef(initialQuery)
 
@@ -56,8 +70,19 @@ function SearchPage() {
     }
   }, [query])
 
+  // Per-type counts drive the facet pills; the active facet narrows the list.
+  const counts = useMemo(() => {
+    const c: Record<string, number> = {}
+    for (const r of results) c[r.type] = (c[r.type] ?? 0) + 1
+    return c
+  }, [results])
+  const visible =
+    typeFilter === 'all'
+      ? results
+      : results.filter((r) => r.type === typeFilter)
+
   const trimmed = query.trim()
-  const hasResults = results.length > 0
+  const hasResults = visible.length > 0
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-7">
@@ -68,10 +93,36 @@ function SearchPage() {
 
       <SearchInput value={query} onChange={setQuery} />
 
+      {trimmed !== '' && results.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setTypeFilter('all')}
+            aria-pressed={typeFilter === 'all'}
+          >
+            <Pill active={typeFilter === 'all'} elevated>
+              All · {results.length}
+            </Pill>
+          </button>
+          {TYPE_ORDER.filter((t) => counts[t]).map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTypeFilter(t)}
+              aria-pressed={typeFilter === t}
+            >
+              <Pill active={typeFilter === t} elevated>
+                {TYPE_LABELS[t]} · {counts[t]}
+              </Pill>
+            </button>
+          ))}
+        </div>
+      )}
+
       {trimmed === '' ? (
         <EmptyState onPick={setQuery} />
       ) : hasResults ? (
-        <SearchResults results={results} />
+        <SearchResults results={visible} />
       ) : loading ? (
         <SearchSkeleton />
       ) : (

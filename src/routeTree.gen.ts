@@ -50,6 +50,7 @@ import { Route as AppDiscussionsIdRouteImport } from './routes/_app/discussions/
 import { Route as ApiQuestionsIdVoteRouteImport } from './routes/api/questions.$id.vote'
 import { Route as ApiQuestionsIdPromoteRouteImport } from './routes/api/questions.$id.promote'
 import { Route as ApiDiscussionsIdPostsRouteImport } from './routes/api/discussions.$id.posts'
+import { Route as AppProjectsSlugEditRouteImport } from './routes/_app/projects/$slug.edit'
 
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
@@ -257,6 +258,11 @@ const ApiDiscussionsIdPostsRoute = ApiDiscussionsIdPostsRouteImport.update({
   path: '/api/discussions/$id/posts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppProjectsSlugEditRoute = AppProjectsSlugEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => AppProjectsSlugRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -286,7 +292,7 @@ export interface FileRoutesByFullPath {
   '/api/tasks': typeof ApiTasksRoute
   '/discussions/$id': typeof AppDiscussionsIdRoute
   '/people/$userId': typeof AppPeopleUserIdRoute
-  '/projects/$slug': typeof AppProjectsSlugRoute
+  '/projects/$slug': typeof AppProjectsSlugRouteWithChildren
   '/projects/new': typeof AppProjectsNewRoute
   '/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -296,6 +302,7 @@ export interface FileRoutesByFullPath {
   '/people/': typeof AppPeopleIndexRoute
   '/projects/': typeof AppProjectsIndexRoute
   '/sessions/': typeof AppSessionsIndexRoute
+  '/projects/$slug/edit': typeof AppProjectsSlugEditRoute
   '/api/discussions/$id/posts': typeof ApiDiscussionsIdPostsRoute
   '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
   '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
@@ -328,7 +335,7 @@ export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/discussions/$id': typeof AppDiscussionsIdRoute
   '/people/$userId': typeof AppPeopleUserIdRoute
-  '/projects/$slug': typeof AppProjectsSlugRoute
+  '/projects/$slug': typeof AppProjectsSlugRouteWithChildren
   '/projects/new': typeof AppProjectsNewRoute
   '/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -338,6 +345,7 @@ export interface FileRoutesByTo {
   '/people': typeof AppPeopleIndexRoute
   '/projects': typeof AppProjectsIndexRoute
   '/sessions': typeof AppSessionsIndexRoute
+  '/projects/$slug/edit': typeof AppProjectsSlugEditRoute
   '/api/discussions/$id/posts': typeof ApiDiscussionsIdPostsRoute
   '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
   '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
@@ -372,7 +380,7 @@ export interface FileRoutesById {
   '/_app/': typeof AppIndexRoute
   '/_app/discussions/$id': typeof AppDiscussionsIdRoute
   '/_app/people/$userId': typeof AppPeopleUserIdRoute
-  '/_app/projects/$slug': typeof AppProjectsSlugRoute
+  '/_app/projects/$slug': typeof AppProjectsSlugRouteWithChildren
   '/_app/projects/new': typeof AppProjectsNewRoute
   '/_app/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -382,6 +390,7 @@ export interface FileRoutesById {
   '/_app/people/': typeof AppPeopleIndexRoute
   '/_app/projects/': typeof AppProjectsIndexRoute
   '/_app/sessions/': typeof AppSessionsIndexRoute
+  '/_app/projects/$slug/edit': typeof AppProjectsSlugEditRoute
   '/api/discussions/$id/posts': typeof ApiDiscussionsIdPostsRoute
   '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
   '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
@@ -426,6 +435,7 @@ export interface FileRouteTypes {
     | '/people/'
     | '/projects/'
     | '/sessions/'
+    | '/projects/$slug/edit'
     | '/api/discussions/$id/posts'
     | '/api/questions/$id/promote'
     | '/api/questions/$id/vote'
@@ -468,6 +478,7 @@ export interface FileRouteTypes {
     | '/people'
     | '/projects'
     | '/sessions'
+    | '/projects/$slug/edit'
     | '/api/discussions/$id/posts'
     | '/api/questions/$id/promote'
     | '/api/questions/$id/vote'
@@ -511,6 +522,7 @@ export interface FileRouteTypes {
     | '/_app/people/'
     | '/_app/projects/'
     | '/_app/sessions/'
+    | '/_app/projects/$slug/edit'
     | '/api/discussions/$id/posts'
     | '/api/questions/$id/promote'
     | '/api/questions/$id/vote'
@@ -830,6 +842,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDiscussionsIdPostsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/projects/$slug/edit': {
+      id: '/_app/projects/$slug/edit'
+      path: '/edit'
+      fullPath: '/projects/$slug/edit'
+      preLoaderRoute: typeof AppProjectsSlugEditRouteImport
+      parentRoute: typeof AppProjectsSlugRoute
+    }
   }
 }
 
@@ -845,6 +864,18 @@ const AppDiscussionsRouteWithChildren = AppDiscussionsRoute._addFileChildren(
   AppDiscussionsRouteChildren,
 )
 
+interface AppProjectsSlugRouteChildren {
+  AppProjectsSlugEditRoute: typeof AppProjectsSlugEditRoute
+}
+
+const AppProjectsSlugRouteChildren: AppProjectsSlugRouteChildren = {
+  AppProjectsSlugEditRoute: AppProjectsSlugEditRoute,
+}
+
+const AppProjectsSlugRouteWithChildren = AppProjectsSlugRoute._addFileChildren(
+  AppProjectsSlugRouteChildren,
+)
+
 interface AppRouteChildren {
   AppDiscussionsRoute: typeof AppDiscussionsRouteWithChildren
   AppMessagesRoute: typeof AppMessagesRoute
@@ -853,7 +884,7 @@ interface AppRouteChildren {
   AppSettingsRoute: typeof AppSettingsRoute
   AppIndexRoute: typeof AppIndexRoute
   AppPeopleUserIdRoute: typeof AppPeopleUserIdRoute
-  AppProjectsSlugRoute: typeof AppProjectsSlugRoute
+  AppProjectsSlugRoute: typeof AppProjectsSlugRouteWithChildren
   AppProjectsNewRoute: typeof AppProjectsNewRoute
   AppSessionsSlugRoute: typeof AppSessionsSlugRoute
   AppConferencesIndexRoute: typeof AppConferencesIndexRoute
@@ -870,7 +901,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppSettingsRoute: AppSettingsRoute,
   AppIndexRoute: AppIndexRoute,
   AppPeopleUserIdRoute: AppPeopleUserIdRoute,
-  AppProjectsSlugRoute: AppProjectsSlugRoute,
+  AppProjectsSlugRoute: AppProjectsSlugRouteWithChildren,
   AppProjectsNewRoute: AppProjectsNewRoute,
   AppSessionsSlugRoute: AppSessionsSlugRoute,
   AppConferencesIndexRoute: AppConferencesIndexRoute,
@@ -948,12 +979,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
