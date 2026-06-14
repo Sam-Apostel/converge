@@ -15,6 +15,7 @@ import {
 } from '#/components/ui'
 import { getHomeSummary } from '#/lib/queries'
 import { getConciergeStatus } from '#/lib/concierge/settings'
+import { cn } from '#/lib/utils'
 import { ConciergeMessage } from '#/components/concierge/message'
 import { AddToClaudeButton } from '#/components/add-to-claude-button'
 import { formatClock, formatCount } from '#/lib/format'
@@ -82,14 +83,19 @@ function Home() {
         )}
 
         {empty ? (
-          <h1 className="mx-auto max-w-xl text-balance text-center text-[30px] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[38px] mb-10">
+          <h1
+            className={cn(
+              'mx-auto max-w-xl',
+              'text-balance text-center text-[30px] font-semibold leading-[1.08] tracking-tighter sm:text-[38px]',
+              'mb-10',
+            )}
+          >
             What do you want to do right now?
           </h1>
         ) : (
           <div
             ref={scrollRef}
-            className="w-full max-w-2xl max-h-[420px] overflow-y-auto"
-            style={{ scrollbarWidth: 'thin' }}
+            className="max-h-[420px] w-full max-w-2xl overflow-y-auto [scrollbar-width:thin]"
           >
             <div className="flex flex-col gap-3 pb-1">
               {messages.map((m) => (
@@ -106,7 +112,13 @@ function Home() {
         )}
 
         {error && (
-          <div className="w-full max-w-2xl rounded-xl border border-line bg-white/60 px-3.5 py-2.5 text-caption text-slate">
+          <div
+            className={cn(
+              'w-full max-w-2xl',
+              'rounded-xl border border-line bg-white/60 px-3.5 py-2.5',
+              'text-caption text-slate',
+            )}
+          >
             Something went wrong: {error.message}.{' '}
             <Link to="/settings" className="font-medium text-ink underline">
               Check your model settings
@@ -116,8 +128,19 @@ function Home() {
         )}
 
         {/* glass frame → white inner input */}
-        <div className="w-full max-w-2xl rounded-[26px] border border-white/60 bg-white/32 p-2 [backdrop-filter:blur(22px)_saturate(1.7)] shadow-card-hover mb-8">
-          <div className="flex items-center gap-3.5 rounded-[18px] bg-white px-[18px] py-[11px] shadow-[0_1px_2px_rgba(40,50,110,.05)]">
+        <div
+          className={cn(
+            'w-full max-w-2xl p-2',
+            'rounded-[26px] border border-white/60 bg-white/32 [backdrop-filter:blur(22px)_saturate(1.7)] shadow-card-hover',
+            'mb-8',
+          )}
+        >
+          <div
+            className={cn(
+              'flex items-center gap-3.5 px-[18px] py-[11px]',
+              'rounded-[18px] bg-white shadow-[0_1px_2px_rgba(40,50,110,.05)]',
+            )}
+          >
             <Search size={18} className="text-mist" />
             <TextArea
               value={input}
@@ -131,7 +154,11 @@ function Home() {
               placeholder={
                 empty ? 'Find people working on AI' : 'Ask anything…'
               }
-              className="*:h-unset  flex-1 *:text-base *:text-slate *:outline-none *:placeholder:text-slate/60"
+              className={cn(
+                '*:h-unset  flex-1',
+                '*:text-base *:text-slate',
+                '*:outline-none *:placeholder:text-slate/60',
+              )}
               autoSize={true}
               rows={1}
               size="large"
@@ -141,7 +168,11 @@ function Home() {
                 type="button"
                 onClick={stop}
                 aria-label="Stop"
-                className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[13px] bg-pillow text-slate transition-transform active:scale-95"
+                className={cn(
+                  'grid h-[42px] w-[42px] shrink-0 place-items-center',
+                  'rounded-[13px] bg-pillow text-slate',
+                  'transition-transform active:scale-95',
+                )}
               >
                 <span className="size-3 rounded-[3px] bg-ink" />
               </button>
@@ -162,7 +193,12 @@ function Home() {
                   onClick={submit}
                   disabled={!input.trim()}
                   aria-label="Send"
-                  className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[13px] bg-ink text-lime transition-all active:scale-95 disabled:opacity-0 disabled:scale-50 disabled:blur-md"
+                  className={cn(
+                    'grid h-[42px] w-[42px] shrink-0 place-items-center',
+                    'rounded-[13px] bg-ink text-lime',
+                    'transition-all active:scale-95',
+                    'disabled:opacity-0 disabled:scale-50 disabled:blur-md',
+                  )}
                 >
                   <ArrowUp size={19} strokeWidth={2.5} />
                 </button>
@@ -184,7 +220,13 @@ function Home() {
                     key={s}
                     type="button"
                     onClick={() => sendMessage(s)}
-                    className="rounded-full border border-edge/18 bg-white px-[15px] py-2 text-note font-medium text-ink-soft shadow-soft transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-px hover:border-edge/40 hover:shadow-pop active:scale-[0.97]"
+                    className={cn(
+                      'px-[15px] py-2',
+                      'text-note font-medium text-ink-soft',
+                      'rounded-full border border-edge/18 bg-white shadow-soft',
+                      'transition-[transform,box-shadow,border-color] duration-150',
+                      'hover:-translate-y-px hover:border-edge/40 hover:shadow-pop active:scale-[0.97]',
+                    )}
                   >
                     {s}
                   </button>
@@ -196,7 +238,13 @@ function Home() {
 
         {/* no model configured — nudge to settings */}
         {empty && !conciergeStatus.ready && (
-          <div className="w-full max-w-2xl rounded-2xl border border-line bg-white/70 px-5 py-4 text-note text-slate [backdrop-filter:blur(12px)]">
+          <div
+            className={cn(
+              'w-full max-w-2xl px-5 py-4',
+              'text-note text-slate',
+              'rounded-2xl border border-line bg-white/70 [backdrop-filter:blur(12px)]',
+            )}
+          >
             Configure your AI provider in{' '}
             <Link to="/settings" className="font-medium text-ink underline">
               Settings
@@ -208,16 +256,15 @@ function Home() {
 
         {/* deep-link Converge's MCP server into Claude */}
         {empty && (
-            <div className="mt-6 flex flex-col items-center gap-4">
-              <AddToClaudeButton />
-              <Mono tone="faint" className="!text-tiny !tracking-[0.06em]">
-                Or use your own mcp enabled agent by adding
-              </Mono>
-              <pre className="bg-gray-900 text-white inline px-1">
-                {window.location.origin}/mcp
+          <div className="mt-6 flex flex-col items-center gap-4">
+            <AddToClaudeButton />
+            <Mono tone="faint" className="!text-tiny !tracking-[0.06em]">
+              Or use your own mcp enabled agent by adding
+            </Mono>
+            <pre className="bg-gray-900 text-white inline px-1">
+              {window.location.origin}/mcp
             </pre>
-            </div>
-
+          </div>
         )}
       </div>
 
@@ -240,7 +287,7 @@ function Home() {
                   <Badge tone="ghost">{nextSession.track}</Badge>
                 )}
               </div>
-              <div className="mb-3.5 text-title font-semibold leading-[1.15] tracking-[-0.02em]">
+              <div className="mb-3.5 text-title font-semibold leading-[1.15] tracking-tight">
                 {nextSession.title}
               </div>
               {nextSession.speakerName && (
@@ -298,12 +345,16 @@ function Home() {
                 <Link
                   to="/projects/$slug"
                   params={{ slug: trendingProject.slug }}
-                  className="flex flex-col rounded-[18px] p-[17px_20px] transition-opacity hover:opacity-80"
+                  className={cn(
+                    'flex flex-col p-[17px_20px]',
+                    'rounded-[18px]',
+                    'transition-opacity hover:opacity-80',
+                  )}
                 >
                   <div className="mb-2 text-caption text-muted">
                     Trending project
                   </div>
-                  <div className="text-base font-semibold tracking-[-0.01em]">
+                  <div className="text-base font-semibold tracking-snug">
                     {trendingProject.name}
                   </div>
                   <div className="mt-1 line-clamp-2 flex-1 text-caption leading-[1.35] text-mist">
@@ -336,7 +387,13 @@ function Home() {
                 <GlassCard innerClassName="flex items-center flex-col gap-3 p-4">
                   <Avatar name={person.name} src={person.image} size={44} />
                   <div className="min-w-0 flex-1">
-                    <div className="block truncate text-body font-semibold tracking-[-0.01em] transition-colors hover:text-ink-2">
+                    <div
+                      className={cn(
+                        'block truncate',
+                        'text-body font-semibold tracking-snug',
+                        'transition-colors hover:text-ink-2',
+                      )}
+                    >
                       {person.name}
                     </div>
                     <div className="truncate text-caption text-wrap text-muted">

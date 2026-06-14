@@ -1,4 +1,5 @@
 import { Avatar, Badge } from '#/components/ui'
+import { cn } from '#/lib/utils'
 import { relativeTime, type Thread } from '#/components/messages/types'
 
 /** The left pane: one row per conversation, newest first. */
@@ -31,9 +32,13 @@ export function ThreadList({
             <button
               type="button"
               onClick={() => onSelect(thread.otherId)}
-              className={`flex w-full items-center gap-3 px-4 py-3 text-left transition-colors ${
-                active ? 'bg-pillow' : 'hover:bg-inner'
-              }`}
+              data-active={active || undefined}
+              className={cn(
+                'flex w-full items-center gap-3 px-4 py-3 text-left',
+                'transition-colors',
+                'hover:bg-inner',
+                'data-active:bg-pillow data-active:hover:bg-pillow',
+              )}
             >
               <Avatar
                 name={thread.other.name}
@@ -52,9 +57,11 @@ export function ThreadList({
                 </div>
                 <div className="mt-0.5 flex items-center gap-2">
                   <span
-                    className={`truncate text-note ${
-                      thread.unread > 0 ? 'font-medium text-slate' : 'text-mist'
-                    }`}
+                    data-unread={thread.unread > 0 || undefined}
+                    className={cn(
+                      'truncate text-note text-mist',
+                      'data-unread:font-medium data-unread:text-slate',
+                    )}
                   >
                     {mine && <span className="text-faint">You: </span>}
                     {thread.lastMessage.body}

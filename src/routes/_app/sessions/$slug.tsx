@@ -3,9 +3,7 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 import { useLiveQuery } from '@tanstack/react-db'
 import { Star } from 'lucide-react'
 
-import { Skeleton } from '@progress/kendo-react-indicators'
-
-import { Avatar, useNotify } from '#/components/ui'
+import { Avatar, Skeleton, useNotify } from '#/components/ui'
 import { LivePlayer } from '#/components/session/live-player'
 import { LiveProgress } from '#/components/session/live-progress'
 import { LiveSlide } from '#/components/session/live-slide'
@@ -34,6 +32,7 @@ import { useEventStream } from '#/hooks/use-event-stream'
 import { useSession } from '#/lib/auth-client'
 import { getDiscussion } from '#/lib/queries/discussions'
 import { getSessionDetail } from '#/lib/queries/sessions'
+import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/_app/sessions/$slug')({
   loader: async ({ params }) => {
@@ -136,7 +135,13 @@ function SessionScreen() {
 
   if (!detail) {
     return (
-      <div className="rounded-2xl border border-dashed border-black/10 bg-white/60 p-8 text-center text-body text-muted">
+      <div
+        className={cn(
+          'p-8 text-center',
+          'rounded-2xl border border-dashed border-black/10 bg-white/60',
+          'text-body text-muted',
+        )}
+      >
         Session not found.{' '}
         <Link to="/sessions" className="text-ink underline">
           Back to the schedule
@@ -159,7 +164,13 @@ function SessionScreen() {
   const viewerIsSpeaker = !!me && !!speaker && me.id === speaker.id
 
   return (
-    <div className="relative overflow-hidden rounded-[30px] [background:linear-gradient(180deg,#fbfcff,#f3f5fc)] [box-shadow:0_2px_8px_rgba(40,50,110,.05),0_30px_70px_rgba(40,50,110,.13),inset_0_1px_0_rgba(255,255,255,.9)]">
+    <div
+      className={cn(
+        'relative overflow-hidden',
+        'rounded-[30px] [background:linear-gradient(180deg,#fbfcff,#f3f5fc)]',
+        '[box-shadow:0_2px_8px_rgba(40,50,110,.05),0_30px_70px_rgba(40,50,110,.13),inset_0_1px_0_rgba(255,255,255,.9)]',
+      )}
+    >
       <LiveProgress
         title={session.title}
         roomName={session.roomName}
@@ -170,7 +181,7 @@ function SessionScreen() {
       <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr]">
         {/* Left — the talk */}
         <div className="border-r border-edge/12 px-[26px] pb-[30px] pt-[26px]">
-          <h1 className="mb-3.5 text-[28px] font-semibold leading-[1.08] tracking-[-0.03em]">
+          <h1 className="mb-3.5 text-[28px] font-semibold leading-[1.08] tracking-tighter">
             {session.title}
           </h1>
 
@@ -227,17 +238,17 @@ function SessionScreen() {
         ) : (
           <div className="bg-inner px-6 pb-[30px] pt-[26px]">
             <div className="mb-1 flex items-center gap-[9px]">
-              <Skeleton shape="text" style={{ width: 120, height: 20 }} />
+              <Skeleton shape="text" className="h-5 w-[120px]" />
             </div>
             <p className="mb-4">
-              <Skeleton shape="text" style={{ width: '75%', height: 14 }} />
+              <Skeleton shape="text" className="h-3.5 w-3/4" />
             </p>
             <div className="grid grid-cols-2 gap-2.5">
               {[...Array(4)].map((_, i) => (
                 <Skeleton
                   key={i}
                   shape="rectangle"
-                  style={{ height: 84, borderRadius: 12 }}
+                  className="h-[84px] rounded-xl"
                 />
               ))}
             </div>

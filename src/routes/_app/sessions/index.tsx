@@ -3,6 +3,7 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 import { Avatar, Mono, Tag } from '#/components/ui'
 import { formatClock } from '#/lib/format'
 import { listSessions } from '#/lib/queries'
+import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/_app/sessions/')({
   loader: () => listSessions(),
@@ -47,7 +48,7 @@ function SessionsPage() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-[-0.02em]">Sessions</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Sessions</h1>
         <p className="mt-1 max-w-2xl text-body text-mist">
           The schedule — tap into any talk to bookmark slides, ask questions,
           and follow the discussion.
@@ -73,21 +74,30 @@ function SessionsPage() {
                       <Link
                         to="/sessions/$slug"
                         params={{ slug: row.slug }}
-                        className={
-                          live
-                            ? 'bg-ink-gradient group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-white shadow-card transition-[transform,box-shadow] duration-150 hover:-translate-y-px hover:shadow-card-hover'
-                            : 'group flex items-center gap-4 rounded-2xl bg-white px-4 py-3.5 shadow-card transition-[transform,box-shadow] duration-150 hover:-translate-y-px hover:shadow-card-hover'
-                        }
+                        data-live={live || undefined}
+                        className={cn(
+                          'group flex items-center gap-4 px-4 py-3.5',
+                          'rounded-2xl bg-white shadow-card',
+                          'transition-[transform,box-shadow] duration-150',
+                          'hover:-translate-y-px hover:shadow-card-hover',
+                          'data-live:bg-ink-gradient data-live:text-white',
+                        )}
                       >
                         <div className="flex w-[68px] shrink-0 flex-col items-start gap-1">
                           <span
-                            className={`font-mono text-note font-semibold tabular-nums ${live ? 'text-white' : 'text-ink'}`}
+                            className={cn(
+                              'font-mono text-note font-semibold tabular-nums text-ink',
+                              'group-data-live:text-white',
+                            )}
                           >
                             {formatClock(row.startsAt)}
                           </span>
                           {row.endsAt ? (
                             <span
-                              className={`font-mono text-tiny tabular-nums ${live ? 'text-frost' : 'text-faint'}`}
+                              className={cn(
+                                'font-mono text-tiny tabular-nums text-faint',
+                                'group-data-live:text-frost',
+                              )}
                             >
                               {formatClock(row.endsAt)}
                             </span>
@@ -96,7 +106,10 @@ function SessionsPage() {
 
                         <div className="min-w-0 flex-1">
                           <p
-                            className={`truncate font-semibold tracking-[-0.01em] ${live ? 'text-white' : 'text-ink'}`}
+                            className={cn(
+                              'truncate font-semibold tracking-snug text-ink',
+                              'group-data-live:text-white',
+                            )}
                           >
                             {row.title}
                           </p>
@@ -105,9 +118,7 @@ function SessionsPage() {
                               <Tag variant="soft">{row.track}</Tag>
                             ) : null}
                             {row.roomName ? (
-                              <span
-                                className={`text-caption ${live ? 'text-frost' : 'text-mist'}`}
-                              >
+                              <span className="text-caption text-mist group-data-live:text-frost">
                                 {row.roomName}
                               </span>
                             ) : null}
@@ -117,9 +128,7 @@ function SessionsPage() {
                         {row.speakerName ? (
                           <div className="hidden shrink-0 items-center gap-2.5 sm:flex">
                             <div className="text-right">
-                              <div
-                                className={`text-note font-medium ${live ? 'text-frost' : 'text-slate'}`}
-                              >
+                              <div className="text-note font-medium text-slate group-data-live:text-frost">
                                 {row.speakerName}
                               </div>
                             </div>

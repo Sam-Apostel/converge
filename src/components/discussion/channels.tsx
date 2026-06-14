@@ -1,6 +1,7 @@
 import { ChevronUp } from 'lucide-react'
 
 import { Card, Mono } from '#/components/ui'
+import { cn } from '#/lib/utils'
 import type { TopicChannel, TrendingQuestion } from '#/lib/queries/discussions'
 
 import { useQuestionVote } from './question-vote'
@@ -14,22 +15,17 @@ export function TopicChannels({ channels }: { channels: Array<TopicChannel> }) {
         {channels.map((c) => (
           <div
             key={c.topic}
-            className={`flex items-center justify-between rounded-[11px] px-2.5 py-[9px] ${
-              c.active ? 'bg-inner' : ''
-            }`}
+            data-active={c.active || undefined}
+            className={cn(
+              'group flex items-center justify-between px-2.5 py-[9px]',
+              'rounded-[11px]',
+              'data-active:bg-inner',
+            )}
           >
-            <span
-              className={`text-note font-medium ${
-                c.active ? 'text-ink-soft' : 'text-slate'
-              }`}
-            >
+            <span className="text-note font-medium text-slate group-data-active:text-ink-soft">
               #{c.topic}
             </span>
-            <span
-              className={`font-mono text-caption ${
-                c.active ? 'text-ink-soft' : 'text-faint'
-              }`}
-            >
+            <span className="font-mono text-caption text-faint group-data-active:text-ink-soft">
               {c.posts}
             </span>
           </div>
@@ -62,7 +58,7 @@ function TrendingQuestionInner({ trending }: { trending: TrendingQuestion }) {
       <Mono tone="ghost" className="mb-2.5 block !text-tiny">
         Trending question
       </Mono>
-      <p className="m-0 mb-3 text-body font-medium leading-[1.45]">
+      <p className="m-0 mb-3 text-body font-medium leading-body">
         {trending.body}
       </p>
       <div className="flex flex-wrap items-center gap-2 text-caption text-muted">
@@ -71,11 +67,13 @@ function TrendingQuestionInner({ trending }: { trending: TrendingQuestion }) {
           onClick={vote.toggle}
           aria-pressed={vote.hasVoted}
           aria-label={vote.hasVoted ? 'Remove upvote' : 'Upvote'}
-          className={`inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 font-medium tabular-nums transition-colors ${
-            vote.hasVoted
-              ? 'bg-lime/25 text-ink'
-              : 'text-ink-soft hover:bg-pillow'
-          }`}
+          className={cn(
+            'inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5',
+            'font-medium tabular-nums text-ink-soft',
+            'transition-colors',
+            'hover:bg-pillow',
+            'aria-pressed:bg-lime/25 aria-pressed:text-ink aria-pressed:hover:bg-lime/25',
+          )}
         >
           <ChevronUp size={14} strokeWidth={2.5} /> {vote.count}
         </button>

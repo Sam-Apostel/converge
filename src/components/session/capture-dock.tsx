@@ -1,6 +1,7 @@
 import { Star } from 'lucide-react'
 
 import { BorderBeam, Button, LiveDot, Mono } from '#/components/ui'
+import { cn } from '#/lib/utils'
 
 /**
  * The dark "capture dock" beneath the live slide / player (design update): a
@@ -20,9 +21,20 @@ export function CaptureDock({
   onCapture: () => void
 }) {
   return (
-    <div className="relative mt-3.5 flex items-center gap-4 overflow-hidden rounded-[18px] bg-ink px-[18px] py-4 text-white">
+    <div
+      className={cn(
+        'relative mt-3.5 flex items-center gap-4 overflow-hidden',
+        'text-white',
+        'rounded-[18px] bg-ink px-[18px] py-4',
+      )}
+    >
       <BorderBeam speed={4} />
-      <div className="pointer-events-none absolute -bottom-[54px] -right-10 h-[180px] w-[180px] rounded-full [background:radial-gradient(circle,rgba(153,255,0,.22),transparent_70%)]" />
+      <div
+        className={cn(
+          'pointer-events-none absolute -bottom-[54px] -right-10 h-[180px] w-[180px] rounded-full',
+          '[background:radial-gradient(circle,rgba(153,255,0,.22),transparent_70%)]',
+        )}
+      />
       <div className="relative min-w-0 flex-1">
         <div className="mb-1.5 flex items-center gap-2">
           <LiveDot size={7} />
@@ -30,14 +42,16 @@ export function CaptureDock({
             Capture · {time}
           </Mono>
         </div>
-        <div className="text-base font-semibold tracking-[-0.01em]">
-          {label}
-        </div>
+        <div className="text-base font-semibold tracking-snug">{label}</div>
       </div>
       <Button
         variant="lime"
         onClick={onCapture}
-        className="relative shrink-0 !rounded-[14px] !px-[22px] !py-3.5 !text-reading"
+        className={cn(
+          'relative shrink-0 !px-[22px] !py-3.5',
+          '!text-reading',
+          '!rounded-[14px]',
+        )}
       >
         <Star size={17} className="fill-current" /> {buttonLabel}
       </Button>

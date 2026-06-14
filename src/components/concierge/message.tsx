@@ -2,6 +2,7 @@ import type { UIMessage } from '@tanstack/ai-react'
 import { Sparkles } from 'lucide-react'
 
 import { Mono } from '#/components/ui'
+import { cn } from '#/lib/utils'
 
 import { ToolResult } from './tool-result'
 
@@ -64,7 +65,13 @@ export function ConciergeMessage({ message }: { message: UIMessage }) {
     if (!text) return null
     return (
       <div className="flex justify-end">
-        <div className="max-w-[80%] rounded-2xl rounded-br-md bg-ink px-4 py-2.5 text-body leading-relaxed text-white shadow-card">
+        <div
+          className={cn(
+            'max-w-[80%] px-4 py-2.5',
+            'text-body leading-relaxed text-white',
+            'rounded-2xl rounded-br-md bg-ink shadow-card',
+          )}
+        >
           {text}
         </div>
       </div>
@@ -92,7 +99,11 @@ export function ConciergeMessage({ message }: { message: UIMessage }) {
           return (
             <div
               key={i}
-              className="max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-bl-md bg-surface px-4 py-2.5 text-body leading-relaxed text-ink shadow-card"
+              className={cn(
+                'max-w-[85%] whitespace-pre-wrap px-4 py-2.5',
+                'text-body leading-relaxed text-ink',
+                'rounded-2xl rounded-bl-md bg-surface shadow-card',
+              )}
             >
               {part.content}
             </div>

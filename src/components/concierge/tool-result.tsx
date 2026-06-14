@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 
 import { Avatar, Mono } from '#/components/ui'
+import { cn } from '#/lib/utils'
 
 /**
  * Inline rendering of a concierge tool result (silo 7).
@@ -57,7 +58,12 @@ function ResultShell({
   children: React.ReactNode
 }) {
   return (
-    <div className="mt-2 rounded-2xl border border-line bg-surface p-3 shadow-card">
+    <div
+      className={cn(
+        'mt-2 p-3',
+        'rounded-2xl border border-line bg-surface shadow-card',
+      )}
+    >
       <div className="mb-2 flex items-center gap-2 px-1">
         <Mono tone="faint">{label}</Mono>
         {count !== undefined ? (
@@ -87,7 +93,10 @@ function PeopleResult({ people }: { people: Array<PersonRow> }) {
             <Link
               to="/people/$userId"
               params={{ userId: p.id }}
-              className="flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors hover:bg-pillow"
+              className={cn(
+                'flex items-center gap-3 rounded-xl px-2 py-1.5',
+                'transition-colors hover:bg-pillow',
+              )}
             >
               <Avatar name={p.name} src={p.image} size={34} />
               <span className="min-w-0">
@@ -122,7 +131,10 @@ function SessionsResult({ sessions }: { sessions: Array<SessionRow> }) {
             <Link
               to="/sessions/$slug"
               params={{ slug: s.slug }}
-              className="flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors hover:bg-pillow"
+              className={cn(
+                'flex items-center gap-3 rounded-xl px-2 py-1.5',
+                'transition-colors hover:bg-pillow',
+              )}
             >
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-body font-medium text-ink">
@@ -158,7 +170,10 @@ function ProjectsResult({ projects }: { projects: Array<ProjectRow> }) {
             <Link
               to="/projects/$slug"
               params={{ slug: p.slug }}
-              className="flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors hover:bg-pillow"
+              className={cn(
+                'flex items-center gap-3 rounded-xl px-2 py-1.5',
+                'transition-colors hover:bg-pillow',
+              )}
             >
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-body font-medium text-ink">

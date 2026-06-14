@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import type { CSSProperties } from 'react'
 import { Link } from '@tanstack/react-router'
 import { ProgressBar } from '@progress/kendo-react-progressbars'
 
 import { Mono } from '#/components/ui'
 import { formatClock } from '#/lib/format'
+import { cn } from '#/lib/utils'
 
 /** Every session reserves its final stretch for live Q&A. */
 const QA_MS = 5 * 60_000
@@ -100,8 +102,13 @@ export function LiveProgress({
             />
           </div>
           <div
-            className="animate-live-pulse absolute top-1/2 h-[15px] w-[15px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] border-white bg-lime transition-[left] duration-500 ease-out [box-shadow:0_1px_5px_rgba(60,90,0,.45)]"
-            style={{ left: dotLeft }}
+            className={cn(
+              'animate-live-pulse absolute left-(--playhead-left) top-1/2 h-[15px] w-[15px] -translate-x-1/2 -translate-y-1/2',
+              'rounded-full border-[2.5px] border-white bg-lime',
+              'transition-[left] duration-500 ease-out',
+              '[box-shadow:0_1px_5px_rgba(60,90,0,.45)]',
+            )}
+            style={{ '--playhead-left': dotLeft } as CSSProperties}
           />
         </div>
         <Mono
@@ -118,7 +125,12 @@ export function LiveProgress({
           Talk · live now
         </span>
         <span className="flex items-center gap-1.5 text-tiny font-medium text-faint">
-          <span className="h-2 w-2 rounded-[3px] [background:repeating-linear-gradient(90deg,#cfd4e4_0_3px,#e7eaf4_3px_6px)]" />
+          <span
+            className={cn(
+              'h-2 w-2 rounded-[3px]',
+              '[background:repeating-linear-gradient(90deg,#cfd4e4_0_3px,#e7eaf4_3px_6px)]',
+            )}
+          />
           Q&amp;A · {qaStart}–{formatClock(endsAt)}
         </span>
       </div>

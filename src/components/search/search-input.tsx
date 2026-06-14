@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { Search } from 'lucide-react'
 
+import { cn } from '#/lib/utils'
+
 /**
  * The command-palette search field — reuses the Home command-bar styling
  * (`bg-pillow` inner shadow, lime caret) as a real, focusable input.
@@ -23,7 +25,13 @@ export function SearchInput({
   }, [autoFocus])
 
   return (
-    <div className="flex items-center gap-3.5 rounded-[20px] bg-pillow px-[18px] py-[17px] [box-shadow:inset_2px_3px_7px_rgba(40,50,110,.1),inset_-2px_-2px_6px_rgba(255,255,255,.95)]">
+    <div
+      className={cn(
+        'flex items-center gap-3.5',
+        'rounded-[20px] bg-pillow px-[18px] py-[17px]',
+        '[box-shadow:inset_2px_3px_7px_rgba(40,50,110,.1),inset_-2px_-2px_6px_rgba(255,255,255,.95)]',
+      )}
+    >
       <Search size={19} className="text-mist" />
       <input
         ref={ref}

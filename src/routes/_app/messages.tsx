@@ -8,6 +8,7 @@ import { Conversation } from '#/components/messages/conversation'
 import { refetchMessages } from '#/db-collections/messages'
 import { useEventStream } from '#/hooks/use-event-stream'
 import { getMessagesData } from '#/lib/queries/messages'
+import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/_app/messages')({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -89,13 +90,18 @@ function MessagesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-[-0.02em]">Messages</h1>
+      <h1 className="text-2xl font-semibold tracking-tight">Messages</h1>
       <p className="mb-5 mt-1 max-w-2xl text-body text-mist">
         Direct messages and the connection graph that outlives the event. The
         conference ends. The network remains.
       </p>
 
-      <div className="grid h-[calc(100vh-220px)] min-h-[460px] grid-cols-1 gap-5 lg:grid-cols-[348px_1fr]">
+      <div
+        className={cn(
+          'grid h-[calc(100vh-220px)] min-h-[460px] grid-cols-1 gap-5',
+          'lg:grid-cols-[348px_1fr]',
+        )}
+      >
         {/* left — connections + threads */}
         <Card surface="white" className="flex flex-col overflow-hidden">
           <ConnectionStrip

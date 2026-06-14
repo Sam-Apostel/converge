@@ -15,6 +15,7 @@ import {
 } from '#/components/ui'
 import { PersonCard } from '#/components/person-card'
 import { listPeople } from '#/lib/queries'
+import { cn } from '#/lib/utils'
 import type { Person } from '#/db/types'
 
 export const Route = createFileRoute('/_app/people/')({
@@ -49,7 +50,7 @@ function PeoplePage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-[-0.02em]">
+      <h1 className="text-2xl font-semibold tracking-tight">
         People — before sessions
       </h1>
       <p className="mb-5 mt-1 max-w-2xl text-body text-mist">
@@ -96,11 +97,10 @@ function TopMatch({ person }: { person: Person }) {
   return (
     <Spotlight
       glow="right"
-      className="mb-5 flex items-center gap-6 px-[26px] py-6"
-      style={{
-        background:
-          'linear-gradient(115deg,#13141d 0%,#1b1e30 55%,#24330f 125%)',
-      }}
+      className={cn(
+        'mb-5 flex items-center gap-6 px-[26px] py-6',
+        '![background-image:linear-gradient(115deg,#13141d_0%,#1b1e30_55%,#24330f_125%)]',
+      )}
     >
       <div className="flex min-w-[300px] flex-1 items-center gap-[18px]">
         <Avatar name={person.name} src={person.image} size={68} />
@@ -108,7 +108,7 @@ function TopMatch({ person }: { person: Person }) {
           <Mono tone="lime" className="mb-1.5 block !text-tiny">
             You should meet
           </Mono>
-          <div className="text-title font-semibold tracking-[-0.02em]">
+          <div className="text-title font-semibold tracking-tight">
             {person.name}
           </div>
           <div className="mb-3 text-note text-frost">
@@ -122,7 +122,13 @@ function TopMatch({ person }: { person: Person }) {
               </span>
             )}
             {p?.location && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-[11px] py-1 text-caption text-frost">
+              <span
+                className={cn(
+                  'inline-flex items-center gap-1.5 px-[11px] py-1',
+                  'text-caption text-frost',
+                  'rounded-full bg-white/10',
+                )}
+              >
                 <span className="h-1.5 w-1.5 rounded-full bg-lime-deep" />
                 at {p.location} now
               </span>
@@ -195,7 +201,7 @@ function ProfilePanel({ person }: { person: Person }) {
       <div className="mb-5 flex items-start gap-[15px]">
         <Avatar name={person.name} src={person.image} size={62} />
         <div className="flex-1">
-          <div className="text-title font-semibold tracking-[-0.02em]">
+          <div className="text-title font-semibold tracking-tight">
             {person.name}
           </div>
           <div className="text-note text-muted">
@@ -207,11 +213,16 @@ function ProfilePanel({ person }: { person: Person }) {
       </div>
 
       {p?.bio && (
-        <div className="mb-[18px] rounded-2xl p-4 [background:linear-gradient(135deg,#f3ffe0,#eef0f8)]">
+        <div
+          className={cn(
+            'mb-[18px] p-4',
+            'rounded-2xl [background:linear-gradient(135deg,#f3ffe0,#eef0f8)]',
+          )}
+        >
           <Mono tone="slate" className="mb-1.5 block !text-tiny">
             Why I'm here
           </Mono>
-          <p className="text-reading font-medium leading-[1.45] text-ink-2">
+          <p className="text-reading font-medium leading-body text-ink-2">
             {p.bio}
           </p>
         </div>
@@ -220,7 +231,9 @@ function ProfilePanel({ person }: { person: Person }) {
       {p?.currentFocus && (
         <div className="mb-[18px]">
           <Mono className="mb-2 block !text-tiny">Current focus</Mono>
-          <p className="text-body leading-[1.5] text-slate">{p.currentFocus}</p>
+          <p className="text-body leading-normal text-slate">
+            {p.currentFocus}
+          </p>
         </div>
       )}
 

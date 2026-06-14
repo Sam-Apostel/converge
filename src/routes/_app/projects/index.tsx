@@ -16,6 +16,7 @@ import { ProjectCard } from '#/components/project-card'
 import { listProjects, listSessions } from '#/lib/queries'
 import type { ProjectWithOwner } from '#/lib/queries'
 import { formatClock, formatCount } from '#/lib/format'
+import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/_app/projects/')({
   loader: async () => ({
@@ -51,7 +52,7 @@ function ProjectsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-[-0.02em]">
+      <h1 className="text-2xl font-semibold tracking-tight">
         Projects — what people are actually building
       </h1>
       <p className="mb-5 mt-1 max-w-2xl text-body text-mist">
@@ -71,7 +72,7 @@ function ProjectsPage() {
         {/* Discover carousel */}
         <div className="min-w-0">
           <div className="mb-3 flex items-center justify-between">
-            <div className="text-body font-semibold tracking-[-0.01em]">
+            <div className="text-body font-semibold tracking-snug">
               Discover{' '}
               <span className="text-note font-normal text-faint">
                 · {projects.length} shipping at the summit
@@ -84,7 +85,10 @@ function ProjectsPage() {
           </div>
           <div
             ref={carousel}
-            className="flex gap-3.5 overflow-x-auto px-0.5 pb-3.5 pt-1 [scroll-snap-type:x_proximity] [scrollbar-width:none]"
+            className={cn(
+              'flex gap-3.5 overflow-x-auto px-0.5 pb-3.5 pt-1',
+              '[scroll-snap-type:x_proximity] [scrollbar-width:none]',
+            )}
           >
             {projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
@@ -111,7 +115,11 @@ function CarouselArrow({
     <button
       onClick={onClick}
       aria-label={dir === 'left' ? 'Previous' : 'Next'}
-      className="grid h-[34px] w-[34px] place-items-center rounded-[10px] bg-white text-slate shadow-soft transition-colors hover:bg-ink hover:text-white"
+      className={cn(
+        'grid h-[34px] w-[34px] place-items-center',
+        'rounded-[10px] bg-white text-slate shadow-soft',
+        'transition-colors hover:bg-ink hover:text-white',
+      )}
     >
       {dir === 'left' ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
     </button>
@@ -137,14 +145,20 @@ function ProjectProfile({
           size={54}
         />
         <div>
-          <div className="text-title font-semibold tracking-[-0.02em]">
+          <div className="text-title font-semibold tracking-tight">
             {project.name}
           </div>
           <div className="text-note text-muted">
             by {project.ownerName} · {project.category}
           </div>
         </div>
-        <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-lime/[0.22] px-[11px] py-1.5 font-mono text-note font-medium text-slate">
+        <span
+          className={cn(
+            'ml-auto inline-flex items-center gap-1 px-[11px] py-1.5',
+            'font-mono text-note font-medium text-slate',
+            'rounded-full bg-lime/[0.22]',
+          )}
+        >
           <Star size={13} className="fill-current" />{' '}
           {formatCount(project.trendingScore)}
         </span>
@@ -160,7 +174,7 @@ function ProjectProfile({
         </span>
       </Thumb>
 
-      <p className="mb-4 text-body leading-[1.5] text-slate">
+      <p className="mb-4 text-body leading-normal text-slate">
         {project.description ?? project.tagline}
       </p>
 

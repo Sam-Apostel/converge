@@ -48,9 +48,7 @@ export function MeetupCard({ thread }: { thread: DiscussionThread }) {
       </div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div className="text-[17px] font-semibold tracking-[-0.01em]">
-            {title}
-          </div>
+          <div className="text-[17px] font-semibold tracking-snug">{title}</div>
           <div className="mt-1 font-mono text-note text-frost">
             Time and place TBC
           </div>

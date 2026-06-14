@@ -1,4 +1,7 @@
 import { useId } from 'react'
+import type { CSSProperties } from 'react'
+
+import { cn } from '#/lib/utils'
 
 /**
  * Converge brand mark.
@@ -53,37 +56,32 @@ export function ConvergeLogo({
     <div
       role="img"
       aria-label={title}
-      className={className}
-      style={{
-        position: 'relative',
-        width: size,
-        height: size,
-        borderRadius: rounded,
-        overflow: 'hidden',
-        isolation: 'isolate',
-        background: '#1A1B29',
-      }}
+      className={cn(
+        'relative isolate size-(--logo-size) overflow-hidden rounded-(--logo-radius) bg-[#1A1B29]',
+        className,
+      )}
+      style={
+        {
+          '--logo-size': `${size}px`,
+          '--logo-radius': rounded,
+          '--logo-blur': `${blur}px`,
+          '--logo-mask': maskUrl,
+        } as CSSProperties
+      }
     >
       {/* 1 — Textured backdrop (gives the glass something to blur). */}
       {background ? (
         <>
           <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background:
-                'radial-gradient(125% 125% at 22% 14%, #7e9ce4 0%, #4a6fcf 42%, #2a4eac 78%, #1f3f97 100%)',
-            }}
+            className={cn(
+              'absolute inset-0',
+              '[background:radial-gradient(125%_125%_at_22%_14%,#7e9ce4_0%,#4a6fcf_42%,#2a4eac_78%,#1f3f97_100%)]',
+            )}
           />
           <svg
             viewBox="0 0 64 64"
             preserveAspectRatio="xMidYMid slice"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-            }}
+            className="absolute inset-0 h-full w-full"
           >
             {/* faint radar rings + grid */}
             <g
@@ -99,16 +97,7 @@ export function ConvergeLogo({
             </g>
           </svg>
           {/* grain so the blur has high-frequency detail to smear */}
-          <svg
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              mixBlendMode: 'overlay',
-              opacity: 0.5,
-            }}
-          >
+          <svg className="absolute inset-0 h-full w-full opacity-50 mix-blend-overlay">
             <filter id={id('grain')}>
               <feTurbulence
                 type="fractalNoise"
@@ -125,31 +114,21 @@ export function ConvergeLogo({
 
       {/* 2 — The glass: real backdrop blur, masked to the C arc, brand-tinted. */}
       <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundColor: 'rgba(255, 223, 0, 0.3)',
-          backdropFilter: `blur(${blur}px) saturate(1.6)`,
-          WebkitBackdropFilter: `blur(${blur}px) saturate(1.6)`,
-          maskImage: maskUrl,
-          WebkitMaskImage: maskUrl,
-          maskSize: '100% 100%',
-          WebkitMaskSize: '100% 100%',
-          maskRepeat: 'no-repeat',
-          WebkitMaskRepeat: 'no-repeat',
-        }}
+        className={cn(
+          'absolute inset-0 bg-[rgba(255,223,0,0.3)]',
+          '[-webkit-backdrop-filter:blur(var(--logo-blur))_saturate(1.6)]',
+          '[-webkit-mask-image:var(--logo-mask)]',
+          '[-webkit-mask-repeat:no-repeat]',
+          '[-webkit-mask-size:100%_100%]',
+          '[backdrop-filter:blur(var(--logo-blur))_saturate(1.6)]',
+          '[mask-image:var(--logo-mask)]',
+          '[mask-repeat:no-repeat]',
+          '[mask-size:100%_100%]',
+        )}
       />
 
       {/* 3 — Glass lighting: top sheen + inner glow + crisp edge, kept inside the arc. */}
-      <svg
-        viewBox="0 0 64 64"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-        }}
-      >
+      <svg viewBox="0 0 64 64" className="absolute inset-0 h-full w-full">
         <defs>
           <clipPath id={id('arc')}>
             <path d={ARC} />
@@ -187,15 +166,7 @@ export function ConvergeLogo({
       </svg>
 
       {/* 4 — The person, solid brand yellow, with a faint bloom. */}
-      <svg
-        viewBox="0 0 64 64"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-        }}
-      >
+      <svg viewBox="0 0 64 64" className="absolute inset-0 h-full w-full">
         <defs>
           <filter id={id('bloom')} x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="0.6" result="b" />

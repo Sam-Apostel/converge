@@ -3,6 +3,7 @@ import { ArrowRight, Clock, MessagesSquare } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 import { Avatar, Mono } from '#/components/ui'
+import { cn } from '#/lib/utils'
 import type { SearchResult, SearchResultType } from '#/lib/queries/search'
 
 /** Display order + section label for each entity group. */
@@ -22,7 +23,7 @@ export function SearchResults({ results }: { results: SearchResult[] }) {
         if (rows.length === 0) return null
         return (
           <section key={type}>
-            <Mono className="mb-2.5 block !text-caption !tracking-[0.12em]">
+            <Mono className="mb-2.5 block !text-caption !tracking-eyebrow">
               {label}
               <span className="ml-2 text-muted">{rows.length}</span>
             </Mono>
@@ -43,7 +44,7 @@ function ResultRow({ result }: { result: SearchResult }) {
     <ResultLink result={result}>
       <Leading result={result} />
       <div className="min-w-0 flex-1">
-        <div className="truncate text-reading font-medium tracking-[-0.01em] text-ink">
+        <div className="truncate text-reading font-medium tracking-snug text-ink">
           {result.title}
         </div>
         {result.subtitle ? (
@@ -58,8 +59,11 @@ function ResultRow({ result }: { result: SearchResult }) {
   )
 }
 
-const ROW_CLASS =
-  'group flex items-center gap-3.5 rounded-2xl bg-white px-4 py-3 shadow-card transition-transform hover:-translate-y-0.5'
+const ROW_CLASS = cn(
+  'group flex items-center gap-3.5 px-4 py-3',
+  'rounded-2xl bg-white shadow-card',
+  'transition-transform hover:-translate-y-0.5',
+)
 
 /** Switch to the typed detail Link for this result's entity. */
 function ResultLink({

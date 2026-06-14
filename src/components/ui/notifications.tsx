@@ -6,10 +6,8 @@ import {
   useState,
 } from 'react'
 import type { ReactNode } from 'react'
-import {
-  Notification,
-  NotificationGroup,
-} from '@progress/kendo-react-notification'
+
+import { cn } from '#/lib/utils'
 
 type NotifyFn = (
   message: string,
@@ -43,36 +41,29 @@ export function NotificationProvider({
   return (
     <NotifyContext.Provider value={notify}>
       {children}
-      {mounted && (
-        <NotificationGroup
-          style={{
-            position: 'fixed',
-            bottom: 24,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 9999,
-            display: 'flex',
-            flexDirection: 'column-reverse',
-            alignItems: 'center',
-            gap: 8,
-            pointerEvents: 'none',
-          }}
+      {mounted && items.length > 0 && (
+        <div
+          className={cn(
+            'pointer-events-none fixed bottom-6 left-1/2 z-[9999]',
+            'flex -translate-x-1/2 flex-col-reverse items-center gap-2',
+          )}
         >
           {items.map((n) => (
-            <Notification
+            <div
               key={n.id}
-              type={{ style: 'none', icon: false }}
-              closable={false}
+              className={cn(
+                'animate-toast-in pointer-events-auto flex items-center gap-2.5',
+                'whitespace-nowrap rounded-full bg-ink px-5 py-3',
+                'text-body font-medium text-white shadow-[0_12px_32px_rgba(20,20,40,.3)]',
+              )}
             >
-              <div className="converge-toast">
-                {n.icon && (
-                  <span className="flex items-center text-lime">{n.icon}</span>
-                )}
-                {n.message}
-              </div>
-            </Notification>
+              {n.icon && (
+                <span className="flex items-center text-lime">{n.icon}</span>
+              )}
+              {n.message}
+            </div>
           ))}
-        </NotificationGroup>
+        </div>
       )}
     </NotifyContext.Provider>
   )

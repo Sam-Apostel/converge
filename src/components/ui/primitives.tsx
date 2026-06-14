@@ -1,66 +1,73 @@
+import { cva } from 'cva'
+import type { VariantProps } from 'cva'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
 
-export type MonoTone = 'faint' | 'slate' | 'lime' | 'mute' | 'ghost'
+import { cn } from '#/lib/utils'
 
-const MONO_COLOR: Record<MonoTone, string> = {
-  faint: 'var(--color-faint)',
-  slate: 'var(--color-slate)',
-  lime: 'var(--color-lime)',
-  mute: '#b9bccb',
-  ghost: '#9aa0bc',
-}
+const monoVariants = cva({
+  base: 'font-mono uppercase tracking-eyebrow',
+  variants: {
+    tone: {
+      faint: 'text-faint',
+      slate: 'text-slate',
+      lime: 'text-lime',
+      mute: 'text-[#b9bccb]',
+      ghost: 'text-[#9aa0bc]',
+    },
+  },
+  defaultVariants: { tone: 'faint' },
+})
+
+export type MonoTone = NonNullable<VariantProps<typeof monoVariants>['tone']>
 
 /**
- * Geist Mono uppercase eyebrow/label. Color comes from `tone` (applied inline)
- * so it never collides with Tailwind text-color utilities at the call site.
+ * Geist Mono uppercase eyebrow/label. Color comes from `tone`; a `text-*`
+ * utility in `className` overrides it (cn resolves the conflict).
  */
 export function Mono({
   children,
-  tone = 'faint',
-  className = '',
-  style,
+  tone,
+  className,
 }: {
   children: ReactNode
   tone?: MonoTone
   className?: string
-  style?: CSSProperties
 }) {
   return (
-    <span
-      className={`font-mono uppercase tracking-[0.12em] ${className}`}
-      style={{ color: MONO_COLOR[tone], ...style }}
-    >
-      {children}
-    </span>
+    <span className={cn(monoVariants({ tone }), className)}>{children}</span>
   )
 }
 
-/** Pulsing lime presence dot. */
+/** Pulsing lime presence dot. `--dot-size` carries the runtime size. */
 export function LiveDot({
   size = 7,
-  className = '',
+  className,
 }: {
   size?: number
   className?: string
 }) {
   return (
     <span
-      className={`animate-live-pulse inline-block rounded-full bg-lime ${className}`}
-      style={{ width: size, height: size }}
+      style={{ '--dot-size': `${size}px` } as CSSProperties}
+      className={cn(
+        'animate-live-pulse inline-block size-(--dot-size) rounded-full bg-lime',
+        className,
+      )}
     />
   )
 }
 
 /**
  * Tinted placeholder used for slide screenshots and project/cover thumbnails —
- * the diagonal two-tone hatch from the design.
+ * the diagonal two-tone hatch from the design. Tint/height/radius ride in on
+ * custom properties so the static gradient recipe stays in a class.
  */
 export function Thumb({
   tint = '#eef0f8',
   height = 104,
   radius = 14,
-  className = '',
+  className,
   children,
 }: {
   tint?: string
@@ -71,12 +78,18 @@ export function Thumb({
 }) {
   return (
     <div
-      className={`relative overflow-hidden ${className}`}
-      style={{
-        height,
-        borderRadius: radius,
-        background: `repeating-linear-gradient(135deg, ${tint} 0 12px, rgba(255,255,255,.45) 12px 24px)`,
-      }}
+      style={
+        {
+          '--thumb-tint': tint,
+          '--thumb-height': typeof height === 'number' ? `${height}px` : height,
+          '--thumb-radius': `${radius}px`,
+        } as CSSProperties
+      }
+      className={cn(
+        'relative h-(--thumb-height) overflow-hidden rounded-(--thumb-radius)',
+        '[background:repeating-linear-gradient(135deg,var(--thumb-tint)_0_12px,rgba(255,255,255,.45)_12px_24px)]',
+        className,
+      )}
     >
       {children}
     </div>
@@ -86,7 +99,8 @@ export function Thumb({
 /**
  * Up/down vote control for questions. Static by default (used in read-only
  * thread views); pass `onUpvote` to make the ▲ a real toggle button, and
- * `active` to show the viewer's vote as a lime fill.
+ * `active` to show the viewer's vote as a lime fill. The viewer's vote is
+ * carried on `aria-pressed`/`data-active` so the styling keys off semantics.
  */
 export function VoteControl({
   count,
@@ -101,9 +115,13 @@ export function VoteControl({
 }) {
   return (
     <div
-      className={`flex min-w-[42px] flex-col items-center gap-0.5 rounded-xl px-2.5 py-1.5 transition-colors ${
-        active ? 'bg-lime/25' : 'bg-pillow'
-      }`}
+      data-active={active || undefined}
+      className={cn(
+        'flex min-w-[42px] flex-col items-center gap-0.5',
+        'rounded-xl bg-pillow px-2.5 py-1.5',
+        'transition-colors',
+        'data-active:bg-lime/25',
+      )}
     >
       {onUpvote ? (
         <button
@@ -111,9 +129,10 @@ export function VoteControl({
           onClick={onUpvote}
           aria-pressed={active}
           aria-label={active ? 'Remove upvote' : 'Upvote'}
-          className={`leading-none transition-colors ${
-            active ? 'text-ink' : 'text-slate hover:text-ink'
-          }`}
+          className={cn(
+            'leading-none text-slate transition-colors',
+            'hover:text-ink aria-pressed:text-ink',
+          )}
         >
           <ChevronUp size={15} strokeWidth={2.5} />
         </button>

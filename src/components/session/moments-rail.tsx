@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { Star } from 'lucide-react'
 
 import { Avatar, Badge, Mono, Thumb } from '#/components/ui'
+import { cn } from '#/lib/utils'
 
 import { MomentCard } from './moment-card'
 
@@ -54,7 +55,7 @@ export function MomentsRail({
   return (
     <div className="bg-inner px-6 pb-[30px] pt-[26px]">
       <div className="mb-1 flex items-center gap-[9px]">
-        <span className="text-base font-semibold tracking-[-0.01em]">
+        <span className="text-base font-semibold tracking-snug">
           Your moments
         </span>
         <Badge tone="lime-soft" mono>
@@ -66,12 +67,22 @@ export function MomentsRail({
       </p>
 
       {ready && moments.length === 0 ? (
-        <div className="rounded-[18px] border-[1.5px] border-dashed border-edge/30 bg-white/50 px-[18px] py-[26px] text-center">
-          <div className="mx-auto mb-3 grid h-[46px] w-[46px] place-items-center rounded-[14px] bg-white text-frost shadow-soft">
+        <div
+          className={cn(
+            'px-[18px] py-[26px] text-center',
+            'rounded-[18px] border-[1.5px] border-dashed border-edge/30 bg-white/50',
+          )}
+        >
+          <div
+            className={cn(
+              'mx-auto mb-3 grid h-[46px] w-[46px] place-items-center',
+              'rounded-[14px] bg-white text-frost shadow-soft',
+            )}
+          >
             <Star size={22} />
           </div>
           <div className="mb-1 text-body font-semibold">No moments yet</div>
-          <div className="text-note leading-[1.45] text-muted">
+          <div className="text-note leading-body text-muted">
             Tap{' '}
             <strong className="font-semibold text-slate">
               Bookmark this slide
@@ -110,7 +121,10 @@ export function MomentsRail({
             {relatedPeople.map((p) => (
               <div
                 key={p.id}
-                className="flex items-center gap-[11px] rounded-[14px] bg-white px-[13px] py-[11px] shadow-soft"
+                className={cn(
+                  'flex items-center gap-[11px]',
+                  'rounded-[14px] bg-white px-[13px] py-[11px] shadow-soft',
+                )}
               >
                 <Avatar name={p.name} src={p.image} size={34} />
                 <div className="min-w-0 flex-1">
@@ -120,7 +134,11 @@ export function MomentsRail({
                 <Link
                   to="/people/$userId"
                   params={{ userId: p.id }}
-                  className="rounded-full bg-pillow px-[11px] py-1.5 text-caption font-medium text-slate transition-colors hover:bg-pillow-deep"
+                  className={cn(
+                    'text-caption font-medium text-slate',
+                    'rounded-full bg-pillow px-[11px] py-1.5',
+                    'transition-colors hover:bg-pillow-deep',
+                  )}
                 >
                   View profile
                 </Link>
@@ -134,10 +152,19 @@ export function MomentsRail({
         <Link
           to="/projects/$slug"
           params={{ slug: relatedProject.slug }}
-          className="mt-[18px] block overflow-hidden rounded-2xl bg-white shadow-card"
+          className={cn(
+            'mt-[18px] block overflow-hidden',
+            'rounded-2xl bg-white shadow-card',
+          )}
         >
           <Thumb tint="#e2eef0" height={76} radius={0}>
-            <span className="absolute bottom-2 left-2.5 rounded-md bg-white/[.88] px-2 py-[3px] font-mono text-micro text-[#3f6173]">
+            <span
+              className={cn(
+                'absolute bottom-2 left-2.5',
+                'font-mono text-micro text-[#3f6173]',
+                'rounded-md bg-white/[.88] px-2 py-[3px]',
+              )}
+            >
               {relatedProject.slug} · live demo
             </span>
           </Thumb>
@@ -145,7 +172,7 @@ export function MomentsRail({
             <Mono tone="ghost" className="mb-[5px] block text-tiny">
               Related project
             </Mono>
-            <div className="text-body font-semibold tracking-[-0.01em]">
+            <div className="text-body font-semibold tracking-snug">
               {relatedProject.name}
             </div>
             {relatedProject.tagline ? (

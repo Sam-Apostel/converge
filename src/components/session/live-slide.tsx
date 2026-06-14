@@ -1,4 +1,5 @@
 import { Thumb } from '#/components/ui'
+import { cn } from '#/lib/utils'
 
 import { CaptureDock } from './capture-dock'
 import { SLIDE_MS, formatOffset } from './slides'
@@ -25,14 +26,32 @@ export function LiveSlide({
         radius={18}
         className="shadow-hairline"
       >
-        <div className="absolute left-3.5 top-3.5 rounded-lg bg-white/90 px-[11px] py-1.5 font-mono text-tiny text-slate backdrop-blur-sm">
+        <div
+          className={cn(
+            'absolute left-3.5 top-3.5',
+            'font-mono text-tiny text-slate',
+            'rounded-lg bg-white/90 px-[11px] py-1.5 backdrop-blur-sm',
+          )}
+        >
           Slide {slide.n} — {slide.topic}
         </div>
-        <div className="absolute right-3.5 top-3.5 flex items-center gap-1.5 rounded-[7px] bg-white/90 px-2.5 py-[5px] font-mono text-tiny text-slate">
+        <div
+          className={cn(
+            'absolute right-3.5 top-3.5 flex items-center gap-1.5',
+            'font-mono text-tiny text-slate',
+            'rounded-[7px] bg-white/90 px-2.5 py-[5px]',
+          )}
+        >
           <span className="animate-live-pulse h-1.5 w-1.5 rounded-full bg-lime" />
           on stage now
         </div>
-        <span className="absolute bottom-3.5 left-3.5 rounded-[9px] bg-white/[.92] px-3 py-[7px] font-mono text-caption text-slate shadow-soft">
+        <span
+          className={cn(
+            'absolute bottom-3.5 left-3.5',
+            'font-mono text-caption text-slate',
+            'rounded-[9px] bg-white/[.92] px-3 py-[7px] shadow-soft',
+          )}
+        >
           {total} slides · #{slide.n} live
         </span>
       </Thumb>
