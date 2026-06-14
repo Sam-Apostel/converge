@@ -48,6 +48,7 @@ import { Route as AppPeopleUserIdRouteImport } from './routes/_app/people/$userI
 import { Route as AppDiscussionsIdRouteImport } from './routes/_app/discussions/$id'
 import { Route as ApiQuestionsIdVoteRouteImport } from './routes/api/questions.$id.vote'
 import { Route as ApiQuestionsIdPromoteRouteImport } from './routes/api/questions.$id.promote'
+import { Route as ApiDiscussionsIdPostsRouteImport } from './routes/api/discussions.$id.posts'
 
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
@@ -245,6 +246,11 @@ const ApiQuestionsIdPromoteRoute = ApiQuestionsIdPromoteRouteImport.update({
   path: '/$id/promote',
   getParentRoute: () => ApiQuestionsRoute,
 } as any)
+const ApiDiscussionsIdPostsRoute = ApiDiscussionsIdPostsRouteImport.update({
+  id: '/api/discussions/$id/posts',
+  path: '/api/discussions/$id/posts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -283,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/people/': typeof AppPeopleIndexRoute
   '/projects/': typeof AppProjectsIndexRoute
   '/sessions/': typeof AppSessionsIndexRoute
+  '/api/discussions/$id/posts': typeof ApiDiscussionsIdPostsRoute
   '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
   '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
 }
@@ -323,6 +330,7 @@ export interface FileRoutesByTo {
   '/people': typeof AppPeopleIndexRoute
   '/projects': typeof AppProjectsIndexRoute
   '/sessions': typeof AppSessionsIndexRoute
+  '/api/discussions/$id/posts': typeof ApiDiscussionsIdPostsRoute
   '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
   '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
 }
@@ -365,6 +373,7 @@ export interface FileRoutesById {
   '/_app/people/': typeof AppPeopleIndexRoute
   '/_app/projects/': typeof AppProjectsIndexRoute
   '/_app/sessions/': typeof AppSessionsIndexRoute
+  '/api/discussions/$id/posts': typeof ApiDiscussionsIdPostsRoute
   '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
   '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
 }
@@ -407,6 +416,7 @@ export interface FileRouteTypes {
     | '/people/'
     | '/projects/'
     | '/sessions/'
+    | '/api/discussions/$id/posts'
     | '/api/questions/$id/promote'
     | '/api/questions/$id/vote'
   fileRoutesByTo: FileRoutesByTo
@@ -447,6 +457,7 @@ export interface FileRouteTypes {
     | '/people'
     | '/projects'
     | '/sessions'
+    | '/api/discussions/$id/posts'
     | '/api/questions/$id/promote'
     | '/api/questions/$id/vote'
   id:
@@ -488,6 +499,7 @@ export interface FileRouteTypes {
     | '/_app/people/'
     | '/_app/projects/'
     | '/_app/sessions/'
+    | '/api/discussions/$id/posts'
     | '/api/questions/$id/promote'
     | '/api/questions/$id/vote'
   fileRoutesById: FileRoutesById
@@ -513,6 +525,7 @@ export interface RootRouteChildren {
   ApiStreamRoute: typeof ApiStreamRoute
   ApiTasksRoute: typeof ApiTasksRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiDiscussionsIdPostsRoute: typeof ApiDiscussionsIdPostsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -790,6 +803,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiQuestionsIdPromoteRouteImport
       parentRoute: typeof ApiQuestionsRoute
     }
+    '/api/discussions/$id/posts': {
+      id: '/api/discussions/$id/posts'
+      path: '/api/discussions/$id/posts'
+      fullPath: '/api/discussions/$id/posts'
+      preLoaderRoute: typeof ApiDiscussionsIdPostsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -902,16 +922,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiStreamRoute: ApiStreamRoute,
   ApiTasksRoute: ApiTasksRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiDiscussionsIdPostsRoute: ApiDiscussionsIdPostsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
