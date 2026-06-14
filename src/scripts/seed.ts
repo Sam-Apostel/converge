@@ -2186,10 +2186,10 @@ async function seed() {
     },
   ]
   let postCount = 0
-  const discussionIds: Array<string> = []
+  let rscDiscussionId: string | null = null
   for (const d of discussions) {
     const did = uid()
-    discussionIds.push(did)
+    if (d.topic === 'react-server-components') rscDiscussionId = did
     await db.insert(discussion).values({
       id: did,
       conferenceId: d.conf ?? null,
@@ -2218,18 +2218,18 @@ async function seed() {
   }
   console.log(`  ✓ ${discussions.length} discussions, ${postCount} posts`)
 
-  /* --- meetups (a thread that became a real-world meetup) --- */
-  if (discussionIds[0]) {
+  /* --- meetups (the RSC thread that became a real-world meetup) --- */
+  if (rscDiscussionId) {
     const meetupId = uid()
     await db.insert(meetup).values({
       id: meetupId,
-      discussionId: discussionIds[0],
+      discussionId: rscDiscussionId,
       title: 'Coffee: RSC data-fetching patterns',
       startsAt: new Date(Date.now() + 2 * 60 * 60_000),
       location: 'Coffee bar, level 1',
-      createdById: U('sasha'),
+      createdById: U('devin'),
     })
-    for (const who of ['sasha', 'theo', 'imani']) {
+    for (const who of ['devin', 'sasha', 'theo']) {
       await db
         .insert(meetupAttendee)
         .values({ meetupId, userId: U(who) })
