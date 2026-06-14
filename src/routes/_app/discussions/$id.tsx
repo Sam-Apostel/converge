@@ -1,7 +1,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 
-import { LifecycleRail, Thread } from '#/components/discussion'
+import { LifecycleRail, ReplyComposer, Thread } from '#/components/discussion'
 import { getDiscussion } from '#/lib/queries/discussions'
 import { cn } from '#/lib/utils'
 
@@ -39,6 +39,7 @@ function DiscussionDetail() {
 
           <LifecycleRail />
           <Thread thread={thread} />
+          <ReplyComposer discussionId={thread.id} />
         </>
       ) : (
         <p className="mt-6 rounded-2xl border border-dashed border-black/10 bg-white/60 p-6 text-body text-muted">

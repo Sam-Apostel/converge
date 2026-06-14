@@ -119,7 +119,7 @@ export function LiveProgress({
         </Mono>
       </div>
 
-      <div className="mt-2 flex gap-4 pl-[47px]">
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 pl-[47px]">
         <span className="flex items-center gap-1.5 text-tiny font-medium text-slate">
           <span className="h-2 w-2 rounded-[3px] bg-ink" />
           Talk · live now

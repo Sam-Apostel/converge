@@ -20,6 +20,14 @@ function LoginPage() {
 
   const afterAuth = () => router.navigate({ to: '/' })
 
+  const errorMessage = (err: unknown, fallback: string) => {
+    if (err && typeof err === 'object' && 'message' in err) {
+      const message = (err as { message?: unknown }).message
+      if (typeof message === 'string' && message.trim()) return message
+    }
+    return fallback
+  }
+
   async function onEmailSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
@@ -29,8 +37,47 @@ function LoginPage() {
         mode === 'sign-in'
           ? await authClient.signIn.email({ email, password })
           : await authClient.signUp.email({ email, password, name })
-      if (res.error) setError(res.error.message ?? 'Something went wrong')
+      if (res.error)
+        setError(
+          errorMessage(
+            res.error,
+            mode === 'sign-in'
+              ? 'Could not sign in. Check your email and password and try again.'
+              : 'Could not create your account. Try again or use a different email.',
+          ),
+        )
       else afterAuth()
+    } catch (err) {
+      setError(errorMessage(err, 'Could not reach the server. Try again.'))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function onSocial() {
+    setError(null)
+    setBusy(true)
+    try {
+      const res = await authClient.signIn.social({ provider: 'github' })
+      if (res?.error)
+        setError(errorMessage(res.error, 'GitHub sign-in failed. Try again.'))
+    } catch (err) {
+      setError(errorMessage(err, 'GitHub sign-in failed. Try again.'))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function onPasskey() {
+    setError(null)
+    setBusy(true)
+    try {
+      const res = await authClient.signIn.passkey()
+      if (res?.error)
+        setError(errorMessage(res.error, 'Passkey sign-in failed. Try again.'))
+      else afterAuth()
+    } catch (err) {
+      setError(errorMessage(err, 'Passkey sign-in failed. Try again.'))
     } finally {
       setBusy(false)
     }
@@ -61,22 +108,17 @@ function LoginPage() {
           {mode === 'sign-in' ? 'Welcome back' : 'Create your account'}
         </h1>
         <p className="mt-1 text-body text-muted">
-          Sign in to discover people, capture moments, and keep the conversation
-          going.
+          {mode === 'sign-in'
+            ? 'Sign in to discover people, capture moments, and keep the conversation going.'
+            : 'Create an account to discover people, capture moments, and keep the conversation going.'}
         </p>
 
         <div className="mt-5 flex flex-col gap-2">
-          <Button
-            onClick={() => authClient.signIn.social({ provider: 'github' })}
-            fillMode="outline"
-          >
+          <Button onClick={onSocial} fillMode="outline" disabled={busy}>
             Continue with GitHub
           </Button>
-          <Button
-            onClick={() => authClient.signIn.passkey().then(afterAuth)}
-            fillMode="outline"
-          >
-            Sign in with a passkey
+          <Button onClick={onPasskey} fillMode="outline" disabled={busy}>
+            Continue with a passkey
           </Button>
         </div>
 
@@ -135,7 +177,7 @@ function LoginPage() {
           className="mt-4 w-full text-center text-body text-brand-600 hover:underline"
         >
           {mode === 'sign-in'
-            ? 'Need an account? Sign up'
+            ? 'Need an account? Create one'
             : 'Already have an account? Sign in'}
         </button>
       </div>

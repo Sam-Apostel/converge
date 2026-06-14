@@ -1,14 +1,16 @@
 import { createServerFn } from '@tanstack/react-start'
-import { desc, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 
 import { db } from '#/db'
 import {
   conferenceSession,
   discussion,
+  moment,
   profile,
   project,
   question,
   room,
+  sessionResource,
   sessionSpeaker,
   user,
 } from '#/db/schema'
@@ -34,6 +36,7 @@ export const getSessionDetail = createServerFn({ method: 'GET' })
         endsAt: conferenceSession.endsAt,
         livestreamUrl: conferenceSession.livestreamUrl,
         aiSummary: conferenceSession.aiSummary,
+        transcriptUrl: conferenceSession.transcriptUrl,
         roomName: room.name,
       })
       .from(conferenceSession)
@@ -144,6 +147,31 @@ export const getSessionDetail = createServerFn({ method: 'GET' })
       if (relatedPeople.length >= 2) break
     }
 
+    // AI-flagged highlight moments from this talk (any attendee), newest first.
+    const highlights = await db
+      .select({
+        id: moment.id,
+        timestampMs: moment.timestampMs,
+        transcriptSnippet: moment.transcriptSnippet,
+        capturedByName: user.name,
+      })
+      .from(moment)
+      .innerJoin(user, eq(user.id, moment.userId))
+      .where(and(eq(moment.sessionId, sessionId), eq(moment.aiHighlight, true)))
+      .orderBy(desc(moment.timestampMs))
+      .limit(5)
+
+    // Links / decks the speaker shared (rendered in a "Resources" section).
+    const resources = await db
+      .select({
+        id: sessionResource.id,
+        label: sessionResource.label,
+        url: sessionResource.url,
+      })
+      .from(sessionResource)
+      .where(eq(sessionResource.sessionId, sessionId))
+      .orderBy(sessionResource.sortOrder)
+
     return {
       session,
       speaker: speaker ?? null,
@@ -151,5 +179,22 @@ export const getSessionDetail = createServerFn({ method: 'GET' })
       discussionId,
       relatedProject,
       relatedPeople,
+      highlights,
+      resources,
     }
   })
+
+/** Just the shared resources for a session — used by the MCP tool. */
+export const getSessionResources = createServerFn({ method: 'GET' })
+  .validator((sessionId: string) => sessionId)
+  .handler(async ({ data: sessionId }) =>
+    db
+      .select({
+        id: sessionResource.id,
+        label: sessionResource.label,
+        url: sessionResource.url,
+      })
+      .from(sessionResource)
+      .where(eq(sessionResource.sessionId, sessionId))
+      .orderBy(sessionResource.sortOrder),
+  )

@@ -1,23 +1,24 @@
-import { useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import {
   ChevronLeft,
   ChevronRight,
   CornerDownRight,
   Plus,
+  Search,
   Star,
 } from 'lucide-react'
 
 import {
   Avatar,
   AvatarStack,
-  Badge,
   Button,
   Mono,
   Pill,
   Tag,
   Thumb,
 } from '#/components/ui'
+import { MessageOwnerButton, StarButton } from '#/components/project-actions'
 import { ProjectCard } from '#/components/project-card'
 import { listProjects, listSessions } from '#/lib/queries'
 import type { ProjectWithOwner } from '#/lib/queries'
@@ -32,19 +33,44 @@ export const Route = createFileRoute('/_app/projects/')({
   component: ProjectsPage,
 })
 
-const CATEGORIES = [
-  'All',
-  'Frameworks',
-  'AI & agents',
-  'React Native',
-  'Trending',
-]
+const TRENDING = 'Trending'
+const ALL = 'All'
 
 function ProjectsPage() {
   const { projects, sessions } = Route.useLoaderData()
   const carousel = useRef<HTMLDivElement>(null)
   const scroll = (dir: number) =>
     carousel.current?.scrollBy({ left: dir * 500, behavior: 'smooth' })
+
+  // Categories derive from the real `project.category` values so the pills
+  // actually match the data, plus the synthetic "All" / "Trending" views.
+  const categories = useMemo(() => {
+    const real = [...new Set(projects.map((p) => p.category).filter(Boolean))]
+    return [ALL, TRENDING, ...(real as Array<string>)]
+  }, [projects])
+  const [category, setCategory] = useState<string>(ALL)
+  const [query, setQuery] = useState('')
+
+  const visibleProjects = useMemo(() => {
+    const byCategory =
+      category === ALL
+        ? projects
+        : category === TRENDING
+          ? [...projects].sort(
+              (a, b) => (b.trendingScore ?? 0) - (a.trendingScore ?? 0),
+            )
+          : projects.filter((p) => p.category === category)
+
+    const q = query.trim().toLowerCase()
+    if (!q) return byCategory
+    return byCategory.filter((p) =>
+      [p.name, p.tagline, p.description, p.ownerName, ...(p.techStack ?? [])]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+        .includes(q),
+    )
+  }, [projects, category, query])
 
   const featured =
     projects.reduce<(typeof projects)[0] | undefined>(
@@ -75,11 +101,38 @@ function ProjectsPage() {
         </Link>
       </div>
 
+      <div className="relative mb-3 max-w-md">
+        <Search
+          size={16}
+          className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-faint"
+        />
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search projects, tech, makers…"
+          aria-label="Search projects"
+          className={cn(
+            'w-full py-2.5 pl-10 pr-3.5',
+            'text-body text-ink placeholder:text-faint',
+            'rounded-full border border-edge/40 bg-white shadow-soft outline-none',
+            'transition-colors focus:border-ink/30',
+          )}
+        />
+      </div>
+
       <div className="mb-[22px] flex flex-wrap gap-2">
-        {CATEGORIES.map((c, i) => (
-          <Pill key={c} active={i === 0} elevated>
-            {c}
-          </Pill>
+        {categories.map((c) => (
+          <button
+            key={c}
+            type="button"
+            onClick={() => setCategory(c)}
+            aria-pressed={c === category}
+          >
+            <Pill active={c === category} elevated>
+              {c}
+            </Pill>
+          </button>
         ))}
       </div>
 
@@ -90,7 +143,10 @@ function ProjectsPage() {
             <div className="text-body font-semibold tracking-snug">
               Discover{' '}
               <span className="text-note font-normal text-faint">
-                · {projects.length} shipping at the summit
+                · {visibleProjects.length}{' '}
+                {category === ALL
+                  ? 'shipping at the summit'
+                  : `in ${category}`}
               </span>
             </div>
             <div className="flex gap-1.5">
@@ -105,9 +161,16 @@ function ProjectsPage() {
               '[scroll-snap-type:x_proximity] [scrollbar-width:none]',
             )}
           >
-            {projects.map((project) => (
+            {visibleProjects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
+            {visibleProjects.length === 0 && (
+              <p className="px-1 py-6 text-note text-muted">
+                {query
+                  ? `No projects match "${query}".`
+                  : `No projects in ${category} yet.`}
+              </p>
+            )}
           </div>
         </div>
 
@@ -229,15 +292,12 @@ function ProjectProfile({
       )}
 
       <div className="flex gap-2.5">
-        <Button variant="dark" className="flex-1">
-          Message {project.ownerName?.split(' ')[0] ?? 'creator'}
-        </Button>
-        <Badge
-          tone="lime-soft"
-          className="!rounded-[13px] !px-4 !py-3 !text-note"
-        >
-          <Star size={15} /> Star
-        </Badge>
+        <MessageOwnerButton
+          ownerId={project.ownerId}
+          ownerName={project.ownerName}
+          className="flex-1"
+        />
+        <StarButton count={project.trendingScore ?? 0} />
       </div>
     </div>
   )

@@ -13,7 +13,8 @@ import {
   LiveDot,
   Mono,
 } from '#/components/ui'
-import { getHomeSummary } from '#/lib/queries'
+import { getHomeSummary, listHighlightMoments } from '#/lib/queries'
+import { listDiscussions } from '#/lib/queries/discussions'
 import { getConciergeStatus } from '#/lib/concierge/settings'
 import { cn } from '#/lib/utils'
 import { ConciergeMessage } from '#/components/concierge/message'
@@ -25,11 +26,14 @@ import { TextArea } from '@progress/kendo-react-inputs'
 
 export const Route = createFileRoute('/_app/')({
   loader: async () => {
-    const [summary, conciergeStatus] = await Promise.all([
-      getHomeSummary(),
-      getConciergeStatus(),
-    ])
-    return { ...summary, conciergeStatus }
+    const [summary, conciergeStatus, discussions, highlights] =
+      await Promise.all([
+        getHomeSummary(),
+        getConciergeStatus(),
+        listDiscussions(),
+        listHighlightMoments({ data: { limit: 4 } }),
+      ])
+    return { ...summary, conciergeStatus, discussions, highlights }
   },
   component: Home,
 })
@@ -43,9 +47,52 @@ const SUGGESTIONS = [
   "What's on right now?",
 ]
 
+/**
+ * Live "starts in N min" pill for the next session. Recomputes each 30s off the
+ * session start; reads "Live now" once it's underway and "Just ended" briefly
+ * after. Returns null when there's no start time.
+ */
+function Countdown({ startsAt }: { startsAt: string | Date | null }) {
+  const target = startsAt ? new Date(startsAt).getTime() : null
+  const [now, setNow] = useState(() => Date.now())
+
+  useEffect(() => {
+    if (target === null) return
+    const id = setInterval(() => setNow(Date.now()), 30_000)
+    return () => clearInterval(id)
+  }, [target])
+
+  if (target === null) return null
+  const diffMin = Math.round((target - now) / 60_000)
+
+  let label: string
+  if (diffMin <= -90) return null
+  else if (diffMin < 0) label = 'Live now'
+  else if (diffMin === 0) label = 'Starting now'
+  else if (diffMin < 60) label = `in ${diffMin} min`
+  else {
+    const h = Math.floor(diffMin / 60)
+    const m = diffMin % 60
+    label = m ? `in ${h}h ${m}m` : `in ${h}h`
+  }
+
+  return (
+    <Badge tone={diffMin < 0 ? 'lime' : 'ghost'}>
+      {diffMin < 0 && <LiveDot size={6} className="mr-1 bg-ink" />}
+      {label}
+    </Badge>
+  )
+}
+
 function Home() {
-  const { nextSession, peopleToMeet, trendingProject, conciergeStatus } =
-    Route.useLoaderData()
+  const {
+    nextSession,
+    peopleToMeet,
+    trendingProject,
+    conciergeStatus,
+    discussions,
+    highlights,
+  } = Route.useLoaderData()
   const { data: session } = useSession()
   const firstName = session?.user?.name?.split(' ')[0] ?? null
 
@@ -279,13 +326,16 @@ function Home() {
               strength={1}
               className="bg-ink-gradient flex flex-col rounded-[22px] p-6 text-white"
             >
-              <div className="mb-3.5 flex items-center justify-between">
+              <div className="mb-3.5 flex items-center justify-between gap-2">
                 <Mono tone="lime" className="!tracking-[0.08em] !text-tiny">
                   Next · {formatClock(nextSession.startsAt)}
                 </Mono>
-                {nextSession.track && (
-                  <Badge tone="ghost">{nextSession.track}</Badge>
-                )}
+                <div className="flex items-center gap-1.5">
+                  <Countdown startsAt={nextSession.startsAt} />
+                  {nextSession.track && (
+                    <Badge tone="ghost">{nextSession.track}</Badge>
+                  )}
+                </div>
               </div>
               <div className="mb-3.5 text-title font-semibold leading-[1.15] tracking-tight">
                 {nextSession.title}
@@ -370,6 +420,102 @@ function Home() {
           </div>
         </div>
       </div>
+
+      {/* ── Active discussions ────────────────────────────────────── */}
+      {(discussions.featured || discussions.channels.length > 0) && (
+        <div>
+          <div className="mb-3 flex items-center justify-between gap-2 mt-8">
+            <Mono className="!text-note !tracking-[0.1em]">
+              Active discussions
+            </Mono>
+            <Link
+              to="/discussions"
+              className="text-caption font-medium text-muted transition-colors hover:text-ink"
+            >
+              See all
+            </Link>
+          </div>
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
+            {discussions.featured && (
+              <Link
+                to="/discussions/$id"
+                params={{ id: discussions.featured.id }}
+              >
+                <GlassCard innerClassName="flex flex-col gap-2 p-[17px_20px]">
+                  <div className="flex items-center gap-2 text-caption text-muted">
+                    <LiveDot size={6} />
+                    {discussions.featured.topic
+                      ? `#${discussions.featured.topic}`
+                      : 'Discussion'}
+                  </div>
+                  <div className="text-base font-semibold tracking-snug">
+                    {discussions.featured.title}
+                  </div>
+                  <div className="mt-auto flex items-center gap-3 text-caption text-mist">
+                    <span>{discussions.featured.posts.length} posts</span>
+                    {discussions.featured.sessionTitle && (
+                      <span className="truncate">
+                        from “{discussions.featured.sessionTitle}”
+                      </span>
+                    )}
+                  </div>
+                </GlassCard>
+              </Link>
+            )}
+            {discussions.channels.length > 0 && (
+              <GlassCard innerClassName="flex flex-col p-[17px_20px]">
+                <div className="mb-2 text-caption text-muted">
+                  Busy channels
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  {discussions.channels.slice(0, 4).map((c) => (
+                    <div
+                      key={c.topic}
+                      className="flex items-center justify-between py-1"
+                    >
+                      <span className="text-note font-medium text-slate">
+                        #{c.topic}
+                      </span>
+                      <span className="font-mono text-caption text-faint">
+                        {c.posts}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </GlassCard>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── AI highlights ─────────────────────────────────────────── */}
+      {highlights.length > 0 && (
+        <div>
+          <div className="mb-3 flex items-center gap-2 mt-8">
+            <Star size={15} className="fill-lime text-lime" />
+            <Mono className="!text-note !tracking-[0.1em]">AI highlights</Mono>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {highlights.map((h) => (
+              <Link
+                key={h.id}
+                to="/sessions/$slug"
+                params={{ slug: h.sessionSlug }}
+              >
+                <GlassCard innerClassName="flex flex-col gap-1.5 p-[15px_18px]">
+                  <div className="text-caption text-muted">{h.sessionTitle}</div>
+                  <div className="line-clamp-2 text-note font-medium leading-[1.35] text-ink-soft">
+                    {h.transcriptSnippet ?? 'Key moment'}
+                  </div>
+                  <div className="text-caption text-mist">
+                    flagged from {h.capturedByName}'s capture
+                  </div>
+                </GlassCard>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ── People to meet ────────────────────────────────────────── */}
       {peopleToMeet.length > 0 && (

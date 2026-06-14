@@ -20,6 +20,8 @@ import {
   connection,
   discussion,
   discussionPost,
+  meetup,
+  meetupAttendee,
   message,
   moment,
   note,
@@ -28,6 +30,7 @@ import {
   projectMember,
   question,
   room,
+  sessionResource,
   sessionSpeaker,
   task,
 } from '#/db/domain-schema'
@@ -858,9 +861,10 @@ async function seed() {
   // Clean slate (cascade clears all domain rows referencing users/conferences).
   await db.execute(sql`
     truncate table
-      ${task}, ${connection}, ${message}, ${discussionPost},
-      ${discussion}, ${answer}, ${question}, ${note}, ${moment},
-      ${sessionSpeaker}, ${conferenceSession}, ${room},
+      ${task}, ${connection}, ${message}, ${meetupAttendee}, ${meetup},
+      ${discussionPost}, ${discussion}, ${answer}, ${question}, ${note},
+      ${moment}, ${sessionResource}, ${sessionSpeaker}, ${conferenceSession},
+      ${room},
       ${projectMember}, ${project}, ${conferenceMember}, ${profile},
       ${conference}, ${user}
     restart identity cascade
@@ -1628,6 +1632,43 @@ async function seed() {
   const S = (key: string) => sessionIds.get(key)!
   console.log(`  ✓ ${sessions.length} sessions`)
 
+  /* --- session resources (links a speaker shared) --- */
+  const resources: Array<{
+    session: string
+    label: string
+    url: string
+  }> = [
+    {
+      session: 'rs-compiler',
+      label: 'Slides — The React Compiler in practice',
+      url: 'https://example.com/react-compiler-slides',
+    },
+    {
+      session: 'rs-compiler',
+      label: 'eslint-plugin-react-compiler',
+      url: 'https://github.com/facebook/react/tree/main/compiler',
+    },
+    {
+      session: 'rs-rsc',
+      label: 'RSC data-fetching patterns repo',
+      url: 'https://github.com/example/rsc-patterns',
+    },
+    {
+      session: 'js-mcp-apps',
+      label: 'MCP Apps (SEP-1865) spec',
+      url: 'https://modelcontextprotocol.io',
+    },
+  ]
+  for (const [i, r] of resources.entries()) {
+    await db.insert(sessionResource).values({
+      sessionId: S(r.session),
+      label: r.label,
+      url: r.url,
+      sortOrder: i,
+    })
+  }
+  console.log(`  ✓ ${resources.length} session resources`)
+
   /* --- moments (bookmarked highlights within talks) --- */
   const moments: Array<{
     session: string
@@ -2145,8 +2186,10 @@ async function seed() {
     },
   ]
   let postCount = 0
+  let rscDiscussionId: string | null = null
   for (const d of discussions) {
     const did = uid()
+    if (d.topic === 'react-server-components') rscDiscussionId = did
     await db.insert(discussion).values({
       id: did,
       conferenceId: d.conf ?? null,
@@ -2174,6 +2217,26 @@ async function seed() {
     await insertPosts(d.posts, null)
   }
   console.log(`  ✓ ${discussions.length} discussions, ${postCount} posts`)
+
+  /* --- meetups (the RSC thread that became a real-world meetup) --- */
+  if (rscDiscussionId) {
+    const meetupId = uid()
+    await db.insert(meetup).values({
+      id: meetupId,
+      discussionId: rscDiscussionId,
+      title: 'Coffee: RSC data-fetching patterns',
+      startsAt: new Date(Date.now() + 2 * 60 * 60_000),
+      location: 'Coffee bar, level 1',
+      createdById: U('devin'),
+    })
+    for (const who of ['devin', 'sasha', 'theo']) {
+      await db
+        .insert(meetupAttendee)
+        .values({ meetupId, userId: U(who) })
+        .onConflictDoNothing()
+    }
+    console.log('  ✓ 1 meetup')
+  }
 
   /* --- direct messages --- */
   const dms: Array<{ from: string; to: string; body: string; read?: boolean }> =

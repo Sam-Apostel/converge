@@ -6,6 +6,7 @@ import { db } from '#/db'
 import {
   conferenceSession,
   connection,
+  moment,
   profile,
   project,
   room,
@@ -158,6 +159,86 @@ export const getHomeSummary = createServerFn({ method: 'GET' }).handler(
       peopleToMeet,
       trendingProject: trending[0] ?? null,
     }
+  },
+)
+
+/** An AI-flagged highlight moment, with the talk + who captured it. */
+export type HighlightMoment = {
+  id: string
+  sessionSlug: string
+  sessionTitle: string
+  timestampMs: number
+  transcriptSnippet: string | null
+  capturedByName: string
+}
+
+/**
+ * Recent AI-flagged highlight moments (`moment.aiHighlight`), newest first.
+ * Optionally scope to one session. Surfaced on home, the billboard, and the
+ * session page so the auto-detected highlights don't stay buried.
+ */
+export const listHighlightMoments = createServerFn({ method: 'GET' })
+  .validator((opts?: { sessionId?: string; limit?: number }) => opts ?? {})
+  .handler(async ({ data }): Promise<Array<HighlightMoment>> => {
+    const filters: Array<SQL> = [eq(moment.aiHighlight, true)]
+    if (data.sessionId) filters.push(eq(moment.sessionId, data.sessionId))
+
+    const rows = await db
+      .select({
+        id: moment.id,
+        sessionSlug: conferenceSession.slug,
+        sessionTitle: conferenceSession.title,
+        timestampMs: moment.timestampMs,
+        transcriptSnippet: moment.transcriptSnippet,
+        capturedByName: user.name,
+      })
+      .from(moment)
+      .innerJoin(
+        conferenceSession,
+        eq(conferenceSession.id, moment.sessionId),
+      )
+      .innerJoin(user, eq(user.id, moment.userId))
+      .where(and(...filters))
+      .orderBy(desc(moment.createdAt))
+      .limit(data.limit ?? 8)
+
+    return rows
+  })
+
+/** One of the viewer's bookmarked moments, with the talk it belongs to. */
+export type MyMoment = {
+  id: string
+  sessionSlug: string
+  sessionTitle: string
+  timestampMs: number
+  transcriptSnippet: string | null
+  slideRef: string | null
+  note: string | null
+  aiHighlight: boolean
+}
+
+/**
+ * The viewer's moments across every session, newest first — the data behind the
+ * cross-session "My moments" review page. Each row links back to its talk.
+ */
+export const listMyMoments = createServerFn({ method: 'GET' }).handler(
+  async (): Promise<Array<MyMoment>> => {
+    const viewer = await resolveViewer()
+    return db
+      .select({
+        id: moment.id,
+        sessionSlug: conferenceSession.slug,
+        sessionTitle: conferenceSession.title,
+        timestampMs: moment.timestampMs,
+        transcriptSnippet: moment.transcriptSnippet,
+        slideRef: moment.slideRef,
+        note: moment.note,
+        aiHighlight: moment.aiHighlight,
+      })
+      .from(moment)
+      .innerJoin(conferenceSession, eq(conferenceSession.id, moment.sessionId))
+      .where(eq(moment.userId, viewer))
+      .orderBy(desc(moment.createdAt))
   },
 )
 

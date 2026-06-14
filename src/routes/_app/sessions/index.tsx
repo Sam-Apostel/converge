@@ -200,6 +200,13 @@ function SessionsPage() {
                                 {row.roomName}
                               </span>
                             ) : null}
+                            {/* Right-rail speaker is sm:flex — show the name
+                                inline so mobile keeps speaker attribution. */}
+                            {row.speakerName ? (
+                              <span className="text-caption text-mist group-data-live:text-frost sm:hidden">
+                                · {row.speakerName}
+                              </span>
+                            ) : null}
                           </div>
                         </div>
 

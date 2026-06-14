@@ -4,6 +4,7 @@ import {
   ChipList,
   type ChipListChangeEvent,
 } from '@progress/kendo-react-buttons'
+import { Search } from 'lucide-react'
 
 import {
   Avatar,
@@ -32,18 +33,42 @@ const INTENTS = [
   { text: 'Meeting makers', value: 'meeting' },
 ]
 
+/** Free-text haystack: name plus the searchable profile fields. */
+function matchesQuery(person: Person, q: string): boolean {
+  if (!q) return true
+  const p = person.profile
+  const haystack = [
+    person.name,
+    p?.headline,
+    p?.title,
+    p?.company,
+    p?.location,
+    p?.currentFocus,
+    ...(p?.interestedTopics ?? []),
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase()
+  return q
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean)
+    .every((term) => haystack.includes(term))
+}
+
 function PeoplePage() {
   const people = Route.useLoaderData()
   const [selectedIntent, setSelectedIntent] = useState('all')
+  const [query, setQuery] = useState('')
 
-  const filtered =
-    selectedIntent === 'all'
-      ? people
-      : people.filter((p) =>
-          p.profile?.intents?.some((i) =>
-            i.toLowerCase().includes(selectedIntent),
-          ),
-        )
+  const filtered = people.filter((p) => {
+    const intentOk =
+      selectedIntent === 'all' ||
+      p.profile?.intents?.some((i) =>
+        i.toLowerCase().includes(selectedIntent),
+      )
+    return intentOk && matchesQuery(p, query)
+  })
   const top = filtered[0] ?? people[0]
   const featured =
     people.find((p) => p.profile?.handle === 'kitze') ?? filtered[1] ?? top
@@ -58,16 +83,37 @@ function PeoplePage() {
         just by name.
       </p>
 
-      <div className="mb-5 flex flex-wrap items-center gap-2">
-        <ChipList
-          data={INTENTS}
-          selection="single"
-          value={selectedIntent}
-          onChange={(e: ChipListChangeEvent) =>
-            setSelectedIntent((e.value as string) ?? 'all')
-          }
-          className="converge-chips"
-        />
+      <div className="mb-5 flex flex-col gap-3">
+        <div className="relative max-w-md">
+          <Search
+            size={16}
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-faint"
+          />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search by name, focus, company…"
+            aria-label="Search people"
+            className={cn(
+              'w-full py-2.5 pl-10 pr-3.5',
+              'text-body text-ink placeholder:text-faint',
+              'rounded-full border border-edge/40 bg-white shadow-soft outline-none',
+              'transition-colors focus:border-ink/30',
+            )}
+          />
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <ChipList
+            data={INTENTS}
+            selection="single"
+            value={selectedIntent}
+            onChange={(e: ChipListChangeEvent) =>
+              setSelectedIntent((e.value as string) ?? 'all')
+            }
+            className="converge-chips"
+          />
+        </div>
       </div>
 
       {top && <TopMatch person={top} />}
@@ -77,6 +123,12 @@ function PeoplePage() {
           {filtered.map((person) => (
             <PersonCard key={person.id} person={person} />
           ))}
+          {filtered.length === 0 && (
+            <p className="col-span-full rounded-2xl border border-dashed border-edge/40 bg-white/60 p-6 text-body text-muted">
+              No people match{query ? ` "${query}"` : ' that filter'}. Try a
+              different search or intent.
+            </p>
+          )}
         </div>
 
         {featured && <ProfilePanel person={featured} />}
@@ -237,7 +289,7 @@ function ProfilePanel({ person }: { person: Person }) {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-3.5">
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
         <div>
           <Mono tone="slate" className="mb-2.5 block !text-tiny">
             Talk to me about

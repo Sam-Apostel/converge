@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { useLiveQuery } from '@tanstack/react-db'
-import { Star } from 'lucide-react'
+import {
+  ArrowUpRight,
+  FileText,
+  Link as LinkIcon,
+  Sparkles,
+  Star,
+} from 'lucide-react'
 
 import { Avatar, Skeleton, useNotify } from '#/components/ui'
 import { LivePlayer } from '#/components/session/live-player'
@@ -180,7 +186,7 @@ function SessionScreen() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr]">
         {/* Left — the talk */}
-        <div className="border-r border-edge/12 px-[26px] pb-[30px] pt-[26px]">
+        <div className="border-edge/12 px-[26px] pb-[30px] pt-[26px] lg:border-r">
           <h1 className="mb-3.5 text-[28px] font-semibold leading-[1.08] tracking-tighter">
             {session.title}
           </h1>
@@ -212,6 +218,82 @@ function SessionScreen() {
               total={SLIDES.length}
               onBookmark={captureSlide}
             />
+          )}
+
+          {(detail.session.aiSummary || detail.session.transcriptUrl) && (
+            <div className="mb-6 rounded-2xl bg-white p-5 shadow-soft">
+              <div className="mb-2 flex items-center gap-1.5">
+                <Sparkles size={14} className="text-ink" />
+                <span className="text-note font-semibold tracking-snug">
+                  AI summary
+                </span>
+              </div>
+              {detail.session.aiSummary ? (
+                <p className="text-body leading-normal text-slate">
+                  {detail.session.aiSummary}
+                </p>
+              ) : (
+                <p className="text-note text-muted">
+                  A summary will appear here after the talk.
+                </p>
+              )}
+              {detail.session.transcriptUrl && (
+                <a
+                  href={detail.session.transcriptUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-flex items-center gap-1.5 text-note font-medium text-ink transition-colors hover:text-ink-soft"
+                >
+                  <FileText size={14} /> Read the full transcript
+                </a>
+              )}
+            </div>
+          )}
+
+          {detail.resources.length > 0 && (
+            <details className="mb-6 rounded-2xl bg-white p-5 shadow-soft">
+              <summary className="flex cursor-pointer items-center gap-1.5 text-note font-semibold tracking-snug marker:content-['']">
+                <LinkIcon size={14} className="text-ink" /> Resources ·{' '}
+                {detail.resources.length}
+              </summary>
+              <ul className="mt-3 flex flex-col gap-2">
+                {detail.resources.map((r) => (
+                  <li key={r.id}>
+                    <a
+                      href={r.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 text-note font-medium text-ink transition-colors hover:text-ink-soft"
+                    >
+                      {r.label} <ArrowUpRight size={13} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+
+          {detail.highlights.length > 0 && (
+            <div className="mb-6 rounded-2xl bg-lime/[0.12] p-4">
+              <div className="mb-2.5 flex items-center gap-1.5">
+                <Star size={14} className="fill-lime text-lime" />
+                <span className="text-note font-semibold tracking-snug">
+                  AI highlights from this talk
+                </span>
+              </div>
+              <ul className="flex flex-col gap-2">
+                {detail.highlights.map((h) => (
+                  <li key={h.id} className="flex gap-2.5 text-note">
+                    <span className="shrink-0 font-mono text-caption text-slate">
+                      {formatOffset(h.timestampMs)}
+                    </span>
+                    <span className="text-ink-soft">
+                      {h.transcriptSnippet ?? 'Key moment'}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
 
           <QuestionList

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as BillboardRouteImport } from './routes/billboard'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as ApiTasksRouteImport } from './routes/api/tasks'
@@ -30,6 +31,7 @@ import { Route as ApiAnswersRouteImport } from './routes/api/answers'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppSearchRouteImport } from './routes/_app/search'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
+import { Route as AppMomentsRouteImport } from './routes/_app/moments'
 import { Route as AppMessagesRouteImport } from './routes/_app/messages'
 import { Route as AppDiscussionsRouteImport } from './routes/_app/discussions'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -48,6 +50,9 @@ import { Route as AppPeopleUserIdRouteImport } from './routes/_app/people/$userI
 import { Route as AppDiscussionsIdRouteImport } from './routes/_app/discussions/$id'
 import { Route as ApiQuestionsIdVoteRouteImport } from './routes/api/questions.$id.vote'
 import { Route as ApiQuestionsIdPromoteRouteImport } from './routes/api/questions.$id.promote'
+import { Route as ApiMeetupsIdRsvpRouteImport } from './routes/api/meetups.$id.rsvp'
+import { Route as ApiDiscussionsIdPostsRouteImport } from './routes/api/discussions.$id.posts'
+import { Route as AppProjectsSlugEditRouteImport } from './routes/_app/projects/$slug.edit'
 
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
@@ -57,6 +62,11 @@ const McpRoute = McpRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BillboardRoute = BillboardRouteImport.update({
+  id: '/billboard',
+  path: '/billboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -153,6 +163,11 @@ const AppProfileRoute = AppProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AppRoute,
 } as any)
+const AppMomentsRoute = AppMomentsRouteImport.update({
+  id: '/moments',
+  path: '/moments',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppMessagesRoute = AppMessagesRouteImport.update({
   id: '/messages',
   path: '/messages',
@@ -245,15 +260,32 @@ const ApiQuestionsIdPromoteRoute = ApiQuestionsIdPromoteRouteImport.update({
   path: '/$id/promote',
   getParentRoute: () => ApiQuestionsRoute,
 } as any)
+const ApiMeetupsIdRsvpRoute = ApiMeetupsIdRsvpRouteImport.update({
+  id: '/api/meetups/$id/rsvp',
+  path: '/api/meetups/$id/rsvp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDiscussionsIdPostsRoute = ApiDiscussionsIdPostsRouteImport.update({
+  id: '/api/discussions/$id/posts',
+  path: '/api/discussions/$id/posts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppProjectsSlugEditRoute = AppProjectsSlugEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => AppProjectsSlugRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/billboard': typeof BillboardRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/discussions': typeof AppDiscussionsRouteWithChildren
   '/messages': typeof AppMessagesRoute
+  '/moments': typeof AppMomentsRoute
   '/profile': typeof AppProfileRoute
   '/search': typeof AppSearchRoute
   '/settings': typeof AppSettingsRoute
@@ -273,7 +305,7 @@ export interface FileRoutesByFullPath {
   '/api/tasks': typeof ApiTasksRoute
   '/discussions/$id': typeof AppDiscussionsIdRoute
   '/people/$userId': typeof AppPeopleUserIdRoute
-  '/projects/$slug': typeof AppProjectsSlugRoute
+  '/projects/$slug': typeof AppProjectsSlugRouteWithChildren
   '/projects/new': typeof AppProjectsNewRoute
   '/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -283,16 +315,21 @@ export interface FileRoutesByFullPath {
   '/people/': typeof AppPeopleIndexRoute
   '/projects/': typeof AppProjectsIndexRoute
   '/sessions/': typeof AppSessionsIndexRoute
+  '/projects/$slug/edit': typeof AppProjectsSlugEditRoute
+  '/api/discussions/$id/posts': typeof ApiDiscussionsIdPostsRoute
+  '/api/meetups/$id/rsvp': typeof ApiMeetupsIdRsvpRoute
   '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
   '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
 }
 export interface FileRoutesByTo {
+  '/billboard': typeof BillboardRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/discussions': typeof AppDiscussionsRouteWithChildren
   '/messages': typeof AppMessagesRoute
+  '/moments': typeof AppMomentsRoute
   '/profile': typeof AppProfileRoute
   '/search': typeof AppSearchRoute
   '/settings': typeof AppSettingsRoute
@@ -313,7 +350,7 @@ export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/discussions/$id': typeof AppDiscussionsIdRoute
   '/people/$userId': typeof AppPeopleUserIdRoute
-  '/projects/$slug': typeof AppProjectsSlugRoute
+  '/projects/$slug': typeof AppProjectsSlugRouteWithChildren
   '/projects/new': typeof AppProjectsNewRoute
   '/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -323,18 +360,23 @@ export interface FileRoutesByTo {
   '/people': typeof AppPeopleIndexRoute
   '/projects': typeof AppProjectsIndexRoute
   '/sessions': typeof AppSessionsIndexRoute
+  '/projects/$slug/edit': typeof AppProjectsSlugEditRoute
+  '/api/discussions/$id/posts': typeof ApiDiscussionsIdPostsRoute
+  '/api/meetups/$id/rsvp': typeof ApiMeetupsIdRsvpRoute
   '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
   '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/billboard': typeof BillboardRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_app/discussions': typeof AppDiscussionsRouteWithChildren
   '/_app/messages': typeof AppMessagesRoute
+  '/_app/moments': typeof AppMomentsRoute
   '/_app/profile': typeof AppProfileRoute
   '/_app/search': typeof AppSearchRoute
   '/_app/settings': typeof AppSettingsRoute
@@ -355,7 +397,7 @@ export interface FileRoutesById {
   '/_app/': typeof AppIndexRoute
   '/_app/discussions/$id': typeof AppDiscussionsIdRoute
   '/_app/people/$userId': typeof AppPeopleUserIdRoute
-  '/_app/projects/$slug': typeof AppProjectsSlugRoute
+  '/_app/projects/$slug': typeof AppProjectsSlugRouteWithChildren
   '/_app/projects/new': typeof AppProjectsNewRoute
   '/_app/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -365,6 +407,9 @@ export interface FileRoutesById {
   '/_app/people/': typeof AppPeopleIndexRoute
   '/_app/projects/': typeof AppProjectsIndexRoute
   '/_app/sessions/': typeof AppSessionsIndexRoute
+  '/_app/projects/$slug/edit': typeof AppProjectsSlugEditRoute
+  '/api/discussions/$id/posts': typeof ApiDiscussionsIdPostsRoute
+  '/api/meetups/$id/rsvp': typeof ApiMeetupsIdRsvpRoute
   '/api/questions/$id/promote': typeof ApiQuestionsIdPromoteRoute
   '/api/questions/$id/vote': typeof ApiQuestionsIdVoteRoute
 }
@@ -372,12 +417,14 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/billboard'
     | '/login'
     | '/mcp'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/discussions'
     | '/messages'
+    | '/moments'
     | '/profile'
     | '/search'
     | '/settings'
@@ -407,16 +454,21 @@ export interface FileRouteTypes {
     | '/people/'
     | '/projects/'
     | '/sessions/'
+    | '/projects/$slug/edit'
+    | '/api/discussions/$id/posts'
+    | '/api/meetups/$id/rsvp'
     | '/api/questions/$id/promote'
     | '/api/questions/$id/vote'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/billboard'
     | '/login'
     | '/mcp'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/discussions'
     | '/messages'
+    | '/moments'
     | '/profile'
     | '/search'
     | '/settings'
@@ -447,17 +499,22 @@ export interface FileRouteTypes {
     | '/people'
     | '/projects'
     | '/sessions'
+    | '/projects/$slug/edit'
+    | '/api/discussions/$id/posts'
+    | '/api/meetups/$id/rsvp'
     | '/api/questions/$id/promote'
     | '/api/questions/$id/vote'
   id:
     | '__root__'
     | '/_app'
+    | '/billboard'
     | '/login'
     | '/mcp'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/_app/discussions'
     | '/_app/messages'
+    | '/_app/moments'
     | '/_app/profile'
     | '/_app/search'
     | '/_app/settings'
@@ -488,12 +545,16 @@ export interface FileRouteTypes {
     | '/_app/people/'
     | '/_app/projects/'
     | '/_app/sessions/'
+    | '/_app/projects/$slug/edit'
+    | '/api/discussions/$id/posts'
+    | '/api/meetups/$id/rsvp'
     | '/api/questions/$id/promote'
     | '/api/questions/$id/vote'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
+  BillboardRoute: typeof BillboardRoute
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
   Char91DotwellKnownChar93OauthAuthorizationServerRoute: typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
@@ -513,6 +574,8 @@ export interface RootRouteChildren {
   ApiStreamRoute: typeof ApiStreamRoute
   ApiTasksRoute: typeof ApiTasksRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiDiscussionsIdPostsRoute: typeof ApiDiscussionsIdPostsRoute
+  ApiMeetupsIdRsvpRoute: typeof ApiMeetupsIdRsvpRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -529,6 +592,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/billboard': {
+      id: '/billboard'
+      path: '/billboard'
+      fullPath: '/billboard'
+      preLoaderRoute: typeof BillboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app': {
@@ -664,6 +734,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/moments': {
+      id: '/_app/moments'
+      path: '/moments'
+      fullPath: '/moments'
+      preLoaderRoute: typeof AppMomentsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/messages': {
       id: '/_app/messages'
       path: '/messages'
@@ -790,6 +867,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiQuestionsIdPromoteRouteImport
       parentRoute: typeof ApiQuestionsRoute
     }
+    '/api/meetups/$id/rsvp': {
+      id: '/api/meetups/$id/rsvp'
+      path: '/api/meetups/$id/rsvp'
+      fullPath: '/api/meetups/$id/rsvp'
+      preLoaderRoute: typeof ApiMeetupsIdRsvpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/discussions/$id/posts': {
+      id: '/api/discussions/$id/posts'
+      path: '/api/discussions/$id/posts'
+      fullPath: '/api/discussions/$id/posts'
+      preLoaderRoute: typeof ApiDiscussionsIdPostsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/projects/$slug/edit': {
+      id: '/_app/projects/$slug/edit'
+      path: '/edit'
+      fullPath: '/projects/$slug/edit'
+      preLoaderRoute: typeof AppProjectsSlugEditRouteImport
+      parentRoute: typeof AppProjectsSlugRoute
+    }
   }
 }
 
@@ -805,15 +903,28 @@ const AppDiscussionsRouteWithChildren = AppDiscussionsRoute._addFileChildren(
   AppDiscussionsRouteChildren,
 )
 
+interface AppProjectsSlugRouteChildren {
+  AppProjectsSlugEditRoute: typeof AppProjectsSlugEditRoute
+}
+
+const AppProjectsSlugRouteChildren: AppProjectsSlugRouteChildren = {
+  AppProjectsSlugEditRoute: AppProjectsSlugEditRoute,
+}
+
+const AppProjectsSlugRouteWithChildren = AppProjectsSlugRoute._addFileChildren(
+  AppProjectsSlugRouteChildren,
+)
+
 interface AppRouteChildren {
   AppDiscussionsRoute: typeof AppDiscussionsRouteWithChildren
   AppMessagesRoute: typeof AppMessagesRoute
+  AppMomentsRoute: typeof AppMomentsRoute
   AppProfileRoute: typeof AppProfileRoute
   AppSearchRoute: typeof AppSearchRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppIndexRoute: typeof AppIndexRoute
   AppPeopleUserIdRoute: typeof AppPeopleUserIdRoute
-  AppProjectsSlugRoute: typeof AppProjectsSlugRoute
+  AppProjectsSlugRoute: typeof AppProjectsSlugRouteWithChildren
   AppProjectsNewRoute: typeof AppProjectsNewRoute
   AppSessionsSlugRoute: typeof AppSessionsSlugRoute
   AppConferencesIndexRoute: typeof AppConferencesIndexRoute
@@ -825,12 +936,13 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppDiscussionsRoute: AppDiscussionsRouteWithChildren,
   AppMessagesRoute: AppMessagesRoute,
+  AppMomentsRoute: AppMomentsRoute,
   AppProfileRoute: AppProfileRoute,
   AppSearchRoute: AppSearchRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppIndexRoute: AppIndexRoute,
   AppPeopleUserIdRoute: AppPeopleUserIdRoute,
-  AppProjectsSlugRoute: AppProjectsSlugRoute,
+  AppProjectsSlugRoute: AppProjectsSlugRouteWithChildren,
   AppProjectsNewRoute: AppProjectsNewRoute,
   AppSessionsSlugRoute: AppSessionsSlugRoute,
   AppConferencesIndexRoute: AppConferencesIndexRoute,
@@ -881,6 +993,7 @@ const ApiQuestionsRouteWithChildren = ApiQuestionsRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
+  BillboardRoute: BillboardRoute,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
   Char91DotwellKnownChar93OauthAuthorizationServerRoute:
@@ -902,6 +1015,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiStreamRoute: ApiStreamRoute,
   ApiTasksRoute: ApiTasksRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiDiscussionsIdPostsRoute: ApiDiscussionsIdPostsRoute,
+  ApiMeetupsIdRsvpRoute: ApiMeetupsIdRsvpRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

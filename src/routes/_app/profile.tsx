@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
-import { ArrowUpRight, Plus, Settings as SettingsIcon } from 'lucide-react'
+import {
+  ArrowUpRight,
+  Bookmark,
+  Plus,
+  Settings as SettingsIcon,
+} from 'lucide-react'
 
 import { AvatarUpload } from '#/components/avatar-upload'
 import { PageHeader } from '#/components/page-header'
@@ -93,6 +98,11 @@ function ProfilePage() {
         subtitle="Your identity, intent, current focus, conversation preferences and projects."
         actions={
           <div className="flex items-center gap-2.5">
+            <Link to="/moments">
+              <Button variant="soft" size="sm">
+                <Bookmark size={14} /> My moments
+              </Button>
+            </Link>
             <Link to="/settings">
               <Button variant="soft" size="sm">
                 <SettingsIcon size={14} /> AI settings
@@ -103,7 +113,9 @@ function ProfilePage() {
                 variant="soft"
                 size="sm"
                 onClick={() =>
-                  void authClient.signOut().then(() => router.invalidate())
+                  void authClient
+                    .signOut()
+                    .then(() => router.navigate({ to: '/login' }))
                 }
               >
                 Sign out
