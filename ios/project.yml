@@ -1,0 +1,43 @@
+name: Converge
+options:
+  bundleIdPrefix: land.sams
+  deploymentTarget:
+    iOS: "26.0"
+  developmentLanguage: en
+  createIntermediateGroups: true
+
+settings:
+  base:
+    DEVELOPMENT_TEAM: Y3734CNKQ8
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "5.0"
+    GENERATE_INFOPLIST_FILE: NO
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+targets:
+  Converge:
+    type: application
+    platform: iOS
+    sources:
+      - path: Converge
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: land.sams.converge
+        PRODUCT_NAME: Converge
+        INFOPLIST_FILE: Converge/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_PREVIEWS: YES
+        TARGETED_DEVICE_FAMILY: "1"
+    info:
+      path: Converge/Info.plist
+      properties:
+        CFBundleDisplayName: Converge
+        UILaunchScreen:
+          UIColorName: CanvasColor
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        ITSAppUsesNonExemptEncryption: false
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true

@@ -20,9 +20,11 @@ import { Route as ApiSessionsRouteImport } from './routes/api/sessions'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
 import { Route as ApiQuestionsRouteImport } from './routes/api/questions'
 import { Route as ApiProjectsRouteImport } from './routes/api/projects'
+import { Route as ApiProfileRouteImport } from './routes/api/profile'
 import { Route as ApiPeopleRouteImport } from './routes/api/people'
 import { Route as ApiMomentsRouteImport } from './routes/api/moments'
 import { Route as ApiMessagesRouteImport } from './routes/api/messages'
+import { Route as ApiHomeRouteImport } from './routes/api/home'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiDocumentsRouteImport } from './routes/api/documents'
 import { Route as ApiDiscussionsRouteImport } from './routes/api/discussions'
@@ -41,8 +43,11 @@ import { Route as AppSessionsIndexRouteImport } from './routes/_app/sessions/ind
 import { Route as AppProjectsIndexRouteImport } from './routes/_app/projects/index'
 import { Route as AppPeopleIndexRouteImport } from './routes/_app/people/index'
 import { Route as AppConferencesIndexRouteImport } from './routes/_app/conferences/index'
+import { Route as ApiSessionsSlugRouteImport } from './routes/api/sessions.$slug'
 import { Route as ApiMomentsSharedRouteImport } from './routes/api/moments/shared'
+import { Route as ApiMomentsMineRouteImport } from './routes/api/moments/mine'
 import { Route as ApiDocumentsIdRouteImport } from './routes/api/documents.$id'
+import { Route as ApiDiscussionsIdRouteImport } from './routes/api/discussions.$id'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppSessionsSlugRouteImport } from './routes/_app/sessions/$slug'
 import { Route as AppProjectsNewRouteImport } from './routes/_app/projects/new'
@@ -109,6 +114,11 @@ const ApiProjectsRoute = ApiProjectsRouteImport.update({
   path: '/api/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiProfileRoute = ApiProfileRouteImport.update({
+  id: '/api/profile',
+  path: '/api/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPeopleRoute = ApiPeopleRouteImport.update({
   id: '/api/people',
   path: '/api/people',
@@ -122,6 +132,11 @@ const ApiMomentsRoute = ApiMomentsRouteImport.update({
 const ApiMessagesRoute = ApiMessagesRouteImport.update({
   id: '/api/messages',
   path: '/api/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHomeRoute = ApiHomeRouteImport.update({
+  id: '/api/home',
+  path: '/api/home',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
@@ -216,15 +231,30 @@ const AppConferencesIndexRoute = AppConferencesIndexRouteImport.update({
   path: '/conferences/',
   getParentRoute: () => AppRoute,
 } as any)
+const ApiSessionsSlugRoute = ApiSessionsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ApiSessionsRoute,
+} as any)
 const ApiMomentsSharedRoute = ApiMomentsSharedRouteImport.update({
   id: '/shared',
   path: '/shared',
+  getParentRoute: () => ApiMomentsRoute,
+} as any)
+const ApiMomentsMineRoute = ApiMomentsMineRouteImport.update({
+  id: '/mine',
+  path: '/mine',
   getParentRoute: () => ApiMomentsRoute,
 } as any)
 const ApiDocumentsIdRoute = ApiDocumentsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => ApiDocumentsRoute,
+} as any)
+const ApiDiscussionsIdRoute = ApiDiscussionsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiDiscussionsRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -272,9 +302,9 @@ const ApiMeetupsIdRsvpRoute = ApiMeetupsIdRsvpRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiDiscussionsIdPostsRoute = ApiDiscussionsIdPostsRouteImport.update({
-  id: '/$id/posts',
-  path: '/$id/posts',
-  getParentRoute: () => ApiDiscussionsRoute,
+  id: '/posts',
+  path: '/posts',
+  getParentRoute: () => ApiDiscussionsIdRoute,
 } as any)
 const AppProjectsSlugEditRoute = AppProjectsSlugEditRouteImport.update({
   id: '/edit',
@@ -301,13 +331,15 @@ export interface FileRoutesByFullPath {
   '/api/discussions': typeof ApiDiscussionsRouteWithChildren
   '/api/documents': typeof ApiDocumentsRouteWithChildren
   '/api/health': typeof ApiHealthRoute
+  '/api/home': typeof ApiHomeRoute
   '/api/messages': typeof ApiMessagesRoute
   '/api/moments': typeof ApiMomentsRouteWithChildren
   '/api/people': typeof ApiPeopleRoute
+  '/api/profile': typeof ApiProfileRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/questions': typeof ApiQuestionsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
-  '/api/sessions': typeof ApiSessionsRoute
+  '/api/sessions': typeof ApiSessionsRouteWithChildren
   '/api/stream': typeof ApiStreamRoute
   '/api/tasks': typeof ApiTasksRoute
   '/discussions/$id': typeof AppDiscussionsIdRoute
@@ -316,8 +348,11 @@ export interface FileRoutesByFullPath {
   '/projects/new': typeof AppProjectsNewRoute
   '/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/discussions/$id': typeof ApiDiscussionsIdRouteWithChildren
   '/api/documents/$id': typeof ApiDocumentsIdRoute
+  '/api/moments/mine': typeof ApiMomentsMineRoute
   '/api/moments/shared': typeof ApiMomentsSharedRoute
+  '/api/sessions/$slug': typeof ApiSessionsSlugRoute
   '/conferences/': typeof AppConferencesIndexRoute
   '/people/': typeof AppPeopleIndexRoute
   '/projects/': typeof AppProjectsIndexRoute
@@ -346,13 +381,15 @@ export interface FileRoutesByTo {
   '/api/discussions': typeof ApiDiscussionsRouteWithChildren
   '/api/documents': typeof ApiDocumentsRouteWithChildren
   '/api/health': typeof ApiHealthRoute
+  '/api/home': typeof ApiHomeRoute
   '/api/messages': typeof ApiMessagesRoute
   '/api/moments': typeof ApiMomentsRouteWithChildren
   '/api/people': typeof ApiPeopleRoute
+  '/api/profile': typeof ApiProfileRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/questions': typeof ApiQuestionsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
-  '/api/sessions': typeof ApiSessionsRoute
+  '/api/sessions': typeof ApiSessionsRouteWithChildren
   '/api/stream': typeof ApiStreamRoute
   '/api/tasks': typeof ApiTasksRoute
   '/': typeof AppIndexRoute
@@ -362,8 +399,11 @@ export interface FileRoutesByTo {
   '/projects/new': typeof AppProjectsNewRoute
   '/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/discussions/$id': typeof ApiDiscussionsIdRouteWithChildren
   '/api/documents/$id': typeof ApiDocumentsIdRoute
+  '/api/moments/mine': typeof ApiMomentsMineRoute
   '/api/moments/shared': typeof ApiMomentsSharedRoute
+  '/api/sessions/$slug': typeof ApiSessionsSlugRoute
   '/conferences': typeof AppConferencesIndexRoute
   '/people': typeof AppPeopleIndexRoute
   '/projects': typeof AppProjectsIndexRoute
@@ -394,13 +434,15 @@ export interface FileRoutesById {
   '/api/discussions': typeof ApiDiscussionsRouteWithChildren
   '/api/documents': typeof ApiDocumentsRouteWithChildren
   '/api/health': typeof ApiHealthRoute
+  '/api/home': typeof ApiHomeRoute
   '/api/messages': typeof ApiMessagesRoute
   '/api/moments': typeof ApiMomentsRouteWithChildren
   '/api/people': typeof ApiPeopleRoute
+  '/api/profile': typeof ApiProfileRoute
   '/api/projects': typeof ApiProjectsRoute
   '/api/questions': typeof ApiQuestionsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
-  '/api/sessions': typeof ApiSessionsRoute
+  '/api/sessions': typeof ApiSessionsRouteWithChildren
   '/api/stream': typeof ApiStreamRoute
   '/api/tasks': typeof ApiTasksRoute
   '/_app/': typeof AppIndexRoute
@@ -410,8 +452,11 @@ export interface FileRoutesById {
   '/_app/projects/new': typeof AppProjectsNewRoute
   '/_app/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/discussions/$id': typeof ApiDiscussionsIdRouteWithChildren
   '/api/documents/$id': typeof ApiDocumentsIdRoute
+  '/api/moments/mine': typeof ApiMomentsMineRoute
   '/api/moments/shared': typeof ApiMomentsSharedRoute
+  '/api/sessions/$slug': typeof ApiSessionsSlugRoute
   '/_app/conferences/': typeof AppConferencesIndexRoute
   '/_app/people/': typeof AppPeopleIndexRoute
   '/_app/projects/': typeof AppProjectsIndexRoute
@@ -443,9 +488,11 @@ export interface FileRouteTypes {
     | '/api/discussions'
     | '/api/documents'
     | '/api/health'
+    | '/api/home'
     | '/api/messages'
     | '/api/moments'
     | '/api/people'
+    | '/api/profile'
     | '/api/projects'
     | '/api/questions'
     | '/api/search'
@@ -458,8 +505,11 @@ export interface FileRouteTypes {
     | '/projects/new'
     | '/sessions/$slug'
     | '/api/auth/$'
+    | '/api/discussions/$id'
     | '/api/documents/$id'
+    | '/api/moments/mine'
     | '/api/moments/shared'
+    | '/api/sessions/$slug'
     | '/conferences/'
     | '/people/'
     | '/projects/'
@@ -488,9 +538,11 @@ export interface FileRouteTypes {
     | '/api/discussions'
     | '/api/documents'
     | '/api/health'
+    | '/api/home'
     | '/api/messages'
     | '/api/moments'
     | '/api/people'
+    | '/api/profile'
     | '/api/projects'
     | '/api/questions'
     | '/api/search'
@@ -504,8 +556,11 @@ export interface FileRouteTypes {
     | '/projects/new'
     | '/sessions/$slug'
     | '/api/auth/$'
+    | '/api/discussions/$id'
     | '/api/documents/$id'
+    | '/api/moments/mine'
     | '/api/moments/shared'
+    | '/api/sessions/$slug'
     | '/conferences'
     | '/people'
     | '/projects'
@@ -535,9 +590,11 @@ export interface FileRouteTypes {
     | '/api/discussions'
     | '/api/documents'
     | '/api/health'
+    | '/api/home'
     | '/api/messages'
     | '/api/moments'
     | '/api/people'
+    | '/api/profile'
     | '/api/projects'
     | '/api/questions'
     | '/api/search'
@@ -551,8 +608,11 @@ export interface FileRouteTypes {
     | '/_app/projects/new'
     | '/_app/sessions/$slug'
     | '/api/auth/$'
+    | '/api/discussions/$id'
     | '/api/documents/$id'
+    | '/api/moments/mine'
     | '/api/moments/shared'
+    | '/api/sessions/$slug'
     | '/_app/conferences/'
     | '/_app/people/'
     | '/_app/projects/'
@@ -577,13 +637,15 @@ export interface RootRouteChildren {
   ApiDiscussionsRoute: typeof ApiDiscussionsRouteWithChildren
   ApiDocumentsRoute: typeof ApiDocumentsRouteWithChildren
   ApiHealthRoute: typeof ApiHealthRoute
+  ApiHomeRoute: typeof ApiHomeRoute
   ApiMessagesRoute: typeof ApiMessagesRoute
   ApiMomentsRoute: typeof ApiMomentsRouteWithChildren
   ApiPeopleRoute: typeof ApiPeopleRoute
+  ApiProfileRoute: typeof ApiProfileRoute
   ApiProjectsRoute: typeof ApiProjectsRoute
   ApiQuestionsRoute: typeof ApiQuestionsRouteWithChildren
   ApiSearchRoute: typeof ApiSearchRoute
-  ApiSessionsRoute: typeof ApiSessionsRoute
+  ApiSessionsRoute: typeof ApiSessionsRouteWithChildren
   ApiStreamRoute: typeof ApiStreamRoute
   ApiTasksRoute: typeof ApiTasksRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -669,6 +731,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiProjectsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/profile': {
+      id: '/api/profile'
+      path: '/api/profile'
+      fullPath: '/api/profile'
+      preLoaderRoute: typeof ApiProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/people': {
       id: '/api/people'
       path: '/api/people'
@@ -688,6 +757,13 @@ declare module '@tanstack/react-router' {
       path: '/api/messages'
       fullPath: '/api/messages'
       preLoaderRoute: typeof ApiMessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/home': {
+      id: '/api/home'
+      path: '/api/home'
+      fullPath: '/api/home'
+      preLoaderRoute: typeof ApiHomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/health': {
@@ -816,11 +892,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppConferencesIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/api/sessions/$slug': {
+      id: '/api/sessions/$slug'
+      path: '/$slug'
+      fullPath: '/api/sessions/$slug'
+      preLoaderRoute: typeof ApiSessionsSlugRouteImport
+      parentRoute: typeof ApiSessionsRoute
+    }
     '/api/moments/shared': {
       id: '/api/moments/shared'
       path: '/shared'
       fullPath: '/api/moments/shared'
       preLoaderRoute: typeof ApiMomentsSharedRouteImport
+      parentRoute: typeof ApiMomentsRoute
+    }
+    '/api/moments/mine': {
+      id: '/api/moments/mine'
+      path: '/mine'
+      fullPath: '/api/moments/mine'
+      preLoaderRoute: typeof ApiMomentsMineRouteImport
       parentRoute: typeof ApiMomentsRoute
     }
     '/api/documents/$id': {
@@ -829,6 +919,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/documents/$id'
       preLoaderRoute: typeof ApiDocumentsIdRouteImport
       parentRoute: typeof ApiDocumentsRoute
+    }
+    '/api/discussions/$id': {
+      id: '/api/discussions/$id'
+      path: '/$id'
+      fullPath: '/api/discussions/$id'
+      preLoaderRoute: typeof ApiDiscussionsIdRouteImport
+      parentRoute: typeof ApiDiscussionsRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -895,10 +992,10 @@ declare module '@tanstack/react-router' {
     }
     '/api/discussions/$id/posts': {
       id: '/api/discussions/$id/posts'
-      path: '/$id/posts'
+      path: '/posts'
       fullPath: '/api/discussions/$id/posts'
       preLoaderRoute: typeof ApiDiscussionsIdPostsRouteImport
-      parentRoute: typeof ApiDiscussionsRoute
+      parentRoute: typeof ApiDiscussionsIdRoute
     }
     '/_app/projects/$slug/edit': {
       id: '/_app/projects/$slug/edit'
@@ -972,12 +1069,23 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
-interface ApiDiscussionsRouteChildren {
+interface ApiDiscussionsIdRouteChildren {
   ApiDiscussionsIdPostsRoute: typeof ApiDiscussionsIdPostsRoute
 }
 
-const ApiDiscussionsRouteChildren: ApiDiscussionsRouteChildren = {
+const ApiDiscussionsIdRouteChildren: ApiDiscussionsIdRouteChildren = {
   ApiDiscussionsIdPostsRoute: ApiDiscussionsIdPostsRoute,
+}
+
+const ApiDiscussionsIdRouteWithChildren =
+  ApiDiscussionsIdRoute._addFileChildren(ApiDiscussionsIdRouteChildren)
+
+interface ApiDiscussionsRouteChildren {
+  ApiDiscussionsIdRoute: typeof ApiDiscussionsIdRouteWithChildren
+}
+
+const ApiDiscussionsRouteChildren: ApiDiscussionsRouteChildren = {
+  ApiDiscussionsIdRoute: ApiDiscussionsIdRouteWithChildren,
 }
 
 const ApiDiscussionsRouteWithChildren = ApiDiscussionsRoute._addFileChildren(
@@ -997,10 +1105,12 @@ const ApiDocumentsRouteWithChildren = ApiDocumentsRoute._addFileChildren(
 )
 
 interface ApiMomentsRouteChildren {
+  ApiMomentsMineRoute: typeof ApiMomentsMineRoute
   ApiMomentsSharedRoute: typeof ApiMomentsSharedRoute
 }
 
 const ApiMomentsRouteChildren: ApiMomentsRouteChildren = {
+  ApiMomentsMineRoute: ApiMomentsMineRoute,
   ApiMomentsSharedRoute: ApiMomentsSharedRoute,
 }
 
@@ -1022,6 +1132,18 @@ const ApiQuestionsRouteWithChildren = ApiQuestionsRoute._addFileChildren(
   ApiQuestionsRouteChildren,
 )
 
+interface ApiSessionsRouteChildren {
+  ApiSessionsSlugRoute: typeof ApiSessionsSlugRoute
+}
+
+const ApiSessionsRouteChildren: ApiSessionsRouteChildren = {
+  ApiSessionsSlugRoute: ApiSessionsSlugRoute,
+}
+
+const ApiSessionsRouteWithChildren = ApiSessionsRoute._addFileChildren(
+  ApiSessionsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   BillboardRoute: BillboardRoute,
@@ -1037,13 +1159,15 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDiscussionsRoute: ApiDiscussionsRouteWithChildren,
   ApiDocumentsRoute: ApiDocumentsRouteWithChildren,
   ApiHealthRoute: ApiHealthRoute,
+  ApiHomeRoute: ApiHomeRoute,
   ApiMessagesRoute: ApiMessagesRoute,
   ApiMomentsRoute: ApiMomentsRouteWithChildren,
   ApiPeopleRoute: ApiPeopleRoute,
+  ApiProfileRoute: ApiProfileRoute,
   ApiProjectsRoute: ApiProjectsRoute,
   ApiQuestionsRoute: ApiQuestionsRouteWithChildren,
   ApiSearchRoute: ApiSearchRoute,
-  ApiSessionsRoute: ApiSessionsRoute,
+  ApiSessionsRoute: ApiSessionsRouteWithChildren,
   ApiStreamRoute: ApiStreamRoute,
   ApiTasksRoute: ApiTasksRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
