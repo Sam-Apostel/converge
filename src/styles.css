@@ -1,5 +1,15 @@
-/* KendoReact theme (kept for complex widgets used outside the redesigned screens). */
-@import '@progress/kendo-theme-default/dist/all.css';
+/*
+ * KendoReact theme (kept for complex widgets used outside the redesigned
+ * screens). Imported into a `kendo` cascade layer placed *below* Tailwind's
+ * `utilities` so our utility classes win on native `<button>`s — Kendo's
+ * stylesheet styles the bare `button` element (`color: var(--kendo-color-on-base)`
+ * / `background-color: var(--kendo-color-base)`), and as unlayered CSS it used
+ * to clobber the Button recipe's `bg-ink text-white`, rendering black-on-black
+ * buttons. The layer sits *above* `base` (preflight) so genuine Kendo widgets
+ * (`.k-*`) keep their own backgrounds.
+ */
+@layer theme, base, components, kendo, utilities;
+@import '@progress/kendo-theme-default/dist/all.css' layer(kendo);
 
 @import 'tailwindcss';
 
