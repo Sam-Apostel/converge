@@ -1,3 +1,4 @@
+import PhotosUI
 import SwiftUI
 
 struct ProfileEditView: View {
@@ -5,6 +6,9 @@ struct ProfileEditView: View {
     let me: MyProfile
     let onSave: (ProfilePatch) -> Void
 
+    @State private var photoItem: PhotosPickerItem?
+    @State private var imageURL: String?
+    @State private var uploading = false
     @State private var name = ""
     @State private var headline = ""
     @State private var title = ""
@@ -19,6 +23,16 @@ struct ProfileEditView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section("Photo") {
+                    HStack(spacing: 14) {
+                        Avatar(name: name.isEmpty ? me.name : name, image: imageURL ?? me.image, size: 56)
+                        PhotosPicker(selection: $photoItem, matching: .images) {
+                            Text(uploading ? "Uploading…" : "Change photo")
+                                .font(TypeRamp.note().weight(.medium)).foregroundStyle(Palette.ink)
+                        }
+                        .disabled(uploading)
+                    }
+                }
                 Section("Identity") {
                     labeled("Name", $name)
                     labeled("Headline", $headline)
@@ -55,7 +69,27 @@ struct ProfileEditView: View {
                 ToolbarItem(placement: .confirmationAction) { Button("Save", action: save).fontWeight(.semibold) }
             }
             .onAppear(perform: populate)
+            .onChange(of: photoItem) { Task { await uploadPhoto() } }
         }
+    }
+
+    private func uploadPhoto() async {
+        guard let photoItem else { return }
+        uploading = true
+        defer { uploading = false }
+        guard let data = try? await photoItem.loadTransferable(type: Data.self) else { return }
+        if let ref: DocumentRef = try? decodeUpload(
+            await APIClient.shared.upload(
+                "/api/documents", fileData: data, filename: "avatar.jpg",
+                mime: "image/jpeg", fields: ["kind": "avatar"]
+            )
+        ) {
+            imageURL = ref.url
+        }
+    }
+
+    private func decodeUpload(_ data: Data) throws -> DocumentRef {
+        try APIClient.shared.decoder.decode(DocumentRef.self, from: data)
     }
 
     private func labeled(_ title: String, _ text: Binding<String>) -> some View {
@@ -87,6 +121,7 @@ struct ProfileEditView: View {
     private func save() {
         onSave(ProfilePatch(
             name: clean(name) ?? me.name,
+            image: imageURL ?? me.image,
             headline: clean(headline),
             title: clean(title),
             company: clean(company),

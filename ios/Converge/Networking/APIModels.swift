@@ -211,6 +211,13 @@ struct MyMoment: Codable, Identifiable, Hashable {
     var createdAt: Date?
 }
 
+// MARK: - Documents
+
+struct DocumentRef: Codable {
+    var id: String
+    var url: String
+}
+
 // MARK: - AI concierge settings
 
 struct AiSettings: Codable {

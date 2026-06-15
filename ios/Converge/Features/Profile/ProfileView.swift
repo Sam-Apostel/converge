@@ -27,6 +27,7 @@ final class ProfileModel {
 
 struct ProfilePatch: Encodable {
     var name: String?
+    var image: String?
     var headline: String?
     var title: String?
     var company: String?

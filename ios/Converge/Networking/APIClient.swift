@@ -82,6 +82,38 @@ final class APIClient {
         }
     }
 
+    /// Upload a file as `multipart/form-data` (e.g. an avatar to `/api/documents`).
+    func upload(
+        _ path: String, fileData: Data, filename: String, mime: String, fields: [String: String]
+    ) async throws -> Data {
+        let base = baseURL
+        let boundary = "Boundary-\(UUID().uuidString)"
+        var body = Data()
+        func append(_ s: String) { body.append(s.data(using: .utf8)!) }
+        for (key, value) in fields {
+            append("--\(boundary)\r\n")
+            append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+            append("\(value)\r\n")
+        }
+        append("--\(boundary)\r\n")
+        append("Content-Disposition: form-data; name=\"file\"; filename=\"\(filename)\"\r\n")
+        append("Content-Type: \(mime)\r\n\r\n")
+        body.append(fileData)
+        append("\r\n--\(boundary)--\r\n")
+
+        var req = URLRequest(url: base.appendingPathComponent(path))
+        req.httpMethod = "POST"
+        req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        req.setValue(base.absoluteString, forHTTPHeaderField: "Origin")
+        req.httpBody = body
+        let (data, response) = try await session.data(for: req)
+        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+            let code = (response as? HTTPURLResponse)?.statusCode ?? -1
+            throw APIError(status: code, message: String(data: data, encoding: .utf8) ?? "Upload failed")
+        }
+        return data
+    }
+
     func rawData<Body: Encodable>(
         _ path: String, method: String, query: [URLQueryItem], body: Body?
     ) async throws -> Data {
