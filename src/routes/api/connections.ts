@@ -28,12 +28,22 @@ export const Route = createFileRoute('/api/connections')({
     handlers: {
       GET: async ({ request }) => {
         const me = await requireUserId(request.headers)
+        // `?box=incoming` → pending requests awaiting my acceptance (contactId =
+        // me). Default → my own connections (userId = me). The joined person is
+        // the *other* side in each case.
+        const incoming =
+          new URL(request.url).searchParams.get('box') === 'incoming'
+        const otherCol = incoming ? connection.userId : connection.contactId
+        const where = incoming
+          ? and(eq(connection.contactId, me), eq(connection.status, 'pending'))
+          : eq(connection.userId, me)
+
         const rows = await db
           .select({ connection, user, profile })
           .from(connection)
-          .innerJoin(user, eq(user.id, connection.contactId))
-          .leftJoin(profile, eq(profile.userId, connection.contactId))
-          .where(eq(connection.userId, me))
+          .innerJoin(user, eq(user.id, otherCol))
+          .leftJoin(profile, eq(profile.userId, otherCol))
+          .where(where)
 
         return Response.json(
           rows.map((r) => ({

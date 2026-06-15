@@ -7,18 +7,30 @@ final class ConversationModel {
     var messages: [MessageRow] = []
     var state: LoadState = .loading
     var draft = ""
+    let realtime = Realtime()
 
-    func load(with other: String) async {
+    func load(with other: String, me: String) async {
         if messages.isEmpty { state = .loading }
         do {
             messages = try await APIClient.shared.get("/api/messages", query: [.init(name: "with", value: other)])
             state = .loaded
             struct Mark: Encodable { let with: String }
             try? await APIClient.shared.fire("/api/messages", method: "PATCH", body: Mark(with: other))
+            realtime.connect(channel: "user:\(me)") { [weak self] _, _ in
+                Task { await self?.refresh(with: other) }
+            }
         } catch {
             state = .failed((error as? APIClient.APIError)?.message ?? error.localizedDescription)
         }
     }
+
+    private func refresh(with other: String) async {
+        if let rows: [MessageRow] = try? await APIClient.shared.get(
+            "/api/messages", query: [.init(name: "with", value: other)]
+        ) { messages = rows }
+    }
+
+    func stop() { realtime.disconnect() }
 
     func send(to other: String) async {
         let text = draft.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -65,7 +77,8 @@ struct ConversationView: View {
         }
         .navigationTitle(otherName)
         .navigationBarTitleDisplayMode(.inline)
-        .task { await model.load(with: otherUserId) }
+        .task { await model.load(with: otherUserId, me: me) }
+        .onDisappear { model.stop() }
     }
 
     private var composer: some View {

@@ -1,7 +1,13 @@
 import SwiftUI
 
 struct ProjectDetailView: View {
-    let project: Project
+    @Environment(SessionStore.self) private var session
+    @State private var project: Project
+    @State private var editing = false
+
+    init(project: Project) { _project = State(initialValue: project) }
+
+    private var isOwner: Bool { session.currentUser?.id == project.ownerId }
 
     var body: some View {
         ZStack {
@@ -42,6 +48,16 @@ struct ProjectDetailView: View {
         }
         .navigationTitle(project.name)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if isOwner {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Edit") { editing = true }
+                }
+            }
+        }
+        .sheet(isPresented: $editing) {
+            ProjectEditSheet(existing: project) { updated in project = updated }
+        }
     }
 
     private func linkRow(label: String, urlString: String) -> some View {

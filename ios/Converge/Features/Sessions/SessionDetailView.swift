@@ -10,6 +10,7 @@ final class SessionDetailModel {
     var state: LoadState = .loading
     var draftQuestion = ""
     var posting = false
+    let realtime = Realtime()
 
     func load(slug: String) async {
         if detail == nil { state = .loading }
@@ -18,10 +19,16 @@ final class SessionDetailModel {
             self.detail = detail
             state = .loaded
             await refreshLive(sessionId: detail.id)
+            // Live updates: new questions / moments land without a refresh.
+            realtime.connect(channel: "session:\(detail.id)") { [weak self] _, _ in
+                Task { await self?.refreshLive(sessionId: detail.id) }
+            }
         } catch {
             state = .failed((error as? APIClient.APIError)?.message ?? error.localizedDescription)
         }
     }
+
+    func stop() { realtime.disconnect() }
 
     func refreshLive(sessionId: String) async {
         async let q: [SessionQuestion] = (try? APIClient.shared.get(
@@ -64,6 +71,15 @@ final class SessionDetailModel {
         } catch {}
     }
 
+    func promote(_ question: SessionQuestion) async {
+        struct Result: Decodable { let discussionId: String }
+        if let result: Result = try? await APIClient.shared.send(
+            "/api/questions/\(question.id)/promote", method: "POST", body: Optional<Int>.none
+        ), let idx = questions.firstIndex(where: { $0.id == question.id }) {
+            questions[idx].promotedDiscussionId = result.discussionId
+        }
+    }
+
     func captureMoment(session: SessionDetail) async {
         let elapsed: Int
         if let start = session.startsAt {
@@ -98,6 +114,7 @@ struct SessionDetailView: View {
         .navigationTitle("Session")
         .navigationBarTitleDisplayMode(.inline)
         .task { await model.load(slug: slug) }
+        .onDisappear { model.stop() }
     }
 
     private func content(_ detail: SessionDetail) -> some View {
@@ -242,7 +259,13 @@ struct SessionDetailView: View {
                 .buttonStyle(.plain)
                 .disabled(model.posting || model.draftQuestion.trimmingCharacters(in: .whitespaces).isEmpty)
             }
-            ForEach(model.questions) { q in QuestionCard(question: q) { Task { await model.toggleVote(q) } } }
+            ForEach(model.questions) { q in
+                QuestionCard(
+                    question: q,
+                    onVote: { Task { await model.toggleVote(q) } },
+                    onPromote: { Task { await model.promote(q) } }
+                )
+            }
             if model.questions.isEmpty {
                 Text("No questions yet — be the first to ask.")
                     .font(TypeRamp.caption()).foregroundStyle(Palette.mist).padding(.vertical, 8)
@@ -262,6 +285,7 @@ struct SessionDetailView: View {
 struct QuestionCard: View {
     let question: SessionQuestion
     let onVote: () -> Void
+    var onPromote: (() -> Void)? = nil
 
     var body: some View {
         SoftCard {
@@ -303,6 +327,19 @@ struct QuestionCard: View {
                         }
                     }
                     .padding(.leading, 48)
+                }
+                if let discussionId = question.promotedDiscussionId {
+                    NavigationLink(value: DiscussionRoute(id: discussionId)) {
+                        Label("View discussion", systemImage: "arrow.turn.up.right")
+                            .font(TypeRamp.caption().weight(.medium)).foregroundStyle(Palette.limeDeep)
+                    }
+                    .buttonStyle(.plain)
+                } else if let onPromote {
+                    Button(action: onPromote) {
+                        Label("Continue as discussion", systemImage: "bubble.left.and.bubble.right")
+                            .font(TypeRamp.caption().weight(.medium)).foregroundStyle(Palette.slate)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }

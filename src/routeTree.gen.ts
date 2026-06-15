@@ -31,6 +31,7 @@ import { Route as ApiDiscussionsRouteImport } from './routes/api/discussions'
 import { Route as ApiConnectionsRouteImport } from './routes/api/connections'
 import { Route as ApiConciergeRouteImport } from './routes/api/concierge'
 import { Route as ApiAnswersRouteImport } from './routes/api/answers'
+import { Route as ApiAiSettingsRouteImport } from './routes/api/ai-settings'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppSearchRouteImport } from './routes/_app/search'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
@@ -48,6 +49,7 @@ import { Route as ApiMomentsSharedRouteImport } from './routes/api/moments/share
 import { Route as ApiMomentsMineRouteImport } from './routes/api/moments/mine'
 import { Route as ApiDocumentsIdRouteImport } from './routes/api/documents.$id'
 import { Route as ApiDiscussionsIdRouteImport } from './routes/api/discussions.$id'
+import { Route as ApiConciergeAskRouteImport } from './routes/api/concierge.ask'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppSessionsSlugRouteImport } from './routes/_app/sessions/$slug'
 import { Route as AppProjectsNewRouteImport } from './routes/_app/projects/new'
@@ -169,6 +171,11 @@ const ApiAnswersRoute = ApiAnswersRouteImport.update({
   path: '/api/answers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAiSettingsRoute = ApiAiSettingsRouteImport.update({
+  id: '/api/ai-settings',
+  path: '/api/ai-settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -256,6 +263,11 @@ const ApiDiscussionsIdRoute = ApiDiscussionsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ApiDiscussionsRoute,
 } as any)
+const ApiConciergeAskRoute = ApiConciergeAskRouteImport.update({
+  id: '/ask',
+  path: '/ask',
+  getParentRoute: () => ApiConciergeRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -325,8 +337,9 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AppProfileRoute
   '/search': typeof AppSearchRoute
   '/settings': typeof AppSettingsRoute
+  '/api/ai-settings': typeof ApiAiSettingsRoute
   '/api/answers': typeof ApiAnswersRoute
-  '/api/concierge': typeof ApiConciergeRoute
+  '/api/concierge': typeof ApiConciergeRouteWithChildren
   '/api/connections': typeof ApiConnectionsRoute
   '/api/discussions': typeof ApiDiscussionsRouteWithChildren
   '/api/documents': typeof ApiDocumentsRouteWithChildren
@@ -348,6 +361,7 @@ export interface FileRoutesByFullPath {
   '/projects/new': typeof AppProjectsNewRoute
   '/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/concierge/ask': typeof ApiConciergeAskRoute
   '/api/discussions/$id': typeof ApiDiscussionsIdRouteWithChildren
   '/api/documents/$id': typeof ApiDocumentsIdRoute
   '/api/moments/mine': typeof ApiMomentsMineRoute
@@ -375,8 +389,9 @@ export interface FileRoutesByTo {
   '/profile': typeof AppProfileRoute
   '/search': typeof AppSearchRoute
   '/settings': typeof AppSettingsRoute
+  '/api/ai-settings': typeof ApiAiSettingsRoute
   '/api/answers': typeof ApiAnswersRoute
-  '/api/concierge': typeof ApiConciergeRoute
+  '/api/concierge': typeof ApiConciergeRouteWithChildren
   '/api/connections': typeof ApiConnectionsRoute
   '/api/discussions': typeof ApiDiscussionsRouteWithChildren
   '/api/documents': typeof ApiDocumentsRouteWithChildren
@@ -399,6 +414,7 @@ export interface FileRoutesByTo {
   '/projects/new': typeof AppProjectsNewRoute
   '/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/concierge/ask': typeof ApiConciergeAskRoute
   '/api/discussions/$id': typeof ApiDiscussionsIdRouteWithChildren
   '/api/documents/$id': typeof ApiDocumentsIdRoute
   '/api/moments/mine': typeof ApiMomentsMineRoute
@@ -428,8 +444,9 @@ export interface FileRoutesById {
   '/_app/profile': typeof AppProfileRoute
   '/_app/search': typeof AppSearchRoute
   '/_app/settings': typeof AppSettingsRoute
+  '/api/ai-settings': typeof ApiAiSettingsRoute
   '/api/answers': typeof ApiAnswersRoute
-  '/api/concierge': typeof ApiConciergeRoute
+  '/api/concierge': typeof ApiConciergeRouteWithChildren
   '/api/connections': typeof ApiConnectionsRoute
   '/api/discussions': typeof ApiDiscussionsRouteWithChildren
   '/api/documents': typeof ApiDocumentsRouteWithChildren
@@ -452,6 +469,7 @@ export interface FileRoutesById {
   '/_app/projects/new': typeof AppProjectsNewRoute
   '/_app/sessions/$slug': typeof AppSessionsSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/concierge/ask': typeof ApiConciergeAskRoute
   '/api/discussions/$id': typeof ApiDiscussionsIdRouteWithChildren
   '/api/documents/$id': typeof ApiDocumentsIdRoute
   '/api/moments/mine': typeof ApiMomentsMineRoute
@@ -482,6 +500,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/search'
     | '/settings'
+    | '/api/ai-settings'
     | '/api/answers'
     | '/api/concierge'
     | '/api/connections'
@@ -505,6 +524,7 @@ export interface FileRouteTypes {
     | '/projects/new'
     | '/sessions/$slug'
     | '/api/auth/$'
+    | '/api/concierge/ask'
     | '/api/discussions/$id'
     | '/api/documents/$id'
     | '/api/moments/mine'
@@ -532,6 +552,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/search'
     | '/settings'
+    | '/api/ai-settings'
     | '/api/answers'
     | '/api/concierge'
     | '/api/connections'
@@ -556,6 +577,7 @@ export interface FileRouteTypes {
     | '/projects/new'
     | '/sessions/$slug'
     | '/api/auth/$'
+    | '/api/concierge/ask'
     | '/api/discussions/$id'
     | '/api/documents/$id'
     | '/api/moments/mine'
@@ -584,6 +606,7 @@ export interface FileRouteTypes {
     | '/_app/profile'
     | '/_app/search'
     | '/_app/settings'
+    | '/api/ai-settings'
     | '/api/answers'
     | '/api/concierge'
     | '/api/connections'
@@ -608,6 +631,7 @@ export interface FileRouteTypes {
     | '/_app/projects/new'
     | '/_app/sessions/$slug'
     | '/api/auth/$'
+    | '/api/concierge/ask'
     | '/api/discussions/$id'
     | '/api/documents/$id'
     | '/api/moments/mine'
@@ -631,8 +655,9 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   Char91DotwellKnownChar93OauthAuthorizationServerRoute: typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ApiAiSettingsRoute: typeof ApiAiSettingsRoute
   ApiAnswersRoute: typeof ApiAnswersRoute
-  ApiConciergeRoute: typeof ApiConciergeRoute
+  ApiConciergeRoute: typeof ApiConciergeRouteWithChildren
   ApiConnectionsRoute: typeof ApiConnectionsRoute
   ApiDiscussionsRoute: typeof ApiDiscussionsRouteWithChildren
   ApiDocumentsRoute: typeof ApiDocumentsRouteWithChildren
@@ -808,6 +833,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAnswersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ai-settings': {
+      id: '/api/ai-settings'
+      path: '/api/ai-settings'
+      fullPath: '/api/ai-settings'
+      preLoaderRoute: typeof ApiAiSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/settings': {
       id: '/_app/settings'
       path: '/settings'
@@ -926,6 +958,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/discussions/$id'
       preLoaderRoute: typeof ApiDiscussionsIdRouteImport
       parentRoute: typeof ApiDiscussionsRoute
+    }
+    '/api/concierge/ask': {
+      id: '/api/concierge/ask'
+      path: '/ask'
+      fullPath: '/api/concierge/ask'
+      preLoaderRoute: typeof ApiConciergeAskRouteImport
+      parentRoute: typeof ApiConciergeRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -1069,6 +1108,18 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface ApiConciergeRouteChildren {
+  ApiConciergeAskRoute: typeof ApiConciergeAskRoute
+}
+
+const ApiConciergeRouteChildren: ApiConciergeRouteChildren = {
+  ApiConciergeAskRoute: ApiConciergeAskRoute,
+}
+
+const ApiConciergeRouteWithChildren = ApiConciergeRoute._addFileChildren(
+  ApiConciergeRouteChildren,
+)
+
 interface ApiDiscussionsIdRouteChildren {
   ApiDiscussionsIdPostsRoute: typeof ApiDiscussionsIdPostsRoute
 }
@@ -1153,8 +1204,9 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OauthAuthorizationServerRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ApiAiSettingsRoute: ApiAiSettingsRoute,
   ApiAnswersRoute: ApiAnswersRoute,
-  ApiConciergeRoute: ApiConciergeRoute,
+  ApiConciergeRoute: ApiConciergeRouteWithChildren,
   ApiConnectionsRoute: ApiConnectionsRoute,
   ApiDiscussionsRoute: ApiDiscussionsRouteWithChildren,
   ApiDocumentsRoute: ApiDocumentsRouteWithChildren,
@@ -1176,12 +1228,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

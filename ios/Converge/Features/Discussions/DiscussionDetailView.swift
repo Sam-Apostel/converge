@@ -8,16 +8,28 @@ final class DiscussionDetailModel {
     var state: LoadState = .loading
     var draft = ""
     var posting = false
+    let realtime = Realtime()
 
     func load(id: String) async {
         if detail == nil { state = .loading }
         do {
             detail = try await APIClient.shared.get("/api/discussions/\(id)")
             state = .loaded
+            realtime.connect(channel: "discussion:\(id)") { [weak self] _, _ in
+                Task { await self?.refresh(id: id) }
+            }
         } catch {
             state = .failed((error as? APIClient.APIError)?.message ?? error.localizedDescription)
         }
     }
+
+    private func refresh(id: String) async {
+        if let fresh: DiscussionDetail = try? await APIClient.shared.get("/api/discussions/\(id)") {
+            detail = fresh
+        }
+    }
+
+    func stop() { realtime.disconnect() }
 
     func reply(id: String) async {
         let text = draft.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -61,6 +73,7 @@ struct DiscussionDetailView: View {
         .navigationTitle("Discussion")
         .navigationBarTitleDisplayMode(.inline)
         .task { await model.load(id: id) }
+        .onDisappear { model.stop() }
     }
 
     private func composer(_ id: String) -> some View {

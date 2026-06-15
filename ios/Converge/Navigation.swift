@@ -16,7 +16,7 @@ struct MessageTarget: Hashable {
 
 /// Secondary, full-screen destinations that aren't a single entity.
 enum HubRoute: Hashable {
-    case discussions, messages, moments, connections, tasks, profile, settings
+    case discussions, messages, moments, connections, tasks, profile, settings, concierge, aiSettings
 }
 
 /// One navigation stack per tab, with every Converge destination registered.
@@ -49,6 +49,8 @@ extension View {
                 case .tasks: TasksView()
                 case .profile: ProfileView()
                 case .settings: SettingsView()
+                case .concierge: ConciergeView()
+                case .aiSettings: AiSettingsView()
                 }
             }
     }

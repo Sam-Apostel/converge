@@ -211,6 +211,15 @@ struct MyMoment: Codable, Identifiable, Hashable {
     var createdAt: Date?
 }
 
+// MARK: - AI concierge settings
+
+struct AiSettings: Codable {
+    var provider: String
+    var model: String?
+    var baseUrl: String?
+    var hasKey: Bool
+}
+
 // MARK: - Tasks
 
 struct TaskRow: Codable, Identifiable, Hashable {

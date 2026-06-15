@@ -25,6 +25,11 @@ struct SettingsView: View {
                     baseURL = APIClient.defaultBaseURL
                 }
             }
+            Section("Concierge") {
+                NavigationLink(value: HubRoute.aiSettings) {
+                    Label("AI provider", systemImage: "sparkles")
+                }
+            }
             Section("Account") {
                 if let user = session.currentUser {
                     LabeledContent("Signed in", value: user.email)

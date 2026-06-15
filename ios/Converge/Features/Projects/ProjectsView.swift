@@ -39,6 +39,7 @@ final class ProjectsModel {
 
 struct ProjectsView: View {
     @State private var model = ProjectsModel()
+    @State private var creating = false
 
     var body: some View {
         ZStack {
@@ -51,6 +52,14 @@ struct ProjectsView: View {
         }
         .navigationTitle("Projects")
         .searchable(text: $model.search, prompt: "Projects, tech, ideas…")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { creating = true } label: { Image(systemName: "plus") }
+            }
+        }
+        .sheet(isPresented: $creating) {
+            ProjectEditSheet(existing: nil) { _ in Task { await model.load() } }
+        }
         .task { await model.load() }
     }
 

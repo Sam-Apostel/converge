@@ -135,6 +135,20 @@ struct HomeView: View {
 
     private var hub: some View {
         VStack(spacing: 10) {
+            NavigationLink(value: HubRoute.concierge) {
+                GlassCard {
+                    HStack(spacing: 10) {
+                        ConvergeMark(size: 20)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("Ask the concierge").font(TypeRamp.body().weight(.semibold)).foregroundStyle(Palette.ink)
+                            Text("Who to meet · what to see next").font(TypeRamp.caption()).foregroundStyle(Palette.mist)
+                        }
+                        Spacer()
+                        Image(systemName: "sparkles").foregroundStyle(Palette.limeDeep)
+                    }
+                }
+            }
+            .buttonStyle(.plain)
             HStack(spacing: 10) {
                 hubTile("Discussions", "bubble.left.and.bubble.right", .discussions)
                 hubTile("My moments", "bookmark", .moments)
