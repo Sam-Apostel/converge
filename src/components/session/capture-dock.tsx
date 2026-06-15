@@ -1,6 +1,6 @@
 import { Star } from 'lucide-react'
 
-import { BorderBeam, Button, LiveDot, Mono } from '#/components/ui'
+import { Button, LiveDot, Mono } from '#/components/ui'
 import { cn } from '#/lib/utils'
 
 /**
@@ -28,7 +28,6 @@ export function CaptureDock({
         'rounded-[18px] bg-ink px-[18px] py-4',
       )}
     >
-      <BorderBeam speed={4} />
       <div
         className={cn(
           'pointer-events-none absolute -bottom-[54px] -right-10 h-[180px] w-[180px] rounded-full',

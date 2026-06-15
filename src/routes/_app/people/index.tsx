@@ -64,9 +64,7 @@ function PeoplePage() {
   const filtered = people.filter((p) => {
     const intentOk =
       selectedIntent === 'all' ||
-      p.profile?.intents?.some((i) =>
-        i.toLowerCase().includes(selectedIntent),
-      )
+      p.profile?.intents?.some((i) => i.toLowerCase().includes(selectedIntent))
     return intentOk && matchesQuery(p, query)
   })
   const top = filtered[0] ?? people[0]
@@ -84,11 +82,11 @@ function PeoplePage() {
       </p>
 
       <div className="mb-5 flex flex-col gap-3">
-        <div className="relative max-w-md">
-          <Search
-            size={16}
-            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-faint"
-          />
+        <GlassCard
+          className="max-w-md"
+          innerClassName="flex items-center gap-3 px-[18px] py-2.5"
+        >
+          <Search size={18} className="shrink-0 text-mist" />
           <input
             type="search"
             value={query}
@@ -96,13 +94,12 @@ function PeoplePage() {
             placeholder="Search by name, focus, company…"
             aria-label="Search people"
             className={cn(
-              'w-full py-2.5 pl-10 pr-3.5',
-              'text-body text-ink placeholder:text-faint',
-              'rounded-full border border-edge/40 bg-white shadow-soft outline-none',
-              'transition-colors focus:border-ink/30',
+              'min-w-0 flex-1',
+              'bg-transparent text-body text-ink placeholder:text-faint',
+              'outline-none',
             )}
           />
-        </div>
+        </GlassCard>
         <div className="flex flex-wrap items-center gap-2">
           <ChipList
             data={INTENTS}
