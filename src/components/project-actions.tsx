@@ -31,7 +31,7 @@ export function MessageOwnerButton({
   return (
     <Link
       to="/messages"
-      search={{ me: undefined, dm: ownerId }}
+      search={{ dm: ownerId }}
       className={className}
     >
       <Button variant="dark" className="w-full">

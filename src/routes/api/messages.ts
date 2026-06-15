@@ -3,30 +3,29 @@ import { createFileRoute } from '@tanstack/react-router'
 import { db } from '#/db'
 import { message } from '#/db/schema'
 import { publish } from '#/lib/events'
+import { requireUserId } from '#/lib/server-auth'
 import {
   conversationBetween,
   markThreadRead,
   messagesForViewer,
-  resolveViewer,
 } from '#/lib/queries/messages'
 
 /**
  * Messages API — backs the `messagesCollection` TanStack DB collection.
  *
- * - `GET  ?me=<id>`            → every message involving the viewer
- * - `GET  ?me=<id>&with=<id>`  → a single conversation
- * - `POST { fromUserId, toUserId, body }` → send a message (publishes realtime)
- * - `PATCH { me, with }`       → mark a thread read
+ * The viewer always comes from the session — never the request. Callers only
+ * supply the other side of a message/thread.
  *
- * TODO(auth): derive `me` / `fromUserId` from the session instead of the body.
+ * - `GET  ?with=<id>` → a single conversation; omit `with` for the whole inbox
+ * - `POST { toUserId, body }` → send a message (publishes realtime)
+ * - `PATCH { with }` → mark a thread read
  */
 export const Route = createFileRoute('/api/messages')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const url = new URL(request.url)
-        const me = await resolveViewer(url.searchParams.get('me') ?? undefined)
-        const withUser = url.searchParams.get('with')
+        const me = await requireUserId(request.headers)
+        const withUser = new URL(request.url).searchParams.get('with')
         const rows = withUser
           ? await conversationBetween(me, withUser)
           : await messagesForViewer(me)
@@ -34,12 +33,11 @@ export const Route = createFileRoute('/api/messages')({
       },
 
       POST: async ({ request }) => {
+        const fromUserId = await requireUserId(request.headers)
         const body = (await request.json()) as {
-          fromUserId?: string
           toUserId: string
           body: string
         }
-        const fromUserId = await resolveViewer(body.fromUserId)
         const [row] = await db
           .insert(message)
           .values({
@@ -73,8 +71,8 @@ export const Route = createFileRoute('/api/messages')({
       },
 
       PATCH: async ({ request }) => {
-        const body = (await request.json()) as { me?: string; with: string }
-        const me = await resolveViewer(body.me)
+        const me = await requireUserId(request.headers)
+        const body = (await request.json()) as { with: string }
         const updated = await markThreadRead(me, body.with)
         return Response.json({ updated })
       },

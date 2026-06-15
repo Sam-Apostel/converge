@@ -194,7 +194,7 @@ function TopMatch({ person }: { person: Person }) {
           onClick={() =>
             navigate({
               to: '/messages',
-              search: { me: undefined, dm: person.id },
+              search: { dm: person.id },
             })
           }
         >

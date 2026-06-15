@@ -1,13 +1,21 @@
-import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
+import { Link, Outlet, createFileRoute, redirect } from '@tanstack/react-router'
 
 import { Avatar, NotificationProvider } from '#/components/ui'
 import { ConferenceSwitcher } from '#/components/conference-switcher'
 import { ConvergeLogo } from '#/components/converge-logo'
 import { useSession } from '#/lib/auth-client'
 import { getConferenceContext } from '#/lib/queries/conferences'
+import { fetchSessionUser } from '#/lib/session'
 import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/_app')({
+  // The whole app is behind auth — bounce to /login when there's no session.
+  beforeLoad: async ({ location }) => {
+    const user = await fetchSessionUser()
+    if (!user) {
+      throw redirect({ to: '/login', search: { redirect: location.href } })
+    }
+  },
   loader: () => getConferenceContext(),
   component: AppLayout,
 })

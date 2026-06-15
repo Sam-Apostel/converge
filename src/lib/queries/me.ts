@@ -1,16 +1,15 @@
 /**
  * Server functions for the signed-in user's own profile screen.
  *
- * Like the rest of the app, the viewer is resolved from the better-auth
- * session with a seed-user fallback (see `resolveViewerId`) so the demo works
- * without signing in.
+ * The viewer is the authenticated better-auth user; these throw a 401 when
+ * there is no session (the `/_app` layout redirects to `/login` first).
  */
 import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 
 import { db } from '#/db'
 import { profile, project, user } from '#/db/schema'
-import { resolveViewerId } from '#/lib/concierge/viewer'
+import { requireUserId } from '#/lib/server-auth'
 import type { ProfileProject } from '#/lib/queries/profiles'
 
 type ProfileRow = typeof profile.$inferSelect
@@ -24,7 +23,7 @@ export type MyProfile = {
 /** The viewer's account, extended profile and owned projects. */
 export const getMyProfile = createServerFn({ method: 'GET' }).handler(
   async (): Promise<MyProfile | null> => {
-    const userId = await resolveViewerId()
+    const userId = await requireUserId()
 
     const rows = await db
       .select({ user, profile })
@@ -91,7 +90,7 @@ const cleanList = (v: Array<string> | undefined) =>
 export const saveMyProfile = createServerFn({ method: 'POST' })
   .validator((d: SaveMyProfileInput): SaveMyProfileInput => d)
   .handler(async ({ data }): Promise<MyProfile | null> => {
-    const userId = await resolveViewerId()
+    const userId = await requireUserId()
 
     const name = data.name?.trim()
     const userUpdates = {

@@ -83,7 +83,11 @@ function ProfilePage() {
         <PageHeader title="Profile" />
         <div className="rounded-2xl border border-line bg-surface p-6 shadow-card">
           <p className="text-body text-muted">You're not signed in.</p>
-          <Link to="/login" className="mt-3 inline-block">
+          <Link
+            to="/login"
+            search={{ redirect: undefined }}
+            className="mt-3 inline-block"
+          >
             <Button variant="dark">Sign in</Button>
           </Link>
         </div>
@@ -115,7 +119,12 @@ function ProfilePage() {
                 onClick={() =>
                   void authClient
                     .signOut()
-                    .then(() => router.navigate({ to: '/login' }))
+                    .then(() =>
+                      router.navigate({
+                        to: '/login',
+                        search: { redirect: undefined },
+                      }),
+                    )
                 }
               >
                 Sign out

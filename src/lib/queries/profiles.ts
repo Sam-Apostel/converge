@@ -12,7 +12,7 @@ import {
   user,
 } from '#/db/schema'
 import type { Person } from '#/db/types'
-import { resolveViewer } from '#/lib/queries/messages'
+import { requireUserId } from '#/lib/server-auth'
 
 /** Where the viewer stands with this person: not yet, requested, or connected. */
 export type ConnectionState = 'none' | 'pending' | 'accepted'
@@ -56,7 +56,7 @@ export const getPersonById = createServerFn({ method: 'GET' })
     }
 
     // The viewer's standing with this person (none → pending → accepted).
-    const me = await resolveViewer()
+    const me = await requireUserId()
     let connectionState: ConnectionState = 'none'
     if (me !== userId) {
       const [link] = await db

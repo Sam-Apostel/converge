@@ -19,7 +19,7 @@ import {
   pickActiveConference,
 } from '#/lib/queries/active-conference'
 import type { ConferenceSummary } from '#/lib/queries/active-conference'
-import { resolveViewer } from '#/lib/queries/messages'
+import { requireUserId } from '#/lib/server-auth'
 
 export type { ConferenceSummary }
 
@@ -100,7 +100,7 @@ export const setActiveConference = createServerFn({ method: 'POST' })
 /** The viewer's conference memberships, as a `conferenceId → role` list. */
 export const listMyConferenceRoles = createServerFn({ method: 'GET' }).handler(
   async (): Promise<Array<{ conferenceId: string; role: string }>> => {
-    const userId = await resolveViewer()
+    const userId = await requireUserId()
     return db
       .select({
         conferenceId: conferenceMember.conferenceId,
@@ -123,7 +123,7 @@ export const createConference = createServerFn({ method: 'POST' })
     }) => input,
   )
   .handler(async ({ data }): Promise<{ id: string; slug: string }> => {
-    const userId = await resolveViewer()
+    const userId = await requireUserId()
     const name = data.name?.trim()
     if (!name) throw new Error('Conference name is required')
 
@@ -152,7 +152,7 @@ export const createConference = createServerFn({ method: 'POST' })
 export const joinConference = createServerFn({ method: 'POST' })
   .validator((input: { id: string; role?: string }) => input)
   .handler(async ({ data }): Promise<{ id: string; role: ConferenceRole }> => {
-    const userId = await resolveViewer()
+    const userId = await requireUserId()
     const role: ConferenceRole = (
       CONFERENCE_ROLES as ReadonlyArray<string>
     ).includes(data.role ?? '')

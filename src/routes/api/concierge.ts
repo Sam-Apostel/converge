@@ -9,7 +9,7 @@ import {
 import { buildRuntimeContext } from '#/lib/concierge/context'
 import { resolveProvider } from '#/lib/concierge/provider'
 import { buildTools } from '#/lib/concierge/tools'
-import { resolveViewerId } from '#/lib/concierge/viewer'
+import { requireUserId } from '#/lib/server-auth'
 
 /**
  * Streaming chat endpoint for the AI concierge (silo 7).
@@ -17,9 +17,6 @@ import { resolveViewerId } from '#/lib/concierge/viewer'
  * Resolves the acting user, picks their configured provider (or the local
  * Ollama fallback), runs the tool-use loop over the read-only Converge tools,
  * and streams the result back as Server-Sent Events.
- *
- * TODO(auth): the gate is a stand-in viewer (see `resolveViewerId`); swap for
- * `requireUser(request)` once the UI has a session.
  */
 const SYSTEM_PROMPT = `You are the Converge concierge — a warm, concise guide for attendees of \
 co-located Amsterdam conferences (JSNation + React Summit).
@@ -37,7 +34,7 @@ export const Route = createFileRoute('/api/concierge')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const userId = await resolveViewerId(request.headers)
+        const userId = await requireUserId(request.headers)
         const { messages } = await chatParamsFromRequest(request)
         const [{ adapter }, runtimeContext] = await Promise.all([
           resolveProvider(userId),
