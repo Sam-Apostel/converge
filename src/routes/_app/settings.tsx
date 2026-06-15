@@ -36,9 +36,11 @@ const MODEL_GUIDANCE: Record<ProviderId, { title: string; lines: string[] }> = {
   ollama: {
     title: 'Picking a local model',
     lines: [
-      'Enter the exact tag you pulled with `ollama pull`, e.g. `llama3.1`.',
-      'Leave it blank to fall back to the dev default.',
-      'Bigger models answer better but need more RAM/VRAM — start with an 8B model and size up.',
+      'Enter the exact tag you pulled with `ollama pull`, e.g. `llama3.1`. Leave it blank to fall back to the dev default.',
+      'The concierge leans on tool calling (it drives the MCP tools), so pick a model trained for tools: llama3.1, qwen2.5, or mistral-nemo all work well.',
+      'Everyday / lower-spec: an 8B model like llama3.1:8b or qwen2.5:7b is fast and tool-capable.',
+      'Sharper answers if you have the VRAM: step up to qwen2.5:14b / :32b or llama3.1:70b.',
+      'Avoid tiny or non-tool models (e.g. plain gemma, phi) — they tend to skip or mangle tool calls.',
     ],
   },
   anthropic: {
@@ -66,6 +68,24 @@ const MODEL_GUIDANCE: Record<ProviderId, { title: string; lines: string[] }> = {
     ],
   },
 }
+
+const OLLAMA_TUNNEL_STEPS: { text: string; code?: string }[] = [
+  {
+    text: 'Make sure Ollama is running locally and allows the tunnel origin.',
+    code: 'OLLAMA_ORIGINS=* ollama serve',
+  },
+  {
+    text: 'Open a public HTTPS tunnel to Ollama with cloudflared…',
+    code: 'cloudflared tunnel --url http://localhost:11434',
+  },
+  {
+    text: '…or with ngrok if you prefer.',
+    code: 'ngrok http 11434',
+  },
+  {
+    text: 'Copy the https://… URL it prints and paste it into Base URL above, then Test connection.',
+  },
+]
 
 type TestState =
   | { kind: 'idle' }
@@ -278,6 +298,11 @@ function SettingsPage() {
                   'focus:outline-none focus:ring-2 focus:ring-lime/40',
                 )}
               />
+              <span className="text-caption text-muted">
+                Local dev reaches Ollama at localhost. On the hosted app,
+                localhost is the server — point this at a public tunnel URL for
+                your machine instead (see below).
+              </span>
             </label>
           ) : null}
 
@@ -332,6 +357,56 @@ function SettingsPage() {
           ))}
         </ul>
       </div>
+
+      {/* hosted ollama via a tunnel */}
+      {provider === 'ollama' ? (
+        <div className="mt-4 max-w-xl rounded-2xl border border-line bg-inner p-5">
+          <h2 className="text-note font-medium text-ink">
+            Using a local Ollama with the hosted app
+          </h2>
+          <p className="mt-2 text-caption leading-body text-slate">
+            The concierge runs on the server, so it can't see your machine's
+            localhost. Expose Ollama with a public HTTPS tunnel, then paste that
+            URL into Base URL above.
+          </p>
+          <ol className="mt-3 flex flex-col gap-2.5">
+            {OLLAMA_TUNNEL_STEPS.map((step, i) => (
+              <li key={step.text} className="flex gap-2.5">
+                <span
+                  aria-hidden
+                  className={cn(
+                    'mt-0.5 inline-flex size-5 shrink-0 items-center justify-center',
+                    'rounded-full bg-surface text-tiny font-medium text-slate',
+                  )}
+                >
+                  {i + 1}
+                </span>
+                <div className="flex flex-col gap-1">
+                  <span className="text-caption leading-body text-slate">
+                    {step.text}
+                  </span>
+                  {step.code ? (
+                    <code
+                      className={cn(
+                        'w-fit px-2 py-1',
+                        'rounded-lg bg-surface font-mono text-tiny text-ink',
+                      )}
+                    >
+                      {step.code}
+                    </code>
+                  ) : null}
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-3 text-caption leading-body text-muted">
+            The tunnel exposes your model server to the internet — keep it
+            running only while you need it, and put auth in front of it (or use
+            a named Cloudflare tunnel) if it'll be long-lived. Prefer not to
+            tunnel? Ollama's hosted cloud works as a Base URL too.
+          </p>
+        </div>
+      ) : null}
     </div>
   )
 }
