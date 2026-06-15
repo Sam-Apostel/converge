@@ -8,6 +8,8 @@ import { cn } from '#/lib/utils'
 import {
   PROVIDERS,
   PROVIDER_LABELS,
+  PROVIDER_MODELS,
+  providerHasModelList,
   providerNeedsKey,
 } from '#/lib/concierge/provider'
 import type { ProviderId } from '#/lib/concierge/provider'
@@ -30,6 +32,61 @@ const MODEL_HINTS: Record<ProviderId, string> = {
   openrouter: 'e.g. anthropic/claude-sonnet-4',
 }
 
+const MODEL_GUIDANCE: Record<ProviderId, { title: string; lines: string[] }> = {
+  ollama: {
+    title: 'Picking a local model',
+    lines: [
+      'Enter the exact tag you pulled with `ollama pull`, e.g. `llama3.1`. Leave it blank to fall back to the dev default.',
+      'The concierge leans on tool calling (it drives the MCP tools), so pick a model trained for tools: llama3.1, qwen2.5, or mistral-nemo all work well.',
+      'Everyday / lower-spec: an 8B model like llama3.1:8b or qwen2.5:7b is fast and tool-capable.',
+      'Sharper answers if you have the VRAM: step up to qwen2.5:14b / :32b or llama3.1:70b.',
+      'Avoid tiny or non-tool models (e.g. plain gemma, phi) — they tend to skip or mangle tool calls.',
+    ],
+  },
+  anthropic: {
+    title: 'Picking an Anthropic model',
+    lines: [
+      'Opus is the most capable — best for nuanced, multi-step concierge replies.',
+      'Sonnet is the balanced default: fast and strong for everyday use.',
+      'Haiku is the cheapest and fastest — great for simple, high-volume queries.',
+    ],
+  },
+  openai: {
+    title: 'Picking an OpenAI model',
+    lines: [
+      'The flagship GPT model gives the highest quality answers.',
+      'The `mini` variants are cheaper and faster with a small quality trade-off.',
+      'When in doubt, start with the recommended (top) option and adjust on cost.',
+    ],
+  },
+  openrouter: {
+    title: 'Picking an OpenRouter model',
+    lines: [
+      'Models are namespaced as `vendor/model` (e.g. `anthropic/claude-sonnet-4-6`).',
+      'Pick a frontier model for quality, or an open model like Llama to cut costs.',
+      'Your OpenRouter key must have access to the model you choose.',
+    ],
+  },
+}
+
+const OLLAMA_TUNNEL_STEPS: { text: string; code?: string }[] = [
+  {
+    text: 'Make sure Ollama is running locally and allows the tunnel origin.',
+    code: 'OLLAMA_ORIGINS=* ollama serve',
+  },
+  {
+    text: 'Open a public HTTPS tunnel to Ollama with cloudflared…',
+    code: 'cloudflared tunnel --url http://localhost:11434',
+  },
+  {
+    text: '…or with ngrok if you prefer.',
+    code: 'ngrok http 11434',
+  },
+  {
+    text: 'Copy the https://… URL it prints and paste it into Base URL above, then Test connection.',
+  },
+]
+
 type TestState =
   | { kind: 'idle' }
   | { kind: 'testing' }
@@ -49,6 +106,24 @@ function SettingsPage() {
   const [test, setTest] = useState<TestState>({ kind: 'idle' })
 
   const needsKey = providerNeedsKey(provider)
+
+  // Online providers offer a curated model dropdown; preserve an already-saved
+  // model that isn't in the list so we never silently drop the user's choice.
+  const modelOptions = providerHasModelList(provider)
+    ? model && !PROVIDER_MODELS[provider].includes(model)
+      ? [model, ...PROVIDER_MODELS[provider]]
+      : PROVIDER_MODELS[provider]
+    : []
+
+  const handleProviderChange = (next: ProviderId) => {
+    setProvider(next)
+    setTest({ kind: 'idle' })
+    // Land on a valid selection for the new provider's dropdown. Keep the
+    // current value if it's still valid; otherwise pick the recommended model.
+    if (providerHasModelList(next) && !PROVIDER_MODELS[next].includes(model)) {
+      setModel(PROVIDER_MODELS[next][0])
+    }
+  }
 
   const applyView = (view: AiSettingsView) => {
     setProvider(view.provider)
@@ -116,10 +191,7 @@ function SettingsPage() {
             <span className="text-note font-medium text-slate">Provider</span>
             <select
               value={provider}
-              onChange={(e) => {
-                setProvider(e.target.value as ProviderId)
-                setTest({ kind: 'idle' })
-              }}
+              onChange={(e) => handleProviderChange(e.target.value as ProviderId)}
               className={cn(
                 'px-3.5 py-2.5 text-body text-ink',
                 'rounded-xl border border-line bg-inner',
@@ -137,16 +209,34 @@ function SettingsPage() {
           {/* model */}
           <label className="flex flex-col gap-1.5">
             <span className="text-note font-medium text-slate">Model</span>
-            <input
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              placeholder={MODEL_HINTS[provider]}
-              className={cn(
-                'px-3.5 py-2.5 text-body text-ink placeholder:text-muted',
-                'rounded-xl border border-line bg-inner',
-                'focus:outline-none focus:ring-2 focus:ring-lime/40',
-              )}
-            />
+            {providerHasModelList(provider) ? (
+              <select
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                className={cn(
+                  'px-3.5 py-2.5 text-body text-ink',
+                  'rounded-xl border border-line bg-inner',
+                  'focus:outline-none focus:ring-2 focus:ring-lime/40',
+                )}
+              >
+                {modelOptions.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                placeholder={MODEL_HINTS[provider]}
+                className={cn(
+                  'px-3.5 py-2.5 text-body text-ink placeholder:text-muted',
+                  'rounded-xl border border-line bg-inner',
+                  'focus:outline-none focus:ring-2 focus:ring-lime/40',
+                )}
+              />
+            )}
           </label>
 
           {/* api key — write-only */}
@@ -208,6 +298,11 @@ function SettingsPage() {
                   'focus:outline-none focus:ring-2 focus:ring-lime/40',
                 )}
               />
+              <span className="text-caption text-muted">
+                Local dev reaches Ollama at localhost. On the hosted app,
+                localhost is the server — point this at a public tunnel URL for
+                your machine instead (see below).
+              </span>
             </label>
           ) : null}
 
@@ -242,6 +337,76 @@ function SettingsPage() {
           </div>
         </form>
       </div>
+
+      {/* model guidance */}
+      <div className="mt-4 max-w-xl rounded-2xl border border-line bg-inner p-5">
+        <h2 className="text-note font-medium text-ink">
+          {MODEL_GUIDANCE[provider].title}
+        </h2>
+        <ul className="mt-2 flex flex-col gap-1.5">
+          {MODEL_GUIDANCE[provider].lines.map((line) => (
+            <li
+              key={line}
+              className="flex gap-2 text-caption leading-body text-slate"
+            >
+              <span aria-hidden className="text-muted">
+                •
+              </span>
+              <span>{line}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* hosted ollama via a tunnel */}
+      {provider === 'ollama' ? (
+        <div className="mt-4 max-w-xl rounded-2xl border border-line bg-inner p-5">
+          <h2 className="text-note font-medium text-ink">
+            Using a local Ollama with the hosted app
+          </h2>
+          <p className="mt-2 text-caption leading-body text-slate">
+            The concierge runs on the server, so it can't see your machine's
+            localhost. Expose Ollama with a public HTTPS tunnel, then paste that
+            URL into Base URL above.
+          </p>
+          <ol className="mt-3 flex flex-col gap-2.5">
+            {OLLAMA_TUNNEL_STEPS.map((step, i) => (
+              <li key={step.text} className="flex gap-2.5">
+                <span
+                  aria-hidden
+                  className={cn(
+                    'mt-0.5 inline-flex size-5 shrink-0 items-center justify-center',
+                    'rounded-full bg-surface text-tiny font-medium text-slate',
+                  )}
+                >
+                  {i + 1}
+                </span>
+                <div className="flex flex-col gap-1">
+                  <span className="text-caption leading-body text-slate">
+                    {step.text}
+                  </span>
+                  {step.code ? (
+                    <code
+                      className={cn(
+                        'w-fit px-2 py-1',
+                        'rounded-lg bg-surface font-mono text-tiny text-ink',
+                      )}
+                    >
+                      {step.code}
+                    </code>
+                  ) : null}
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-3 text-caption leading-body text-muted">
+            The tunnel exposes your model server to the internet — keep it
+            running only while you need it, and put auth in front of it (or use
+            a named Cloudflare tunnel) if it'll be long-lived. Prefer not to
+            tunnel? Ollama's hosted cloud works as a Base URL too.
+          </p>
+        </div>
+      ) : null}
     </div>
   )
 }
