@@ -1,20 +1,22 @@
 import { Link } from '@tanstack/react-router'
 import { MapPin } from 'lucide-react'
 
-import { Avatar, Tag, GlassCard } from '#/components/ui'
+import { Avatar, Tag, GlassCard, paletteFor } from '#/components/ui'
 import type { Person } from '#/db/types'
 import { cn } from '#/lib/utils'
 
 /** Directory card: cover strip · overlapping avatar · intent chip · tags. */
 export function PersonCard({ person }: { person: Person }) {
   const p = person.profile
+  const pal = paletteFor(person.name)
 
   return (
     <Link to="/people/$userId" params={{ userId: person.id }}>
       <GlassCard
         className="pt-12"
+        tint={pal.bg}
         innerClassName={cn(
-          'overflow-visible group flex flex-col overflow-hidden',
+          'group flex flex-col overflow-visible',
           'rounded-[18px] bg-white shadow-card',
           'transition-[transform,box-shadow] duration-200',
           'hover:-translate-y-0.5 hover:shadow-card-hover',

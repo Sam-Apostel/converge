@@ -83,26 +83,37 @@ export function Spotlight({
  * Glass frame (translucent blurred border) wrapping an opaque white nested
  * container — the design's primary card pattern for content that sits against
  * the ambient periwinkle background.
+ *
+ * Pass `tint` (any CSS colour) to wash the frosted frame with a per-item hue —
+ * e.g. a person's palette colour bleeding through the cover strip behind their
+ * avatar. The tint rides in on a custom property so it stays translucent.
  */
 export function GlassCard({
   className,
   innerClassName,
   children,
   style,
+  tint,
 }: {
   className?: string
   innerClassName?: string
   children: ReactNode
   style?: CSSProperties
+  tint?: string
 }) {
   return (
     <div
       className={cn(
-        'rounded-[26px] border border-white/60 bg-white/32 p-2 shadow-card',
+        'rounded-[26px] border border-white/60 p-2 shadow-card',
         '[backdrop-filter:blur(22px)_saturate(1.7)]',
+        tint
+          ? '[background:linear-gradient(135deg,color-mix(in_oklab,var(--glass-tint)_65%,transparent),rgba(255,255,255,.32))]'
+          : 'bg-white/32',
         className,
       )}
-      style={style}
+      style={
+        tint ? ({ ...style, '--glass-tint': tint } as CSSProperties) : style
+      }
     >
       <div className={cn('rounded-[18px] bg-white', innerClassName)}>
         {children}
