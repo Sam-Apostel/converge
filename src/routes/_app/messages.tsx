@@ -13,12 +13,10 @@ import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/_app/messages')({
   validateSearch: (search: Record<string, unknown>) => ({
-    me: typeof search.me === 'string' ? search.me : undefined,
     // Deep-link to a conversation with this person (e.g. "Say hi" from /people).
     dm: typeof search.dm === 'string' ? search.dm : undefined,
   }),
-  loaderDeps: ({ search }) => ({ me: search.me }),
-  loader: ({ deps }) => getMessagesData({ data: { me: deps.me } }),
+  loader: () => getMessagesData(),
   component: MessagesPage,
 })
 

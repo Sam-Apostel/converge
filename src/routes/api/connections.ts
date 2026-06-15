@@ -4,7 +4,7 @@ import { and, eq } from 'drizzle-orm'
 import { db } from '#/db'
 import { connection, profile, user } from '#/db/schema'
 import type { Person } from '#/db/types'
-import { resolveViewer } from '#/lib/queries/messages'
+import { requireUserId } from '#/lib/server-auth'
 
 /**
  * Connections API — the lasting network that outlives the conference.
@@ -21,16 +21,13 @@ import { resolveViewer } from '#/lib/queries/messages'
  * Connections are directed (`userId` → `contactId`). Accepting mirrors the row
  * so both sides see the contact.
  *
- * TODO(auth): derive the acting user from the session (`requireUser`) instead of
- * `resolveViewer`, in step with the rest of the connection/messages subsystem.
+ * The acting user always comes from the session — never the request body.
  */
 export const Route = createFileRoute('/api/connections')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const me = await resolveViewer(
-          new URL(request.url).searchParams.get('me') ?? undefined,
-        )
+        const me = await requireUserId(request.headers)
         const rows = await db
           .select({ connection, user, profile })
           .from(connection)
@@ -55,10 +52,9 @@ export const Route = createFileRoute('/api/connections')({
       },
 
       POST: async ({ request }) => {
+        const me = await requireUserId(request.headers)
         const body = (await request.json()) as {
           action?: 'request' | 'accept'
-          fromUserId?: string
-          me?: string
           toUserId?: string
           contactId?: string
           note?: string
@@ -66,7 +62,6 @@ export const Route = createFileRoute('/api/connections')({
 
         // Accept an incoming request: `contactId` is the person who requested me.
         if (body.action === 'accept') {
-          const me = await resolveViewer(body.me)
           const other = body.contactId
           if (!other) return new Response('Missing contactId', { status: 400 })
 
@@ -89,12 +84,11 @@ export const Route = createFileRoute('/api/connections')({
         // Request a connection. `toUserId` (preferred) or `contactId`.
         const contactId = body.toUserId ?? body.contactId
         if (!contactId) return new Response('Missing toUserId', { status: 400 })
-        const fromUserId = await resolveViewer(body.fromUserId ?? body.me)
 
         const [row] = await db
           .insert(connection)
           .values({
-            userId: fromUserId,
+            userId: me,
             contactId,
             status: 'pending',
             note: body.note ?? null,
@@ -110,7 +104,7 @@ export const Route = createFileRoute('/api/connections')({
             .from(connection)
             .where(
               and(
-                eq(connection.userId, fromUserId),
+                eq(connection.userId, me),
                 eq(connection.contactId, contactId),
               ),
             )
@@ -122,15 +116,14 @@ export const Route = createFileRoute('/api/connections')({
       },
 
       PATCH: async ({ request }) => {
+        const me = await requireUserId(request.headers)
         const body = (await request.json()) as {
           id?: string
-          me?: string
           status: 'accepted' | 'rejected'
         }
         if (body.status !== 'accepted' && body.status !== 'rejected') {
           return new Response('Invalid status', { status: 400 })
         }
-        const me = await resolveViewer(body.me)
         if (!body.id) return new Response('Missing id', { status: 400 })
 
         // The id refers to the incoming request (its `contactId` is me).

@@ -15,23 +15,9 @@ items marked ✅ were finished there.
 | ✅ Project screenshots & links | Detail/featured cards rendered a hard-coded "project screenshot" hatch; `project.links` was never displayed | Real first screenshot rendered when present (placeholder hatch kept as fallback); link chips on the detail page |
 | ✅ Multi-conference navigation | Two conferences were seeded but the whole app assumed one; no way to switch | Active conference persisted in a cookie, header switcher (`ConferenceSwitcher`), `/conferences` overview page; sessions, home counts/next-up, and the concierge context all scope to the active conference (`src/lib/queries/conferences.ts`, `active-conference.ts`) |
 | ✅ Multi-track schedule | `session.track` existed but tracks weren't navigable | Track filter pills on `/sessions` (shareable via `?track=`), grouped by day; conference header with venue/date |
+| ✅ Auth viewer fallback removed | The acting user fell back to the earliest-seeded user when there was no session, so the app behaved as logged-in (mock profile, no sign-in/out) while logged out | Viewer is now session-only everywhere: `requireUserId` (`src/lib/server-auth.ts`) replaces the `resolveViewer`/`resolveViewerId` seed fallbacks; messages/connections derive the actor from the session, never the request body; the `/_app` layout redirects to `/login` when there's no session |
 
 ## Still open
-
-### Auth viewer fallback
-
-The acting user falls back to the earliest-seeded user when there is no
-session, so the demo works logged-out. Fine for demos, wrong for production.
-
-- `src/lib/concierge/viewer.ts` — `resolveViewerId` (used by concierge,
-  AI settings, and the new profile queries)
-- `src/lib/queries/messages.ts:24` — `resolveViewer` (messages, connections,
-  people suggestions)
-- `src/routes/api/messages.ts` — `fromUserId` comes from the request body
-- `src/routes/api/connections.ts` — acting user via `resolveViewer`
-
-Fix: replace both helpers with `requireUser` / session-only resolution once
-logged-out demo mode is no longer needed.
 
 ### Buttons with no behavior
 

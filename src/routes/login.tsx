@@ -6,11 +6,15 @@ import { authClient } from '#/lib/auth-client'
 import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/login')({
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: typeof search.redirect === 'string' ? search.redirect : undefined,
+  }),
   component: LoginPage,
 })
 
 function LoginPage() {
   const router = useRouter()
+  const { redirect } = Route.useSearch()
   const [mode, setMode] = useState<'sign-in' | 'sign-up'>('sign-in')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -18,7 +22,7 @@ function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
-  const afterAuth = () => router.navigate({ to: '/' })
+  const afterAuth = () => router.navigate({ to: redirect ?? '/' })
 
   const errorMessage = (err: unknown, fallback: string) => {
     if (err && typeof err === 'object' && 'message' in err) {

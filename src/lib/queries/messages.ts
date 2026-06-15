@@ -3,6 +3,7 @@ import { and, asc, eq, isNull, or } from 'drizzle-orm'
 
 import { db } from '#/db'
 import { connection, message, profile, user } from '#/db/schema'
+import { requireUserId } from '#/lib/server-auth'
 import {
   buildThreads,
   type DirectoryPerson,
@@ -13,23 +14,6 @@ import {
 /* ------------------------------------------------------------------ */
 /* Helpers                                                             */
 /* ------------------------------------------------------------------ */
-
-/**
- * Resolve the viewing user. There's no signed-in "me" yet, so we fall back to
- * the earliest-seeded user (stable across reloads). Pass `?me=<id>` to preview
- * the inbox of anyone in the seed.
- *
- * TODO(auth): replace with the session user from `getSessionFromRequest`.
- */
-export async function resolveViewer(me?: string): Promise<string> {
-  if (me) return me
-  const [first] = await db
-    .select({ id: user.id })
-    .from(user)
-    .orderBy(asc(user.createdAt))
-    .limit(1)
-  return first.id
-}
 
 /** The full attendee directory, keyed for avatar + name lookups. */
 async function loadDirectory(): Promise<Array<DirectoryPerson>> {
@@ -119,10 +103,9 @@ export async function markThreadRead(
  * Everything the `/messages` screen needs on first paint: the viewer, the
  * directory, their conversation threads, and pending/accepted connections.
  */
-export const getMessagesData = createServerFn({ method: 'GET' })
-  .validator((d: { me?: string } | undefined) => d ?? {})
-  .handler(async ({ data }): Promise<MessagesData> => {
-    const me = await resolveViewer(data.me)
+export const getMessagesData = createServerFn({ method: 'GET' }).handler(
+  async (): Promise<MessagesData> => {
+    const me = await requireUserId()
     const people = await loadDirectory()
     const peopleById = new Map(people.map((p) => [p.id, p]))
 

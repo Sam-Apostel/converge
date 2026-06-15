@@ -23,7 +23,7 @@ import {
   providerNeedsKey,
 } from './provider'
 import type { ProviderId } from './provider'
-import { resolveViewerId } from './viewer'
+import { requireUserId } from '#/lib/server-auth'
 
 /** Non-secret view of a user's settings — safe to send to the client. */
 export type AiSettingsView = {
@@ -42,7 +42,7 @@ function coerceProvider(value: string | undefined): ProviderId {
 /** Current user's settings, minus the secret. */
 export const getAiSettings = createServerFn({ method: 'GET' }).handler(
   async (): Promise<AiSettingsView> => {
-    const userId = await resolveViewerId()
+    const userId = await requireUserId()
     const row = await loadSettings(userId)
     return {
       provider: coerceProvider(row?.provider),
@@ -67,7 +67,7 @@ type SaveInput = {
 export const saveAiSettings = createServerFn({ method: 'POST' })
   .validator((d: SaveInput): SaveInput => d)
   .handler(async ({ data }): Promise<AiSettingsView> => {
-    const userId = await resolveViewerId()
+    const userId = await requireUserId()
     const provider = coerceProvider(data.provider)
     const model = data.model?.trim() || null
     const baseUrl = data.baseUrl?.trim() || null
@@ -124,7 +124,7 @@ type TestInput = {
 export const testAiConnection = createServerFn({ method: 'POST' })
   .validator((d: TestInput): TestInput => d)
   .handler(async ({ data }): Promise<{ ok: boolean; error?: string }> => {
-    const userId = await resolveViewerId()
+    const userId = await requireUserId()
     const provider = coerceProvider(data.provider)
     const baseUrl = data.baseUrl?.trim() || undefined
     const model =
@@ -167,7 +167,7 @@ export type ConciergeStatus = {
 
 export const getConciergeStatus = createServerFn({ method: 'GET' }).handler(
   async (): Promise<ConciergeStatus> => {
-    const userId = await resolveViewerId()
+    const userId = await requireUserId()
     const settings = await loadSettings(userId)
     const provider = coerceProvider(settings?.provider)
 

@@ -15,7 +15,7 @@ import {
 } from '#/db/schema'
 import type { Person } from '#/db/types'
 import { resolveActiveConferenceId } from '#/lib/queries/active-conference'
-import { resolveViewer } from '#/lib/queries/messages'
+import { requireUserId } from '#/lib/server-auth'
 
 /** A suggested attendee to meet on the home page. */
 export type SuggestedPerson = {
@@ -40,7 +40,7 @@ function sharedCount(a: Array<string> | null, b: Array<string> | null): number {
  * the slot is never empty. (Shared-moment ranking lives in the MCP layer.)
  */
 async function suggestPeopleToMeet(limit = 5): Promise<Array<SuggestedPerson>> {
-  const me = await resolveViewer()
+  const me = await requireUserId()
 
   const [mine] = await db
     .select()
@@ -223,7 +223,7 @@ export type MyMoment = {
  */
 export const listMyMoments = createServerFn({ method: 'GET' }).handler(
   async (): Promise<Array<MyMoment>> => {
-    const viewer = await resolveViewer()
+    const viewer = await requireUserId()
     return db
       .select({
         id: moment.id,

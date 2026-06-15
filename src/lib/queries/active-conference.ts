@@ -1,7 +1,7 @@
 /**
  * Server-only conference helpers. Kept out of `conferences.ts` (which client
  * routes import for its server functions) because these are plain functions
- * that touch the request cookie — like `concierge/viewer.ts`, this module must
+ * that touch the request cookie — like `server-auth.ts`, this module must
  * never be imported directly by a client component.
  */
 import { getCookie } from '@tanstack/react-start/server'
