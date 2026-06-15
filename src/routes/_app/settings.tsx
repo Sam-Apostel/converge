@@ -8,6 +8,8 @@ import { cn } from '#/lib/utils'
 import {
   PROVIDERS,
   PROVIDER_LABELS,
+  PROVIDER_MODELS,
+  providerHasModelList,
   providerNeedsKey,
 } from '#/lib/concierge/provider'
 import type { ProviderId } from '#/lib/concierge/provider'
@@ -30,6 +32,41 @@ const MODEL_HINTS: Record<ProviderId, string> = {
   openrouter: 'e.g. anthropic/claude-sonnet-4',
 }
 
+const MODEL_GUIDANCE: Record<ProviderId, { title: string; lines: string[] }> = {
+  ollama: {
+    title: 'Picking a local model',
+    lines: [
+      'Enter the exact tag you pulled with `ollama pull`, e.g. `llama3.1`.',
+      'Leave it blank to fall back to the dev default.',
+      'Bigger models answer better but need more RAM/VRAM — start with an 8B model and size up.',
+    ],
+  },
+  anthropic: {
+    title: 'Picking an Anthropic model',
+    lines: [
+      'Opus is the most capable — best for nuanced, multi-step concierge replies.',
+      'Sonnet is the balanced default: fast and strong for everyday use.',
+      'Haiku is the cheapest and fastest — great for simple, high-volume queries.',
+    ],
+  },
+  openai: {
+    title: 'Picking an OpenAI model',
+    lines: [
+      'The flagship GPT model gives the highest quality answers.',
+      'The `mini` variants are cheaper and faster with a small quality trade-off.',
+      'When in doubt, start with the recommended (top) option and adjust on cost.',
+    ],
+  },
+  openrouter: {
+    title: 'Picking an OpenRouter model',
+    lines: [
+      'Models are namespaced as `vendor/model` (e.g. `anthropic/claude-sonnet-4-6`).',
+      'Pick a frontier model for quality, or an open model like Llama to cut costs.',
+      'Your OpenRouter key must have access to the model you choose.',
+    ],
+  },
+}
+
 type TestState =
   | { kind: 'idle' }
   | { kind: 'testing' }
@@ -49,6 +86,24 @@ function SettingsPage() {
   const [test, setTest] = useState<TestState>({ kind: 'idle' })
 
   const needsKey = providerNeedsKey(provider)
+
+  // Online providers offer a curated model dropdown; preserve an already-saved
+  // model that isn't in the list so we never silently drop the user's choice.
+  const modelOptions = providerHasModelList(provider)
+    ? model && !PROVIDER_MODELS[provider].includes(model)
+      ? [model, ...PROVIDER_MODELS[provider]]
+      : PROVIDER_MODELS[provider]
+    : []
+
+  const handleProviderChange = (next: ProviderId) => {
+    setProvider(next)
+    setTest({ kind: 'idle' })
+    // Land on a valid selection for the new provider's dropdown. Keep the
+    // current value if it's still valid; otherwise pick the recommended model.
+    if (providerHasModelList(next) && !PROVIDER_MODELS[next].includes(model)) {
+      setModel(PROVIDER_MODELS[next][0])
+    }
+  }
 
   const applyView = (view: AiSettingsView) => {
     setProvider(view.provider)
@@ -116,10 +171,7 @@ function SettingsPage() {
             <span className="text-note font-medium text-slate">Provider</span>
             <select
               value={provider}
-              onChange={(e) => {
-                setProvider(e.target.value as ProviderId)
-                setTest({ kind: 'idle' })
-              }}
+              onChange={(e) => handleProviderChange(e.target.value as ProviderId)}
               className={cn(
                 'px-3.5 py-2.5 text-body text-ink',
                 'rounded-xl border border-line bg-inner',
@@ -137,16 +189,34 @@ function SettingsPage() {
           {/* model */}
           <label className="flex flex-col gap-1.5">
             <span className="text-note font-medium text-slate">Model</span>
-            <input
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              placeholder={MODEL_HINTS[provider]}
-              className={cn(
-                'px-3.5 py-2.5 text-body text-ink placeholder:text-muted',
-                'rounded-xl border border-line bg-inner',
-                'focus:outline-none focus:ring-2 focus:ring-lime/40',
-              )}
-            />
+            {providerHasModelList(provider) ? (
+              <select
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                className={cn(
+                  'px-3.5 py-2.5 text-body text-ink',
+                  'rounded-xl border border-line bg-inner',
+                  'focus:outline-none focus:ring-2 focus:ring-lime/40',
+                )}
+              >
+                {modelOptions.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                placeholder={MODEL_HINTS[provider]}
+                className={cn(
+                  'px-3.5 py-2.5 text-body text-ink placeholder:text-muted',
+                  'rounded-xl border border-line bg-inner',
+                  'focus:outline-none focus:ring-2 focus:ring-lime/40',
+                )}
+              />
+            )}
           </label>
 
           {/* api key — write-only */}
@@ -241,6 +311,26 @@ function SettingsPage() {
             ) : null}
           </div>
         </form>
+      </div>
+
+      {/* model guidance */}
+      <div className="mt-4 max-w-xl rounded-2xl border border-line bg-inner p-5">
+        <h2 className="text-note font-medium text-ink">
+          {MODEL_GUIDANCE[provider].title}
+        </h2>
+        <ul className="mt-2 flex flex-col gap-1.5">
+          {MODEL_GUIDANCE[provider].lines.map((line) => (
+            <li
+              key={line}
+              className="flex gap-2 text-caption leading-body text-slate"
+            >
+              <span aria-hidden className="text-muted">
+                •
+              </span>
+              <span>{line}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   )

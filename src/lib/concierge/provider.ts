@@ -37,8 +37,38 @@ export const PROVIDER_LABELS: Record<ProviderId, string> = {
   openrouter: 'OpenRouter',
 }
 
+/**
+ * Curated model choices per online provider, surfaced as a dropdown in the AI
+ * settings UI. The first entry is treated as the recommended default. BYOK
+ * still passes the chosen string straight through to the provider, so this is a
+ * convenience list — refresh it as providers ship new models. Ollama is omitted
+ * on purpose: local model tags vary per machine, so that field stays free text.
+ */
+export const PROVIDER_MODELS: Record<Exclude<ProviderId, 'ollama'>, string[]> = {
+  anthropic: [
+    'claude-opus-4-8',
+    'claude-sonnet-4-6',
+    'claude-haiku-4-5',
+    'claude-opus-4-7',
+  ],
+  openai: ['gpt-5.4', 'gpt-5.4-mini', 'gpt-5', 'gpt-4.1-mini'],
+  openrouter: [
+    'anthropic/claude-sonnet-4-6',
+    'anthropic/claude-opus-4-8',
+    'openai/gpt-5.4',
+    'meta-llama/llama-3.1-70b-instruct',
+  ],
+}
+
 /** Providers that require an API key (everything except local Ollama). */
 export function providerNeedsKey(provider: ProviderId): boolean {
+  return provider !== 'ollama'
+}
+
+/** Does this provider expose a curated model dropdown (vs. free-text)? */
+export function providerHasModelList(
+  provider: ProviderId,
+): provider is Exclude<ProviderId, 'ollama'> {
   return provider !== 'ollama'
 }
 
