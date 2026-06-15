@@ -25,6 +25,7 @@ import { Route as ApiMomentsRouteImport } from './routes/api/moments'
 import { Route as ApiMessagesRouteImport } from './routes/api/messages'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiDocumentsRouteImport } from './routes/api/documents'
+import { Route as ApiDiscussionsRouteImport } from './routes/api/discussions'
 import { Route as ApiConnectionsRouteImport } from './routes/api/connections'
 import { Route as ApiConciergeRouteImport } from './routes/api/concierge'
 import { Route as ApiAnswersRouteImport } from './routes/api/answers'
@@ -131,6 +132,11 @@ const ApiHealthRoute = ApiHealthRouteImport.update({
 const ApiDocumentsRoute = ApiDocumentsRouteImport.update({
   id: '/api/documents',
   path: '/api/documents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDiscussionsRoute = ApiDiscussionsRouteImport.update({
+  id: '/api/discussions',
+  path: '/api/discussions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiConnectionsRoute = ApiConnectionsRouteImport.update({
@@ -266,9 +272,9 @@ const ApiMeetupsIdRsvpRoute = ApiMeetupsIdRsvpRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiDiscussionsIdPostsRoute = ApiDiscussionsIdPostsRouteImport.update({
-  id: '/api/discussions/$id/posts',
-  path: '/api/discussions/$id/posts',
-  getParentRoute: () => rootRouteImport,
+  id: '/$id/posts',
+  path: '/$id/posts',
+  getParentRoute: () => ApiDiscussionsRoute,
 } as any)
 const AppProjectsSlugEditRoute = AppProjectsSlugEditRouteImport.update({
   id: '/edit',
@@ -292,6 +298,7 @@ export interface FileRoutesByFullPath {
   '/api/answers': typeof ApiAnswersRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
+  '/api/discussions': typeof ApiDiscussionsRouteWithChildren
   '/api/documents': typeof ApiDocumentsRouteWithChildren
   '/api/health': typeof ApiHealthRoute
   '/api/messages': typeof ApiMessagesRoute
@@ -336,6 +343,7 @@ export interface FileRoutesByTo {
   '/api/answers': typeof ApiAnswersRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
+  '/api/discussions': typeof ApiDiscussionsRouteWithChildren
   '/api/documents': typeof ApiDocumentsRouteWithChildren
   '/api/health': typeof ApiHealthRoute
   '/api/messages': typeof ApiMessagesRoute
@@ -383,6 +391,7 @@ export interface FileRoutesById {
   '/api/answers': typeof ApiAnswersRoute
   '/api/concierge': typeof ApiConciergeRoute
   '/api/connections': typeof ApiConnectionsRoute
+  '/api/discussions': typeof ApiDiscussionsRouteWithChildren
   '/api/documents': typeof ApiDocumentsRouteWithChildren
   '/api/health': typeof ApiHealthRoute
   '/api/messages': typeof ApiMessagesRoute
@@ -431,6 +440,7 @@ export interface FileRouteTypes {
     | '/api/answers'
     | '/api/concierge'
     | '/api/connections'
+    | '/api/discussions'
     | '/api/documents'
     | '/api/health'
     | '/api/messages'
@@ -475,6 +485,7 @@ export interface FileRouteTypes {
     | '/api/answers'
     | '/api/concierge'
     | '/api/connections'
+    | '/api/discussions'
     | '/api/documents'
     | '/api/health'
     | '/api/messages'
@@ -521,6 +532,7 @@ export interface FileRouteTypes {
     | '/api/answers'
     | '/api/concierge'
     | '/api/connections'
+    | '/api/discussions'
     | '/api/documents'
     | '/api/health'
     | '/api/messages'
@@ -562,6 +574,7 @@ export interface RootRouteChildren {
   ApiAnswersRoute: typeof ApiAnswersRoute
   ApiConciergeRoute: typeof ApiConciergeRoute
   ApiConnectionsRoute: typeof ApiConnectionsRoute
+  ApiDiscussionsRoute: typeof ApiDiscussionsRouteWithChildren
   ApiDocumentsRoute: typeof ApiDocumentsRouteWithChildren
   ApiHealthRoute: typeof ApiHealthRoute
   ApiMessagesRoute: typeof ApiMessagesRoute
@@ -574,7 +587,6 @@ export interface RootRouteChildren {
   ApiStreamRoute: typeof ApiStreamRoute
   ApiTasksRoute: typeof ApiTasksRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
-  ApiDiscussionsIdPostsRoute: typeof ApiDiscussionsIdPostsRoute
   ApiMeetupsIdRsvpRoute: typeof ApiMeetupsIdRsvpRoute
 }
 
@@ -690,6 +702,13 @@ declare module '@tanstack/react-router' {
       path: '/api/documents'
       fullPath: '/api/documents'
       preLoaderRoute: typeof ApiDocumentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/discussions': {
+      id: '/api/discussions'
+      path: '/api/discussions'
+      fullPath: '/api/discussions'
+      preLoaderRoute: typeof ApiDiscussionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/connections': {
@@ -876,10 +895,10 @@ declare module '@tanstack/react-router' {
     }
     '/api/discussions/$id/posts': {
       id: '/api/discussions/$id/posts'
-      path: '/api/discussions/$id/posts'
+      path: '/$id/posts'
       fullPath: '/api/discussions/$id/posts'
       preLoaderRoute: typeof ApiDiscussionsIdPostsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ApiDiscussionsRoute
     }
     '/_app/projects/$slug/edit': {
       id: '/_app/projects/$slug/edit'
@@ -953,6 +972,18 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface ApiDiscussionsRouteChildren {
+  ApiDiscussionsIdPostsRoute: typeof ApiDiscussionsIdPostsRoute
+}
+
+const ApiDiscussionsRouteChildren: ApiDiscussionsRouteChildren = {
+  ApiDiscussionsIdPostsRoute: ApiDiscussionsIdPostsRoute,
+}
+
+const ApiDiscussionsRouteWithChildren = ApiDiscussionsRoute._addFileChildren(
+  ApiDiscussionsRouteChildren,
+)
+
 interface ApiDocumentsRouteChildren {
   ApiDocumentsIdRoute: typeof ApiDocumentsIdRoute
 }
@@ -1003,6 +1034,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAnswersRoute: ApiAnswersRoute,
   ApiConciergeRoute: ApiConciergeRoute,
   ApiConnectionsRoute: ApiConnectionsRoute,
+  ApiDiscussionsRoute: ApiDiscussionsRouteWithChildren,
   ApiDocumentsRoute: ApiDocumentsRouteWithChildren,
   ApiHealthRoute: ApiHealthRoute,
   ApiMessagesRoute: ApiMessagesRoute,
@@ -1015,7 +1047,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiStreamRoute: ApiStreamRoute,
   ApiTasksRoute: ApiTasksRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
-  ApiDiscussionsIdPostsRoute: ApiDiscussionsIdPostsRoute,
   ApiMeetupsIdRsvpRoute: ApiMeetupsIdRsvpRoute,
 }
 export const routeTree = rootRouteImport
