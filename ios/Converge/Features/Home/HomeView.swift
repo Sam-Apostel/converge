@@ -110,8 +110,16 @@ struct HomeView: View {
     }
 
     private func trendingCard(_ p: HomeSummary.TrendingProject) -> some View {
-        NavigationLink(value: ProjectRoute(slug: p.slug)) {
-            GlassCard {
+        let color = personColor(p.slug)
+        return NavigationLink(value: ProjectRoute(slug: p.slug)) {
+            VStack(spacing: 0) {
+                ZStack {
+                    LinearGradient(colors: [color.opacity(0.9), color.opacity(0.45)],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing)
+                    Image(systemName: "square.grid.2x2.fill")
+                        .font(.system(size: 28, weight: .semibold)).foregroundStyle(.white.opacity(0.8))
+                }
+                .frame(maxWidth: .infinity).frame(height: 96).clipped()
                 VStack(alignment: .leading, spacing: 6) {
                     HStack { Text("Trending project").eyebrow(); Spacer()
                         Label("\(p.trendingScore)", systemImage: "flame.fill")
@@ -124,7 +132,12 @@ struct HomeView: View {
                         Text("by \(owner)").font(TypeRamp.tiny()).foregroundStyle(Palette.faint)
                     }
                 }
+                .padding(14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Palette.surface)
             }
+            .clipShape(.rect(cornerRadius: 18))
+            .modifier(GlassFrame(innerRadius: 18, inset: 8))
         }
         .buttonStyle(.plain)
     }

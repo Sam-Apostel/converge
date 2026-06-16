@@ -7,7 +7,17 @@ final class SearchModel {
     var query = ""
     var results: [SearchResult] = []
     var searching = false
+    var people: [String: Person] = [:]
     private var task: Task<Void, Never>?
+
+    /// Cache the directory so person results render with real avatars and open
+    /// the real profile.
+    func loadDirectory() async {
+        guard people.isEmpty else { return }
+        if let all: [Person] = try? await APIClient.shared.get("/api/people") {
+            people = Dictionary(uniqueKeysWithValues: all.map { ($0.id, $0) })
+        }
+    }
 
     func onQueryChange() {
         task?.cancel()
@@ -29,33 +39,62 @@ struct SearchView: View {
     @State private var model = SearchModel()
 
     var body: some View {
-        ZStack {
-            CanvasBackground()
-            ScrollView {
-                VStack(spacing: 10) {
-                    ForEach(model.results) { result in
+        ScrollView {
+            VStack(spacing: 10) {
+                ForEach(model.results) { result in
+                    if result.type == "person", let person = model.people[result.id] {
+                        NavigationLink(value: person) {
+                            PersonResultRow(person: person, subtitle: result.subtitle)
+                        }
+                        .buttonStyle(.plain)
+                    } else {
                         destination(for: result) { SearchRow(result: result) }
                     }
-                    if model.results.isEmpty && model.query.count >= 2 && !model.searching {
-                        Text("Nothing found.").font(TypeRamp.note()).foregroundStyle(Palette.mist).padding(.top, 40)
-                    }
                 }
-                .padding(.horizontal, 16).padding(.vertical, 12)
+                if model.results.isEmpty && model.query.count >= 2 && !model.searching {
+                    Text("Nothing found.").font(TypeRamp.note()).foregroundStyle(Palette.mist).padding(.top, 40)
+                }
             }
+            .padding(.horizontal, 16).padding(.vertical, 12)
         }
+        .background(Palette.canvas, ignoresSafeAreaEdges: .all)
         .navigationTitle("Search")
         .searchable(text: $model.query, prompt: "People, projects, sessions, discussions")
         .onChange(of: model.query) { model.onQueryChange() }
+        .task { await model.loadDirectory() }
     }
 
     @ViewBuilder
     private func destination(for result: SearchResult, @ViewBuilder label: () -> some View) -> some View {
         switch result.type {
-        case "person": NavigationLink(value: Person(id: result.id, name: result.title, image: nil, profile: nil)) { label() }.buttonStyle(.plain)
         case "project": NavigationLink(value: ProjectRoute(slug: result.id)) { label() }.buttonStyle(.plain)
         case "session": NavigationLink(value: SessionRoute(slug: result.id)) { label() }.buttonStyle(.plain)
         case "discussion": NavigationLink(value: DiscussionRoute(id: result.id)) { label() }.buttonStyle(.plain)
         default: label()
+        }
+    }
+}
+
+/// Search result row for a person, with their real avatar — a compact person card.
+struct PersonResultRow: View {
+    let person: Person
+    var subtitle: String?
+
+    var body: some View {
+        GlassCard {
+            HStack(spacing: 12) {
+                Avatar(name: person.name, image: person.image, size: 40)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(person.name).font(TypeRamp.body().weight(.semibold)).foregroundStyle(Palette.ink).lineLimit(1)
+                    if let line = person.roleLine ?? subtitle {
+                        Text(line).font(TypeRamp.caption()).foregroundStyle(Palette.mist).lineLimit(1)
+                    }
+                }
+                Spacer(minLength: 0)
+                if !person.intents.isEmpty {
+                    Pill(text: person.intents[0], tone: .lime)
+                }
+            }
         }
     }
 }

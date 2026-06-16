@@ -249,18 +249,19 @@ struct SessionDetailView: View {
     private func qanda(_ d: SessionDetail) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Q&A").eyebrow()
-            HStack(alignment: .bottom, spacing: 8) {
-                GlassField {
+            GlassField {
+                HStack(alignment: .bottom, spacing: 8) {
                     TextField("Ask the speaker…", text: $model.draftQuestion, axis: .vertical)
                         .font(TypeRamp.body())
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Button { Task { await model.ask(sessionId: d.id) } } label: {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .font(.system(size: 30))
+                            .foregroundStyle(Palette.ink)
+                            .symbolRenderingMode(.hierarchical)
+                    }
+                    .buttonStyle(.plain)
                 }
-                Button { Task { await model.ask(sessionId: d.id) } } label: {
-                    Image(systemName: "arrow.up").font(.system(size: 17, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(width: 46, height: 46).background(Palette.ink, in: .circle)
-                }
-                .buttonStyle(.plain)
-                .disabled(model.posting || model.draftQuestion.trimmingCharacters(in: .whitespaces).isEmpty)
             }
             ForEach(model.questions) { q in
                 QuestionCard(
