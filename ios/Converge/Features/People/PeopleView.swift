@@ -88,7 +88,7 @@ struct PersonRow: View {
     let person: Person
 
     var body: some View {
-        SoftCard {
+        GlassCard {
             HStack(spacing: 12) {
                 Avatar(name: person.name, image: person.image, size: 48)
                 VStack(alignment: .leading, spacing: 3) {

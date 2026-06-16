@@ -91,7 +91,7 @@ struct SessionRow: View {
     let session: Session
 
     var body: some View {
-        SoftCard {
+        GlassCard {
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 8) {
                     Text(Format.timeRange(session.startsAt, session.endsAt))

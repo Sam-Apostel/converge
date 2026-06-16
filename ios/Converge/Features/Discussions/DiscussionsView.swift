@@ -81,7 +81,7 @@ struct DiscussionsView: View {
 struct DiscussionRow: View {
     let discussion: DiscussionSummary
     var body: some View {
-        SoftCard {
+        GlassCard {
             VStack(alignment: .leading, spacing: 6) {
                 if let topic = discussion.topic { Pill(text: topic) }
                 Text(discussion.title).font(TypeRamp.body().weight(.semibold)).foregroundStyle(Palette.ink)

@@ -75,24 +75,26 @@ struct PersonDetailView: View {
     }
 
     private var header: some View {
-        HStack(spacing: 14) {
-            Avatar(name: person.name, image: person.image, size: 72)
-            VStack(alignment: .leading, spacing: 5) {
-                Text(person.name).font(TypeRamp.title()).foregroundStyle(Palette.ink)
-                if let role = person.roleLine {
-                    Text(role).font(TypeRamp.note()).foregroundStyle(Palette.slate)
+        Spotlight {
+            HStack(spacing: 14) {
+                Avatar(name: person.name, image: person.image, size: 72)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(person.name).font(TypeRamp.title()).foregroundStyle(.white)
+                    if let role = person.roleLine {
+                        Text(role).font(TypeRamp.note()).foregroundStyle(Palette.frost)
+                    }
+                    if let loc = person.location, !loc.isEmpty {
+                        Label(loc, systemImage: "mappin.and.ellipse")
+                            .font(TypeRamp.caption())
+                            .foregroundStyle(Palette.frost)
+                    }
+                    HStack(spacing: 6) {
+                        AvailabilityDot(availability: person.profile?.availability)
+                        Text(availabilityLabel).font(TypeRamp.tiny()).foregroundStyle(Palette.frost)
+                    }
                 }
-                if let loc = person.location, !loc.isEmpty {
-                    Label(loc, systemImage: "mappin.and.ellipse")
-                        .font(TypeRamp.caption())
-                        .foregroundStyle(Palette.mist)
-                }
-                HStack(spacing: 6) {
-                    AvailabilityDot(availability: person.profile?.availability)
-                    Text(availabilityLabel).font(TypeRamp.tiny()).foregroundStyle(Palette.mist)
-                }
+                Spacer(minLength: 0)
             }
-            Spacer(minLength: 0)
         }
     }
 

@@ -54,12 +54,23 @@ final class AiSettingsModel {
 
 struct AiSettingsView: View {
     @State private var model = AiSettingsModel()
+    @AppStorage("converge.useOnDeviceAI") private var useOnDevice = true
 
     private let providers = ["ollama", "openai", "anthropic", "openrouter"]
 
     var body: some View {
         Form {
-            Section("Provider") {
+            Section("Engine") {
+                Toggle("On-device (Apple Intelligence)", isOn: $useOnDevice)
+                    .disabled(!OnDeviceConcierge.isAvailable)
+                if let reason = OnDeviceConcierge.unavailableReason {
+                    Text(reason).font(TypeRamp.caption()).foregroundStyle(Palette.mist)
+                } else {
+                    Text("Runs locally on your iPhone — no API key, works offline. Falls back to the provider below.")
+                        .font(TypeRamp.caption()).foregroundStyle(Palette.mist)
+                }
+            }
+            Section("Provider (fallback)") {
                 Picker("Provider", selection: $model.provider) {
                     ForEach(providers, id: \.self) { Text(label($0)).tag($0) }
                 }

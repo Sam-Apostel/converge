@@ -60,7 +60,7 @@ struct TasksView: View {
             VStack(spacing: 8) {
                 ForEach(model.tasks) { task in
                     Button { Task { await model.toggle(task) } } label: {
-                        SoftCard {
+                        GlassCard {
                             HStack(spacing: 12) {
                                 Image(systemName: task.done ? "checkmark.circle.fill" : "circle")
                                     .font(.system(size: 20))

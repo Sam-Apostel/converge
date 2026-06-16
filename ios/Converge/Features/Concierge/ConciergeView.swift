@@ -15,6 +15,16 @@ final class ConciergeModel {
     var thinking = false
     var error: String?
 
+    /// Whether the concierge is currently running on-device (Apple Intelligence).
+    var usingOnDevice: Bool {
+        onDevicePreferred && OnDeviceConcierge.isAvailable
+    }
+
+    private var onDevicePreferred: Bool {
+        if let v = UserDefaults.standard.object(forKey: "converge.useOnDeviceAI") as? Bool { return v }
+        return OnDeviceConcierge.isAvailable
+    }
+
     func send() async {
         let text = draft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, !thinking else { return }
@@ -23,22 +33,37 @@ final class ConciergeModel {
         thinking = true
         error = nil
 
-        struct Wire: Encodable { let role: String; let content: String }
-        struct Body: Encodable { let messages: [Wire] }
-        struct Reply: Decodable { let text: String?; let error: String? }
-
-        let payload = Body(messages: messages.map { Wire(role: $0.role, content: $0.content) })
         do {
-            let reply: Reply = try await APIClient.shared.send("/api/concierge/ask", method: "POST", body: payload)
-            if let text = reply.text, !text.isEmpty {
-                messages.append(ChatMessage(role: "assistant", content: text))
+            if usingOnDevice {
+                let reply = try await OnDeviceConcierge.answer(messages: messages)
+                appendReply(reply)
             } else {
-                error = reply.error ?? "No response."
+                try await askServer()
             }
         } catch {
             self.error = conciergeError(error)
         }
         thinking = false
+    }
+
+    private func askServer() async throws {
+        struct Wire: Encodable { let role: String; let content: String }
+        struct Body: Encodable { let messages: [Wire] }
+        struct Reply: Decodable { let text: String?; let error: String? }
+
+        let payload = Body(messages: messages.map { Wire(role: $0.role, content: $0.content) })
+        let reply: Reply = try await APIClient.shared.send("/api/concierge/ask", method: "POST", body: payload)
+        if let text = reply.text, !text.isEmpty {
+            appendReply(text)
+        } else {
+            error = reply.error ?? "No response."
+        }
+    }
+
+    private func appendReply(_ text: String) {
+        let clean = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if clean.isEmpty { error = "No response."; return }
+        messages.append(ChatMessage(role: "assistant", content: clean))
     }
 
     private func conciergeError(_ error: Error) -> String {
@@ -90,7 +115,15 @@ struct ConciergeView: View {
     private var intro: some View {
         GlassCard {
             VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 8) { ConvergeLogo(size: 20); Text("Concierge").eyebrow() }
+                HStack(spacing: 8) {
+                    ConvergeLogo(size: 20)
+                    Text("Concierge").eyebrow()
+                    Spacer()
+                    if model.usingOnDevice {
+                        Label("On-device", systemImage: "cpu")
+                            .font(TypeRamp.tiny().weight(.semibold)).foregroundStyle(Palette.limeDeep)
+                    }
+                }
                 Text("Ask who to meet, what to see next, or which projects match what you're building.")
                     .font(TypeRamp.reading()).foregroundStyle(Palette.inkSoft)
                 VStack(alignment: .leading, spacing: 6) {

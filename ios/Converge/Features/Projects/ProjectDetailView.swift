@@ -14,11 +14,13 @@ struct ProjectDetailView: View {
             CanvasBackground()
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        if let category = project.category { Pill(text: category) }
-                        Text(project.name).font(TypeRamp.title()).foregroundStyle(Palette.ink)
-                        if let tagline = project.tagline {
-                            Text(tagline).font(TypeRamp.reading()).foregroundStyle(Palette.slate)
+                    Spotlight {
+                        VStack(alignment: .leading, spacing: 8) {
+                            if let category = project.category { Pill(text: category) }
+                            Text(project.name).font(TypeRamp.title()).foregroundStyle(.white)
+                            if let tagline = project.tagline {
+                                Text(tagline).font(TypeRamp.reading()).foregroundStyle(Palette.frost)
+                            }
                         }
                     }
 

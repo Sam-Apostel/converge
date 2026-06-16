@@ -96,7 +96,7 @@ struct MessagesView: View {
 struct ThreadRow: View {
     let thread: MessageThread
     var body: some View {
-        SoftCard {
+        GlassCard {
             HStack(spacing: 12) {
                 Avatar(name: thread.name, image: thread.image, size: 46)
                 VStack(alignment: .leading, spacing: 3) {

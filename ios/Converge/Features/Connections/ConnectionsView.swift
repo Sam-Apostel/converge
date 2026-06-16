@@ -76,7 +76,7 @@ struct ConnectionsView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Requests").eyebrow()
             ForEach(model.incoming) { row in
-                SoftCard {
+                GlassCard {
                     HStack(spacing: 12) {
                         Avatar(name: row.person.name, image: row.person.image, size: 44)
                         VStack(alignment: .leading, spacing: 2) {
@@ -100,7 +100,7 @@ struct ConnectionsView: View {
         VStack(alignment: .leading, spacing: 10) {
             if !rows.isEmpty { Text(title).eyebrow() }
             ForEach(rows) { row in
-                SoftCard {
+                GlassCard {
                     HStack(spacing: 12) {
                         NavigationLink(value: row.person) {
                             HStack(spacing: 12) {

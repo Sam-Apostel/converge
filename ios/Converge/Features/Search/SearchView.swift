@@ -63,7 +63,7 @@ struct SearchView: View {
 struct SearchRow: View {
     let result: SearchResult
     var body: some View {
-        SoftCard {
+        GlassCard {
             HStack(spacing: 12) {
                 Image(systemName: icon)
                     .font(.system(size: 15, weight: .medium)).foregroundStyle(Palette.slate)

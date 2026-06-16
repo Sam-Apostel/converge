@@ -86,7 +86,7 @@ struct ProjectRow: View {
     let project: Project
 
     var body: some View {
-        SoftCard {
+        GlassCard {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
                     if let category = project.category {

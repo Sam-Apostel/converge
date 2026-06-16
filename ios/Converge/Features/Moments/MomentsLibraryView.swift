@@ -81,7 +81,7 @@ struct MomentsLibraryView: View {
 struct MomentCard: View {
     let moment: MyMoment
     var body: some View {
-        SoftCard {
+        GlassCard {
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 8) {
                     Text(timestamp).font(TypeRamp.mono(12)).foregroundStyle(Palette.slate)

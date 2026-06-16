@@ -290,7 +290,7 @@ struct QuestionCard: View {
     var onPromote: (() -> Void)? = nil
 
     var body: some View {
-        SoftCard {
+        GlassCard {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .top, spacing: 12) {
                     Button(action: onVote) {

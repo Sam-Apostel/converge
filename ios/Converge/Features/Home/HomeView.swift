@@ -119,7 +119,7 @@ struct HomeView: View {
 
     private func trendingCard(_ p: HomeSummary.TrendingProject) -> some View {
         NavigationLink(value: ProjectRoute(slug: p.slug)) {
-            SoftCard {
+            GlassCard {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack { Text("Trending project").eyebrow(); Spacer()
                         Label("\(p.trendingScore)", systemImage: "flame.fill")

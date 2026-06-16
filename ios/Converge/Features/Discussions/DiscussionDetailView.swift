@@ -56,9 +56,11 @@ struct DiscussionDetailView: View {
                 VStack(spacing: 0) {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 14) {
-                            VStack(alignment: .leading, spacing: 6) {
-                                if let topic = detail.topic { Pill(text: topic) }
-                                Text(detail.title).font(TypeRamp.title()).foregroundStyle(Palette.ink)
+                            Spotlight {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    if let topic = detail.topic { Pill(text: topic) }
+                                    Text(detail.title).font(TypeRamp.title()).foregroundStyle(.white)
+                                }
                             }
                             ForEach(detail.posts) { post in PostBubble(post: post) }
                         }
@@ -97,7 +99,7 @@ struct DiscussionDetailView: View {
 struct PostBubble: View {
     let post: DiscussionPost
     var body: some View {
-        SoftCard {
+        GlassCard {
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 8) {
                     Avatar(name: post.authorName, image: post.authorImage, size: 24)
