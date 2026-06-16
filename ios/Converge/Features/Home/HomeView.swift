@@ -23,14 +23,14 @@ struct HomeView: View {
     @State private var model = HomeModel()
 
     var body: some View {
-        ZStack {
-            CanvasBackground()
+        Group {
             if let summary = model.summary {
                 content(summary)
             } else {
                 StateOverlay(state: model.state) { Task { await model.load() } }
             }
         }
+        .background(Palette.canvas, ignoresSafeAreaEdges: .all)
         .navigationTitle("Converge")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -50,13 +50,13 @@ struct HomeView: View {
     private func content(_ s: HomeSummary) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-                if let next = s.nextSession { nextCard(next) }
+                if let next = s.nextSession { nextCard(next).padding(.horizontal, 16) }
                 if !s.peopleToMeet.isEmpty { peopleToMeet(s.peopleToMeet) }
-                if let trending = s.trendingProject { trendingCard(trending) }
-                hub
-                counts(s.counts)
+                if let trending = s.trendingProject { trendingCard(trending).padding(.horizontal, 16) }
+                hub.padding(.horizontal, 16)
+                counts(s.counts).padding(.horizontal, 16)
             }
-            .padding(20)
+            .padding(.vertical, 16)
         }
         .refreshable { await model.load() }
     }
@@ -91,29 +91,21 @@ struct HomeView: View {
 
     private func peopleToMeet(_ people: [HomeSummary.PersonLite]) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("People to meet").eyebrow()
+            Text("People to meet").eyebrow().padding(.horizontal, 16)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach(people) { p in
                         NavigationLink(value: Person(lite: p)) {
-                            VStack(spacing: 8) {
-                                Avatar(name: p.name, image: p.image, size: 60)
-                                Text(p.name).font(TypeRamp.caption().weight(.semibold))
-                                    .foregroundStyle(Palette.ink).lineLimit(1)
-                                if let reason = p.reason ?? p.headline {
-                                    Text(reason).font(TypeRamp.tiny()).foregroundStyle(Palette.mist)
-                                        .lineLimit(1)
-                                }
-                            }
-                            .frame(width: 96)
-                            .padding(.vertical, 12)
-                            .background(Palette.surface, in: .rect(cornerRadius: 18))
-                            .shadow(color: .black.opacity(0.05), radius: 10, y: 6)
+                            PersonBadge(person: Person(lite: p), compact: true)
+                                .frame(width: 168)
                         }
                         .buttonStyle(.plain)
                     }
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 2)
             }
+            .scrollClipDisabled()
         }
     }
 

@@ -153,7 +153,7 @@ struct SessionDetailView: View {
                 }
                 qanda(detail)
             }
-            .padding(20)
+            .padding(16)
         }
         .refreshable { await model.refreshLive(sessionId: detail.id) }
     }
@@ -183,22 +183,22 @@ struct SessionDetailView: View {
 
     private func captureBar(_ d: SessionDetail) -> some View {
         Button { Task { await model.captureMoment(session: d) } } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "bookmark.fill")
-                Text("Capture this moment").font(TypeRamp.body().weight(.semibold))
-                Spacer()
+            HStack(spacing: 10) {
+                Image(systemName: "bookmark.fill").font(.system(size: 18, weight: .semibold))
+                Text("Capture this moment").font(TypeRamp.reading().weight(.semibold))
                 if !model.moments.isEmpty {
                     Text("\(model.moments.count)").font(TypeRamp.caption().weight(.bold))
-                        .foregroundStyle(Palette.ink)
                         .padding(.horizontal, 8).padding(.vertical, 3)
-                        .background(Palette.lime, in: .capsule)
+                        .background(Palette.ink.opacity(0.12), in: .capsule)
                 }
             }
             .foregroundStyle(Palette.ink)
-            .padding(14)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 18)
+            .background(Palette.lime, in: .rect(cornerRadius: 18))
+            .shadow(color: Palette.lime.opacity(0.45), radius: 14, x: 0, y: 6)
         }
         .buttonStyle(.plain)
-        .glassEffect(.regular, in: .rect(cornerRadius: 16))
     }
 
     private func speakers(_ d: SessionDetail) -> some View {
@@ -249,14 +249,15 @@ struct SessionDetailView: View {
     private func qanda(_ d: SessionDetail) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Q&A").eyebrow()
-            HStack(spacing: 8) {
+            HStack(alignment: .bottom, spacing: 8) {
                 GlassField {
                     TextField("Ask the speaker…", text: $model.draftQuestion, axis: .vertical)
                         .font(TypeRamp.body())
                 }
                 Button { Task { await model.ask(sessionId: d.id) } } label: {
-                    Image(systemName: "paperplane.fill").foregroundStyle(Palette.ink)
-                        .frame(width: 40, height: 40).background(Palette.lime, in: .circle)
+                    Image(systemName: "arrow.up").font(.system(size: 17, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 46, height: 46).background(Palette.ink, in: .circle)
                 }
                 .buttonStyle(.plain)
                 .disabled(model.posting || model.draftQuestion.trimmingCharacters(in: .whitespaces).isEmpty)

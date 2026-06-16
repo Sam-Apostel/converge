@@ -72,7 +72,7 @@ struct DiscussionsView: View {
                     .frame(maxWidth: .infinity).padding(.top, 60)
                 }
             }
-            .padding(.horizontal, 20).padding(.bottom, 24)
+            .padding(.horizontal, 16).padding(.bottom, 24)
         }
         .refreshable { await model.load() }
     }
@@ -116,7 +116,7 @@ struct NewDiscussionSheet: View {
                         .padding(12).background(Palette.surface, in: .rect(cornerRadius: 12))
                     Spacer()
                 }
-                .padding(20)
+                .padding(16)
             }
             .navigationTitle("New discussion")
             .navigationBarTitleDisplayMode(.inline)

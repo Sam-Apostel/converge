@@ -64,7 +64,7 @@ struct DiscussionDetailView: View {
                             }
                             ForEach(detail.posts) { post in PostBubble(post: post) }
                         }
-                        .padding(20)
+                        .padding(16)
                     }
                     composer(detail.id)
                 }

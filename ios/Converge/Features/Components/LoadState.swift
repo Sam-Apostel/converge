@@ -56,8 +56,10 @@ struct FilterChips: View {
                     }
                 }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 2)
         }
+        .scrollClipDisabled()
     }
 
     private func chip(_ label: String, active: Bool, _ tap: @escaping () -> Void) -> some View {

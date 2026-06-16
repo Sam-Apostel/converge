@@ -211,6 +211,41 @@ struct MyMoment: Codable, Identifiable, Hashable {
     var createdAt: Date?
 }
 
+// MARK: - Project detail (with owner + team)
+
+struct ProjectFull: Codable {
+    var id: String
+    var slug: String
+    var ownerId: String
+    var name: String
+    var tagline: String?
+    var description: String?
+    var category: String?
+    var techStack: [String]?
+    var lookingFor: [String]?
+    var screenshots: [String]?
+    var links: [String: String]?
+    var trendingScore: Int
+    var owner: TeamMember?
+    var members: [TeamMember]
+
+    struct TeamMember: Codable, Identifiable, Hashable {
+        var id: String
+        var name: String
+        var image: String?
+        var headline: String?
+        var role: String?
+    }
+
+    /// The list-shaped Project for reuse by the existing detail view.
+    var asProject: Project {
+        Project(id: id, slug: slug, ownerId: ownerId, name: name, tagline: tagline,
+                description: description, category: category, techStack: techStack,
+                lookingFor: lookingFor, screenshots: screenshots, links: links,
+                trendingScore: trendingScore)
+    }
+}
+
 // MARK: - Documents
 
 struct DocumentRef: Codable {

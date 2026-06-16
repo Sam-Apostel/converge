@@ -41,14 +41,14 @@ struct SessionsView: View {
     @State private var model = SessionsModel()
 
     var body: some View {
-        ZStack {
-            CanvasBackground()
+        Group {
             if model.state == .loaded {
                 list
             } else {
                 StateOverlay(state: model.state) { Task { await model.load() } }
             }
         }
+        .background(Palette.canvas, ignoresSafeAreaEdges: .all)
         .navigationTitle("Sessions")
         .task { await model.load() }
     }
@@ -61,13 +61,13 @@ struct SessionsView: View {
                 }
                 ForEach(model.days, id: \.label) { day in
                     VStack(alignment: .leading, spacing: 10) {
-                        Text(day.label).eyebrow().padding(.horizontal, 20)
+                        Text(day.label).eyebrow().padding(.horizontal, 16)
                         ForEach(day.sessions) { session in
                             NavigationLink(value: SessionRoute(slug: session.slug)) {
                                 SessionRow(session: session)
                             }
                             .buttonStyle(.plain)
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, 16)
                         }
                     }
                 }
@@ -114,6 +114,14 @@ struct SessionRow: View {
                         .font(TypeRamp.caption())
                         .foregroundStyle(Palette.mist)
                         .lineLimit(2)
+                }
+                if !session.speakers.isEmpty {
+                    HStack(spacing: 8) {
+                        AvatarStack(items: session.speakers.map { ($0.name, $0.image) }, size: 24)
+                        Text(session.speakers.map(\.name).joined(separator: ", "))
+                            .font(TypeRamp.caption()).foregroundStyle(Palette.slate).lineLimit(1)
+                    }
+                    .padding(.top, 2)
                 }
             }
         }

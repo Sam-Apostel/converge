@@ -43,6 +43,30 @@ struct Avatar: View {
     }
 }
 
+/// Overlapping avatar stack — speakers on a session card, a project's team, etc.
+struct AvatarStack: View {
+    let items: [(name: String, image: String?)]
+    var size: CGFloat = 26
+    var max: Int = 4
+
+    var body: some View {
+        HStack(spacing: -size * 0.34) {
+            ForEach(Array(items.prefix(max).enumerated()), id: \.offset) { _, item in
+                Avatar(name: item.name, image: item.image, size: size)
+                    .overlay(Circle().strokeBorder(Palette.surface, lineWidth: 1.5))
+            }
+            if items.count > max {
+                Text("+\(items.count - max)")
+                    .font(.system(size: size * 0.38, weight: .semibold))
+                    .foregroundStyle(Palette.slate)
+                    .frame(width: size, height: size)
+                    .background(Palette.pillow, in: .circle)
+                    .overlay(Circle().strokeBorder(Palette.surface, lineWidth: 1.5))
+            }
+        }
+    }
+}
+
 /// Availability dot (open / busy / dnd).
 struct AvailabilityDot: View {
     let availability: String?

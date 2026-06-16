@@ -127,7 +127,7 @@ struct ConciergeView: View {
                                 Text(error).font(TypeRamp.caption()).foregroundStyle(Palette.danger)
                             }
                         }
-                        .padding(20)
+                        .padding(16)
                     }
                     .onChange(of: model.messages.count) {
                         if let last = model.messages.last { withAnimation { proxy.scrollTo(last.id, anchor: .bottom) } }

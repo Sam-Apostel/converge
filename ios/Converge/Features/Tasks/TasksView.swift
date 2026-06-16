@@ -79,7 +79,7 @@ struct TasksView: View {
                     Text("No tasks yet.").font(TypeRamp.note()).foregroundStyle(Palette.mist).padding(.top, 60)
                 }
             }
-            .padding(.horizontal, 20).padding(.vertical, 12)
+            .padding(.horizontal, 16).padding(.vertical, 12)
         }
     }
 

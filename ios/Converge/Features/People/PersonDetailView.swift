@@ -14,6 +14,13 @@ final class PersonDetailModel {
         projects = (all ?? []).filter { $0.ownerId == ownerId }
     }
 
+    /// Resolve the full person record (with profile) when we were handed a
+    /// partial one — e.g. from search or the home "people to meet" list.
+    func fetchFull(id: String) async -> Person? {
+        let all: [Person]? = try? await APIClient.shared.get("/api/people")
+        return all?.first { $0.id == id }
+    }
+
     func connect(to userId: String) async {
         connectState = .requesting
         struct Body: Encodable { let toUserId: String }
@@ -27,8 +34,10 @@ final class PersonDetailModel {
 }
 
 struct PersonDetailView: View {
-    let person: Person
+    @State private var person: Person
     @State private var model = PersonDetailModel()
+
+    init(person: Person) { _person = State(initialValue: person) }
 
     var body: some View {
         ZStack {
@@ -66,12 +75,17 @@ struct PersonDetailView: View {
                         }
                     }
                 }
-                .padding(20)
+                .padding(16)
             }
         }
         .navigationTitle(person.name)
         .navigationBarTitleDisplayMode(.inline)
-        .task { await model.loadProjects(ownerId: person.id) }
+        .task {
+            await model.loadProjects(ownerId: person.id)
+            if person.profile == nil, let full = await model.fetchFull(id: person.id) {
+                person = full
+            }
+        }
     }
 
     private var header: some View {

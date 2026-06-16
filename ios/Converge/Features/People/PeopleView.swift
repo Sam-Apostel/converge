@@ -43,15 +43,17 @@ final class PeopleModel {
 struct PeopleView: View {
     @State private var model = PeopleModel()
 
+    private let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
+
     var body: some View {
-        ZStack {
-            CanvasBackground()
+        Group {
             if model.state == .loaded {
                 list
             } else {
                 StateOverlay(state: model.state) { Task { await model.load() } }
             }
         }
+        .background(Palette.canvas, ignoresSafeAreaEdges: .all)
         .navigationTitle("People")
         .searchable(text: $model.search, prompt: "Name, company, interests…")
         .task { await model.load() }
@@ -59,17 +61,19 @@ struct PeopleView: View {
 
     private var list: some View {
         ScrollView {
-            VStack(spacing: 12) {
+            VStack(spacing: 14) {
                 if !model.intents.isEmpty {
                     FilterChips(options: model.intents, selection: $model.intent)
-                        .padding(.bottom, 4)
                 }
-                ForEach(model.filtered) { person in
-                    NavigationLink(value: person) {
-                        PersonRow(person: person)
+                LazyVGrid(columns: columns, alignment: .center, spacing: 12) {
+                    ForEach(model.filtered) { person in
+                        NavigationLink(value: person) {
+                            PersonBadge(person: person, compact: true)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
+                .padding(.horizontal, 16)
                 if model.filtered.isEmpty {
                     Text("No one matches that yet.")
                         .font(TypeRamp.note())
@@ -77,7 +81,7 @@ struct PeopleView: View {
                         .padding(.top, 40)
                 }
             }
-            .padding(.horizontal, 20)
+            .padding(.top, 4)
             .padding(.bottom, 24)
         }
         .refreshable { await model.load() }

@@ -87,7 +87,7 @@ struct MessagesView: View {
                     .frame(maxWidth: .infinity).padding(.top, 60)
                 }
             }
-            .padding(.horizontal, 20).padding(.bottom, 24)
+            .padding(.horizontal, 16).padding(.bottom, 24)
         }
         .refreshable { await reload() }
     }

@@ -128,7 +128,7 @@ struct ProfileView: View {
                 .buttonStyle(.plain)
                 .padding(.top, 8)
             }
-            .padding(20)
+            .padding(16)
         }
     }
 

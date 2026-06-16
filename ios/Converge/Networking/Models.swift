@@ -57,6 +57,7 @@ struct Session: Codable, Identifiable, Hashable {
     var aiSummary: String?
     var createdAt: Date?
     var updatedAt: Date?
+    var speakers: [Speaker] = []
 
     var isLiveNow: Bool {
         guard let startsAt, let endsAt else { return false }

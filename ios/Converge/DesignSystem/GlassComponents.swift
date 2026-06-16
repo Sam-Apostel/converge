@@ -27,6 +27,8 @@ struct SoftCard<Content: View>: View {
 struct GlassFrame: ViewModifier {
     var innerRadius: CGFloat = 18
     var inset: CGFloat = 8
+    /// Optional per-item hue washed through the frosted frame (web `tint`).
+    var tint: Color? = nil
 
     func body(content: Content) -> some View {
         content
@@ -36,7 +38,14 @@ struct GlassFrame: ViewModifier {
                 let r = innerRadius + inset
                 ZStack {
                     RoundedRectangle(cornerRadius: r).fill(.ultraThinMaterial)
-                    RoundedRectangle(cornerRadius: r).fill(.white.opacity(0.32))
+                    if let tint {
+                        RoundedRectangle(cornerRadius: r).fill(
+                            LinearGradient(colors: [tint.opacity(0.55), .white.opacity(0.34)],
+                                           startPoint: .topLeading, endPoint: .bottomTrailing)
+                        )
+                    } else {
+                        RoundedRectangle(cornerRadius: r).fill(.white.opacity(0.32))
+                    }
                 }
             }
             .overlay {
@@ -88,7 +97,7 @@ struct Spotlight<Content: View>: View {
             .clipShape(.rect(cornerRadius: 22))
             .overlay {
                 RoundedRectangle(cornerRadius: 22)
-                    .strokeBorder(beam ? Palette.lime.opacity(0.55) : .white.opacity(0.08), lineWidth: beam ? 1.5 : 1)
+                    .strokeBorder(.white.opacity(0.08), lineWidth: 1)
             }
             .shadow(color: .black.opacity(0.18), radius: 22, x: 0, y: 14)
     }

@@ -14,6 +14,15 @@ extension Color {
     }
 }
 
+/// Deterministic per-person theme colour (for badge cover strips / tints),
+/// mirroring the web's per-person palette hue.
+func personColor(_ seed: String) -> Color {
+    var hash: UInt64 = 5381
+    for b in seed.utf8 { hash = (hash &* 33) ^ UInt64(b) }
+    let hue = Double(hash % 360) / 360.0
+    return Color(hue: hue, saturation: 0.5, brightness: 0.95)
+}
+
 enum Palette {
     // Ink / text
     static let ink = Color(hex: 0x13141D)

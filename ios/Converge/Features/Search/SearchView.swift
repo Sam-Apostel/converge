@@ -40,7 +40,7 @@ struct SearchView: View {
                         Text("Nothing found.").font(TypeRamp.note()).foregroundStyle(Palette.mist).padding(.top, 40)
                     }
                 }
-                .padding(.horizontal, 20).padding(.vertical, 12)
+                .padding(.horizontal, 16).padding(.vertical, 12)
             }
         }
         .navigationTitle("Search")
@@ -65,9 +65,13 @@ struct SearchRow: View {
     var body: some View {
         GlassCard {
             HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.system(size: 15, weight: .medium)).foregroundStyle(Palette.slate)
-                    .frame(width: 34, height: 34).background(Palette.pillow, in: .circle)
+                if result.type == "person" {
+                    Avatar(name: result.title, size: 34)
+                } else {
+                    Image(systemName: icon)
+                        .font(.system(size: 15, weight: .medium)).foregroundStyle(Palette.slate)
+                        .frame(width: 34, height: 34).background(Palette.pillow, in: .circle)
+                }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(result.title).font(TypeRamp.body().weight(.semibold)).foregroundStyle(Palette.ink).lineLimit(1)
                     if let subtitle = result.subtitle {
