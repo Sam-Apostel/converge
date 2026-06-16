@@ -88,7 +88,12 @@ async function upsertUser(p: HackathonPerson): Promise<string> {
   return id
 }
 
-async function seed() {
+/**
+ * Seed the hackathon conference, its people and projects. Additive and
+ * idempotent — safe to call standalone or from the main `seed.ts` after its
+ * own inserts (their natural keys don't overlap, so nothing is clobbered).
+ */
+export async function seedHackathon() {
   console.log('🌱 Seeding Converge from Progress x GitNation hackathon…')
 
   const conferenceId = await upsertConference()
@@ -195,9 +200,13 @@ async function seed() {
   console.log('✅ Seed complete.')
 }
 
-seed()
-  .then(() => process.exit(0))
-  .catch((err) => {
-    console.error('❌ Hackathon seed failed:', err)
-    process.exit(1)
-  })
+// Run standalone via `bun run db:seed:hackathon`. When imported by `seed.ts`
+// this block is skipped so the connection stays open for the caller.
+if (import.meta.main) {
+  seedHackathon()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error('❌ Hackathon seed failed:', err)
+      process.exit(1)
+    })
+}

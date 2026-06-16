@@ -35,6 +35,8 @@ import {
   task,
 } from '#/db/domain-schema'
 
+import { seedHackathon } from './seed-hackathon'
+
 /* ------------------------------------------------------------------ */
 /* Helpers                                                             */
 /* ------------------------------------------------------------------ */
@@ -2429,6 +2431,11 @@ async function seed() {
     })
   }
   console.log(`  ✓ ${tasks.length} tasks`)
+
+  // Layer the real Progress x GitNation hackathon people + projects on top of
+  // the mock data above. Additive — the conference speakers seeded here stay,
+  // and the hackathon's projects are added alongside them.
+  await seedHackathon()
 
   console.log('✅ Seed complete.')
 }
