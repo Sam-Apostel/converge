@@ -63,20 +63,24 @@ struct HomeView: View {
 
     private func nextCard(_ n: HomeSummary.NextSession) -> some View {
         NavigationLink(value: SessionRoute(slug: n.slug)) {
-            GlassCard {
+            Spotlight(beam: true) {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Next session").eyebrow()
+                        Text("Next session")
+                            .font(TypeRamp.eyebrow()).textCase(.uppercase).tracking(1.2)
+                            .foregroundStyle(Palette.lime)
                         Spacer()
-                        if let start = n.startsAt { Text(Format.relative(start)).font(TypeRamp.caption()).foregroundStyle(Palette.slate) }
+                        if let start = n.startsAt {
+                            Text(Format.relative(start)).font(TypeRamp.caption()).foregroundStyle(Palette.frost)
+                        }
                     }
-                    Text(n.title).font(TypeRamp.title()).foregroundStyle(Palette.ink)
+                    Text(n.title).font(TypeRamp.title()).foregroundStyle(.white)
                     HStack(spacing: 10) {
                         if let speaker = n.speakerName {
-                            Label(speaker, systemImage: "person.fill").font(TypeRamp.caption()).foregroundStyle(Palette.mist)
+                            Label(speaker, systemImage: "person.fill").font(TypeRamp.caption()).foregroundStyle(Palette.frost)
                         }
                         if let room = n.roomName {
-                            Label(room, systemImage: "mappin").font(TypeRamp.caption()).foregroundStyle(Palette.mist)
+                            Label(room, systemImage: "mappin").font(TypeRamp.caption()).foregroundStyle(Palette.frost)
                         }
                     }
                 }
@@ -138,7 +142,7 @@ struct HomeView: View {
             NavigationLink(value: HubRoute.concierge) {
                 GlassCard {
                     HStack(spacing: 10) {
-                        ConvergeMark(size: 20)
+                        ConvergeLogo(size: 20)
                         VStack(alignment: .leading, spacing: 1) {
                             Text("Ask the concierge").font(TypeRamp.body().weight(.semibold)).foregroundStyle(Palette.ink)
                             Text("Who to meet · what to see next").font(TypeRamp.caption()).foregroundStyle(Palette.mist)

@@ -37,7 +37,7 @@ struct SplashView: View {
         ZStack {
             CanvasBackground()
             VStack(spacing: 16) {
-                ConvergeMark(size: 34)
+                ConvergeLogo(size: 34)
                 ProgressView().tint(Palette.mist)
             }
         }

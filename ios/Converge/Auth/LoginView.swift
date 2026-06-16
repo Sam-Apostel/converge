@@ -19,7 +19,7 @@ struct LoginView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(spacing: 10) {
-                            ConvergeMark()
+                            ConvergeLogo(size: 26)
                             Text("Converge").eyebrow()
                         }
                         Text(mode == .signIn ? "Welcome back" : "Join the room")
@@ -162,41 +162,25 @@ private struct Field: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title).eyebrow()
-            Group {
-                switch content {
-                case .password: SecureField("", text: $text)
-                case .email:
-                    TextField("", text: $text)
-                        .textContentType(.emailAddress)
-                        .keyboardType(.emailAddress)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                case .name:
-                    TextField("", text: $text)
-                        .textContentType(.name)
+            GlassField {
+                Group {
+                    switch content {
+                    case .password: SecureField("", text: $text)
+                    case .email:
+                        TextField("", text: $text)
+                            .textContentType(.emailAddress)
+                            .keyboardType(.emailAddress)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                    case .name:
+                        TextField("", text: $text)
+                            .textContentType(.name)
+                    }
                 }
+                .font(TypeRamp.body())
+                .foregroundStyle(Palette.ink)
             }
-            .font(TypeRamp.body())
-            .foregroundStyle(Palette.ink)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 11)
-            .background(Palette.inner, in: .rect(cornerRadius: 12))
         }
-    }
-}
-
-/// The converging-discs mark, rendered with shapes (matches the app icon).
-struct ConvergeMark: View {
-    var size: CGFloat = 22
-    var body: some View {
-        ZStack {
-            Circle().fill(Palette.lime).frame(width: size, height: size)
-                .offset(x: -size * 0.22)
-            Circle().fill(Palette.frost).frame(width: size, height: size)
-                .offset(x: size * 0.22)
-                .blendMode(.multiply)
-        }
-        .frame(width: size * 1.5, height: size)
     }
 }
 

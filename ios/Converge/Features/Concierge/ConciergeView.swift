@@ -90,7 +90,7 @@ struct ConciergeView: View {
     private var intro: some View {
         GlassCard {
             VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 8) { ConvergeMark(size: 20); Text("Concierge").eyebrow() }
+                HStack(spacing: 8) { ConvergeLogo(size: 20); Text("Concierge").eyebrow() }
                 Text("Ask who to meet, what to see next, or which projects match what you're building.")
                     .font(TypeRamp.reading()).foregroundStyle(Palette.inkSoft)
                 VStack(alignment: .leading, spacing: 6) {

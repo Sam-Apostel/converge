@@ -1,8 +1,9 @@
 import SwiftUI
 
-// Reusable surfaces mirroring the web primitives (Card / GlassCard / Pill / Tag /
-// LiveDot). On iOS 26 we lean on real Liquid Glass for the frosted surfaces and
-// keep the soft neumorphic card for opaque content.
+// Reusable surfaces mirroring the web primitives. The two centerpieces of the
+// visual identity are the GlassCard (a frosted translucent frame wrapping an
+// opaque white inner) and the Spotlight (the dark ink hero card with a lime
+// glow). Search/text fields carry the same glassy frame.
 
 /// Opaque soft card — the web `Card` (white surface, soft shadow, no border).
 struct SoftCard<Content: View>: View {
@@ -13,22 +14,75 @@ struct SoftCard<Content: View>: View {
         content
             .padding(padding)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Palette.surface, in: .rect(cornerRadius: 22))
+            .background(Palette.surface, in: .rect(cornerRadius: 20))
             .shadow(color: .black.opacity(0.06), radius: 18, x: 0, y: 10)
             .shadow(color: .black.opacity(0.04), radius: 2, x: 0, y: 1)
     }
 }
 
-/// Frosted Liquid Glass panel — the web `GlassCard`, for floating / special UI.
+/// The signature card: a frosted Liquid-Glass frame around an opaque white
+/// inner. The glass reads in the gap around the content.
 struct GlassCard<Content: View>: View {
     var padding: CGFloat = 16
+    var inset: CGFloat = 6
     @ViewBuilder var content: Content
 
     var body: some View {
         content
             .padding(padding)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .glassEffect(.regular, in: .rect(cornerRadius: 22))
+            .background(Palette.surface, in: .rect(cornerRadius: 18))
+            .padding(inset)
+            .glassEffect(.regular, in: .rect(cornerRadius: 18 + inset))
+            .shadow(color: Color(hex: 0x28326E, alpha: 0.16), radius: 24, x: 0, y: 16)
+    }
+}
+
+/// The dark "hero" surface — ink gradient with a lime radial glow. Used for the
+/// next-session card, top matches, and other spotlight moments.
+struct Spotlight<Content: View>: View {
+    var padding: CGFloat = 18
+    var beam: Bool = false
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        content
+            .padding(padding)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background {
+                ZStack {
+                    LinearGradient(
+                        colors: [Palette.ink, Color(hex: 0x1C1E2E)],
+                        startPoint: .topLeading, endPoint: .bottomTrailing
+                    )
+                    RadialGradient(
+                        colors: [Palette.lime.opacity(0.22), .clear],
+                        center: UnitPoint(x: 0.95, y: 0.1), startRadius: 0, endRadius: 220
+                    )
+                }
+            }
+            .clipShape(.rect(cornerRadius: 22))
+            .overlay {
+                RoundedRectangle(cornerRadius: 22)
+                    .strokeBorder(beam ? Palette.lime.opacity(0.55) : .white.opacity(0.08), lineWidth: beam ? 1.5 : 1)
+            }
+            .shadow(color: .black.opacity(0.18), radius: 22, x: 0, y: 14)
+    }
+}
+
+/// Glassy-framed wrapper for search / text inputs — mirrors the GlassCard frame
+/// at field scale so inputs sit inside the same frosted identity.
+struct GlassField<Content: View>: View {
+    var radius: CGFloat = 14
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        content
+            .padding(.horizontal, 14)
+            .padding(.vertical, 11)
+            .background(Palette.surface, in: .rect(cornerRadius: radius))
+            .padding(4)
+            .glassEffect(.regular, in: .rect(cornerRadius: radius + 4))
     }
 }
 
