@@ -10,16 +10,11 @@ struct PersonBadge: View {
     var body: some View {
         let color = personColor(person.id)
         VStack(spacing: 0) {
-            ZStack(alignment: .bottom) {
-                LinearGradient(
-                    colors: [color.opacity(0.95), color.opacity(0.5)],
-                    startPoint: .topLeading, endPoint: .bottomTrailing
-                )
-                .frame(height: 50)
-                Avatar(name: person.name, image: person.image, size: 56)
-                    .overlay(Circle().strokeBorder(Palette.surface, lineWidth: 3))
-                    .offset(y: 26)
-            }
+            LinearGradient(
+                colors: [color.opacity(0.95), color.opacity(0.5)],
+                startPoint: .topLeading, endPoint: .bottomTrailing
+            )
+            .frame(height: 52)
             VStack(spacing: 3) {
                 Text(person.name)
                     .font(TypeRamp.body().weight(.semibold))
@@ -37,10 +32,16 @@ struct PersonBadge: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.top, 34)
+            .padding(.top, 38)
             .padding(.horizontal, 12)
             .padding(.bottom, 14)
             .background(Palette.surface)
+        }
+        // Avatar straddles the cover/white seam, drawn on top so it's a full circle.
+        .overlay(alignment: .top) {
+            Avatar(name: person.name, image: person.image, size: 56)
+                .overlay(Circle().strokeBorder(Palette.surface, lineWidth: 3))
+                .offset(y: 24)
         }
         .clipShape(.rect(cornerRadius: 18))
         .modifier(GlassFrame(innerRadius: 18, inset: 8, tint: color))

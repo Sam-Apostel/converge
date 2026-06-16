@@ -249,11 +249,12 @@ struct SessionDetailView: View {
     private func qanda(_ d: SessionDetail) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Q&A").eyebrow()
-            HStack(alignment: .bottom, spacing: 8) {
-                TextField("Ask the speaker…", text: $model.draftQuestion, axis: .vertical)
+            HStack(spacing: 8) {
+                TextField("Ask the speaker…", text: $model.draftQuestion)
                     .font(TypeRamp.body())
+                    .padding(.horizontal, 14)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 14).padding(.vertical, 14)
+                    .frame(height: 52)
                     .background(Palette.surface, in: .rect(cornerRadius: 16))
                 Button { Task { await model.ask(sessionId: d.id) } } label: {
                     Image(systemName: "arrow.up")

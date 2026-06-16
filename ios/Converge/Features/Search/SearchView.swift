@@ -39,29 +39,50 @@ struct SearchView: View {
     @State private var model = SearchModel()
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 10) {
-                ForEach(model.results) { result in
-                    if result.type == "person", let person = model.people[result.id] {
-                        NavigationLink(value: person) {
-                            PersonResultRow(person: person, subtitle: result.subtitle)
+        ZStack {
+            CanvasBackground()
+            if model.results.isEmpty {
+                emptyState
+            } else {
+                ScrollView {
+                    VStack(spacing: 10) {
+                        ForEach(model.results) { result in
+                            if result.type == "person", let person = model.people[result.id] {
+                                NavigationLink(value: person) {
+                                    PersonResultRow(person: person, subtitle: result.subtitle)
+                                }
+                                .buttonStyle(.plain)
+                            } else {
+                                destination(for: result) { SearchRow(result: result) }
+                            }
                         }
-                        .buttonStyle(.plain)
-                    } else {
-                        destination(for: result) { SearchRow(result: result) }
                     }
-                }
-                if model.results.isEmpty && model.query.count >= 2 && !model.searching {
-                    Text("Nothing found.").font(TypeRamp.note()).foregroundStyle(Palette.mist).padding(.top, 40)
+                    .padding(.horizontal, 16).padding(.vertical, 12)
                 }
             }
-            .padding(.horizontal, 16).padding(.vertical, 12)
         }
-        .background(Palette.canvas, ignoresSafeAreaEdges: .all)
         .navigationTitle("Search")
         .searchable(text: $model.query, prompt: "People, projects, sessions, discussions")
         .onChange(of: model.query) { model.onQueryChange() }
         .task { await model.loadDirectory() }
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 34, weight: .light))
+                .foregroundStyle(Palette.faint)
+            Text(searchedNothing ? "Nothing found." : "Find people, projects, sessions and discussions.")
+                .font(TypeRamp.note())
+                .foregroundStyle(Palette.mist)
+                .multilineTextAlignment(.center)
+        }
+        .padding(40)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var searchedNothing: Bool {
+        model.query.trimmingCharacters(in: .whitespaces).count >= 2 && !model.searching
     }
 
     @ViewBuilder
