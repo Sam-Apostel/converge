@@ -43,8 +43,6 @@ final class PeopleModel {
 struct PeopleView: View {
     @State private var model = PeopleModel()
 
-    private let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
-
     var body: some View {
         Group {
             if model.state == .loaded {
@@ -65,12 +63,9 @@ struct PeopleView: View {
                 if !model.intents.isEmpty {
                     FilterChips(options: model.intents, selection: $model.intent)
                 }
-                LazyVGrid(columns: columns, alignment: .center, spacing: 12) {
+                LazyVStack(spacing: 14) {
                     ForEach(model.filtered) { person in
-                        NavigationLink(value: person) {
-                            PersonBadge(person: person, compact: true)
-                        }
-                        .buttonStyle(.plain)
+                        PersonCard(person: person)
                     }
                 }
                 .padding(.horizontal, 16)
