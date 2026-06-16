@@ -1202,6 +1202,379 @@ async function seed() {
   }
   console.log(`  ✓ ${projects.length} projects`)
 
+  /* --- speaker projects (what the real speakers are working on) --- */
+  // One project per speaker, owned by them, drawn from their `currentFocus`.
+  // Links fall back to the speaker's own `socials.site` when no canonical
+  // project URL is given. `techStack`/`category` map onto the existing enums.
+  type SpeakerProjectSeed = {
+    owner: string
+    slug: string
+    name: string
+    tagline: string
+    description: string
+    category: string
+    techStack: string[]
+    lookingFor: string[]
+    links?: Record<string, string>
+    trendingScore: number
+  }
+  const speakerProjects: SpeakerProjectSeed[] = [
+    {
+      owner: 'sacha',
+      slug: 'state-of-js',
+      name: 'State of JS',
+      tagline: 'The annual survey of what the JavaScript community actually uses',
+      description:
+        'The long-running State of JS / State of CSS / State of HTML surveys, plus the new State of Web Dev AI — turning what developers are doing into open data.',
+      category: 'research',
+      techStack: ['Next.js', 'React', 'MongoDB', 'TypeScript'],
+      lookingFor: ['respondents', 'feedback', 'sponsors'],
+      links: { site: 'https://stateofjs.com', github: 'Devographics/Monorepo' },
+      trendingScore: 150,
+    },
+    {
+      owner: 'liad',
+      slug: 'mcp-apps',
+      name: 'MCP Apps',
+      tagline: 'An open standard for interactive, app-like UIs inside MCP',
+      description:
+        'A proposed extension to the Model Context Protocol for rich, embedded human-agent interfaces — co-authored on the MCP Steering Committee.',
+      category: 'open-source',
+      techStack: ['TypeScript', 'MCP', 'React'],
+      lookingFor: ['contributors', 'feedback', 'early adopters'],
+      links: { site: 'https://mcpui.dev', github: 'idosal/mcp-ui' },
+      trendingScore: 146,
+    },
+    {
+      owner: 'ido',
+      slug: 'mcp-ui',
+      name: 'MCP-UI',
+      tagline: 'Bring rich, interactive UI to Model Context Protocol clients',
+      description:
+        'The reference toolkit for shipping interactive UI resources over MCP, alongside AgentCraft for building agent experiences.',
+      category: 'open-source',
+      techStack: ['TypeScript', 'MCP', 'React'],
+      lookingFor: ['contributors', 'feedback'],
+      links: { site: 'https://mcpui.dev', github: 'idosal/mcp-ui' },
+      trendingScore: 141,
+    },
+    {
+      owner: 'luca',
+      slug: 'building-micro-frontends',
+      name: 'Building Micro-Frontends',
+      tagline: 'The book and playbook for splitting a frontend across teams',
+      description:
+        'The O’Reilly book plus the talks and consulting that help organisations adopt micro-frontends without losing the plot.',
+      category: 'product',
+      techStack: ['Architecture', 'Module Federation', 'AWS'],
+      lookingFor: ['readers', 'design partners'],
+      links: { site: 'https://buildingmicrofrontends.com' },
+      trendingScore: 92,
+    },
+    {
+      owner: 'noah',
+      slug: 'whatsapp-design-system',
+      name: 'WhatsApp Design System',
+      tagline: 'An AI-assisted design system for 1B+ WhatsApp users',
+      description:
+        'Building the component and token foundations that keep WhatsApp’s web surfaces fast, consistent and accessible at enormous scale.',
+      category: 'product',
+      techStack: ['React', 'Design Systems', 'AI'],
+      lookingFor: ['feedback', 'collaborators'],
+      trendingScore: 82,
+    },
+    {
+      owner: 'paolo',
+      slug: 'svelte-mcp-server',
+      name: 'Svelte MCP Server',
+      tagline: 'The official MCP server that teaches agents idiomatic Svelte',
+      description:
+        'The Svelte project’s MCP server, giving AI tools first-class, up-to-date knowledge of Svelte and SvelteKit. From the maker of SvelteLab.',
+      category: 'open-source',
+      techStack: ['Svelte', 'TypeScript', 'MCP'],
+      lookingFor: ['contributors', 'feedback'],
+      links: { site: 'https://sveltelab.dev', github: 'sveltejs/mcp' },
+      trendingScore: 112,
+    },
+    {
+      owner: 'joyee',
+      slug: 'node-module-pipeline',
+      name: 'Node.js Module Pipeline',
+      tagline: 'Making the ESM/CJS pipeline in Node.js faster and saner',
+      description:
+        'Ongoing work in V8 and Node.js core to improve the module loading pipeline, startup performance and overall developer experience.',
+      category: 'open-source',
+      techStack: ['Node.js', 'V8', 'C++'],
+      lookingFor: ['contributors', 'feedback'],
+      links: { github: 'nodejs/node' },
+      trendingScore: 96,
+    },
+    {
+      owner: 'alem',
+      slug: 'tanstack-ai',
+      name: 'TanStack AI',
+      tagline: 'Type-safe, framework-agnostic primitives for AI apps',
+      description:
+        'Headless building blocks for streaming chat, tools and agents — part of the TanStack family, alongside TanStack Devtools.',
+      category: 'open-source',
+      techStack: ['TypeScript', 'TanStack', 'React'],
+      lookingFor: ['contributors', 'early adopters', 'feedback'],
+      links: { site: 'https://tanstack.com' },
+      trendingScore: 132,
+    },
+    {
+      owner: 'eddie',
+      slug: 'eddiehub',
+      name: 'EddieHub',
+      tagline: 'An open-source community helping people learn in public',
+      description:
+        'A non-profit open-source community and the LinkFree/BioDrop project — getting newcomers their first contributions and connections.',
+      category: 'open-source',
+      techStack: ['Open Source', 'Next.js', 'Community'],
+      lookingFor: ['contributors', 'mentors'],
+      links: { site: 'https://eddiehub.org', github: 'EddieHubCommunity' },
+      trendingScore: 86,
+    },
+    {
+      owner: 'tobias',
+      slug: 'turbopack',
+      name: 'Turbopack',
+      tagline: 'An incremental bundler for JavaScript and TypeScript, in Rust',
+      description:
+        'The successor to webpack — a Rust-based, incremental bundler focused on fast cold starts and instant updates for large apps.',
+      category: 'open-source',
+      techStack: ['Rust', 'Bundlers', 'TypeScript'],
+      lookingFor: ['feedback', 'early adopters'],
+      links: { site: 'https://turbo.build/pack' },
+      trendingScore: 158,
+    },
+    {
+      owner: 'wesbos',
+      slug: 'wes-bos-courses',
+      name: 'Wes Bos Courses',
+      tagline: 'Premium, project-based courses for working web developers',
+      description:
+        'The courses (and the Syntax podcast) that taught a generation JavaScript, React and Node — now exploring agentic interfaces.',
+      category: 'product',
+      techStack: ['JavaScript', 'Node.js', 'React'],
+      lookingFor: ['students', 'feedback'],
+      links: { site: 'https://wesbos.com' },
+      trendingScore: 104,
+    },
+    {
+      owner: 'aurora',
+      slug: 'rsc-in-practice',
+      name: 'RSC in Practice',
+      tagline: 'Workshops and demos for shipping React Server Components today',
+      description:
+        'Talks, articles and reference demos that show what React Server Components and Next.js can actually do in production right now.',
+      category: 'side-project',
+      techStack: ['React', 'Next.js', 'RSC'],
+      lookingFor: ['feedback', 'collaborators'],
+      trendingScore: 72,
+    },
+    {
+      owner: 'scott',
+      slug: 'level-up-tutorials',
+      name: 'Level Up Tutorials',
+      tagline: 'Deep, modern web dev tutorials beyond the framework defaults',
+      description:
+        'Subscription tutorials (and the Syntax podcast) digging into the web platform, Svelte and leaning on browser-native APIs.',
+      category: 'product',
+      techStack: ['Svelte', 'React', 'Web Platform'],
+      lookingFor: ['students', 'feedback'],
+      links: { site: 'https://leveluptutorials.com' },
+      trendingScore: 76,
+    },
+    {
+      owner: 'manuel',
+      slug: 'tanstack-start-rsc',
+      name: 'TanStack Start RSC',
+      tagline: 'Treating React Server Components as data in TanStack Start',
+      description:
+        'Exploration and implementation work bringing an RSC-as-data model to TanStack Start’s full-stack story.',
+      category: 'open-source',
+      techStack: ['TypeScript', 'TanStack', 'RSC'],
+      lookingFor: ['contributors', 'feedback'],
+      links: { site: 'https://tanstack.com' },
+      trendingScore: 66,
+    },
+    {
+      owner: 'mark',
+      slug: 'redux-toolkit',
+      name: 'Redux Toolkit',
+      tagline: 'The official, opinionated toolset for efficient Redux',
+      description:
+        'Maintaining Redux Toolkit and RTK Query, plus deep-dive writing on how React and the React Compiler actually render.',
+      category: 'open-source',
+      techStack: ['TypeScript', 'React', 'Redux'],
+      lookingFor: ['contributors', 'feedback'],
+      links: {
+        site: 'https://redux-toolkit.js.org',
+        github: 'reduxjs/redux-toolkit',
+      },
+      trendingScore: 122,
+    },
+    {
+      owner: 'adrian',
+      slug: 'js-mastery',
+      name: 'JS Mastery',
+      tagline: 'Project-based courses that use AI as a teaching layer',
+      description:
+        'A learning platform turning real-world projects into courses, with AI woven in as a teaching and feedback layer.',
+      category: 'product',
+      techStack: ['React', 'Next.js', 'AI'],
+      lookingFor: ['students', 'feedback'],
+      links: { site: 'https://jsmastery.pro' },
+      trendingScore: 96,
+    },
+    {
+      owner: 'faris',
+      slug: 'frontend-slos',
+      name: 'Frontend SLOs',
+      tagline: 'Designing frontends for failure: SLOs, flags and rollbacks',
+      description:
+        'A set of patterns and talks on treating the frontend as a reliable system — error budgets, feature flags and safe rollbacks.',
+      category: 'side-project',
+      techStack: ['Observability', 'Feature Flags', 'React'],
+      lookingFor: ['feedback', 'collaborators'],
+      trendingScore: 54,
+    },
+    {
+      owner: 'alexrussell',
+      slug: 'infrequently',
+      name: 'Infrequently',
+      tagline: 'Research and writing on a faster, post-SPA web',
+      description:
+        'Long-form research and advocacy for web performance and capable, accessible web apps that don’t default to a heavyweight SPA.',
+      category: 'research',
+      techStack: ['Web Platform', 'Performance'],
+      lookingFor: ['readers', 'feedback'],
+      links: { site: 'https://infrequently.org' },
+      trendingScore: 90,
+    },
+    {
+      owner: 'alexgs',
+      slug: 'vue-school',
+      name: 'Vue School',
+      tagline: 'The learning platform for Vue and Nuxt developers',
+      description:
+        'Courses and workshops for the Vue ecosystem, increasingly exploring spec-driven, AI-assisted development workflows.',
+      category: 'product',
+      techStack: ['Vue', 'Nuxt', 'TypeScript'],
+      lookingFor: ['students', 'feedback'],
+      links: { site: 'https://vueschool.io' },
+      trendingScore: 84,
+    },
+    {
+      owner: 'gaauwe',
+      slug: 'zed',
+      name: 'Zed',
+      tagline: 'A high-performance, multiplayer code editor',
+      description:
+        'Working on Zed — a GPU-accelerated, collaborative editor written in Rust — balancing speed, quality and thoughtful AI integration.',
+      category: 'product',
+      techStack: ['Rust', 'GPUI', 'AI'],
+      lookingFor: ['early adopters', 'feedback'],
+      links: { site: 'https://zed.dev' },
+      trendingScore: 134,
+    },
+    {
+      owner: 'kitze',
+      slug: 'sizzy',
+      name: 'Sizzy',
+      tagline: 'A browser built for developers and designers',
+      description:
+        'A developer-focused browser for previewing responsive apps across devices — built solo, from vibe coding to vibe engineering.',
+      category: 'startup',
+      techStack: ['React', 'Electron', 'TypeScript'],
+      lookingFor: ['users', 'feedback'],
+      links: { site: 'https://sizzy.co' },
+      trendingScore: 92,
+    },
+    {
+      owner: 'kathryn',
+      slug: 'kendoreact',
+      name: 'KendoReact',
+      tagline: 'A professional UI component library for React',
+      description:
+        'Working on KendoReact’s components and developer experience, plus content on building accessible, well-designed React UI.',
+      category: 'product',
+      techStack: ['React', 'TypeScript', 'Design Systems'],
+      lookingFor: ['feedback', 'users'],
+      links: { site: 'https://www.telerik.com/kendo-react-ui' },
+      trendingScore: 98,
+    },
+    {
+      owner: 'kevin',
+      slug: 'friday-frontend',
+      name: 'Friday Frontend',
+      tagline: 'A weekly newsletter and coaching for frontend engineers',
+      description:
+        'The ZenDev newsletter and coaching practice helping engineers grow their skills and their careers, week after week.',
+      category: 'product',
+      techStack: ['Frontend', 'Career', 'Community'],
+      lookingFor: ['subscribers', 'feedback'],
+      links: { site: 'https://zendev.com' },
+      trendingScore: 62,
+    },
+    {
+      owner: 'sam',
+      slug: 'build-ui',
+      name: 'Build UI',
+      tagline: 'Screencasts on building polished React UIs and animations',
+      description:
+        'Screencasts and writing on crafting delightful, production-grade React interfaces — with a strong focus on motion and interaction.',
+      category: 'product',
+      techStack: ['React', 'Framer Motion', 'Next.js'],
+      lookingFor: ['students', 'feedback'],
+      links: { site: 'https://buildui.com', github: 'samselikoff' },
+      trendingScore: 102,
+    },
+    {
+      owner: 'ryan',
+      slug: 'rari',
+      name: 'rari',
+      tagline: 'React Server Components on a Rust runtime',
+      description:
+        'An experimental runtime that executes React Server Components on Rust, aiming for fast, lightweight server rendering.',
+      category: 'open-source',
+      techStack: ['Rust', 'React', 'RSC'],
+      lookingFor: ['contributors', 'feedback', 'early adopters'],
+      trendingScore: 116,
+    },
+  ]
+  const socialsByKey = new Map(people.map((p) => [p.key, p.socials]))
+  for (const pr of speakerProjects) {
+    const id = uid()
+    const fallbackSite = socialsByKey.get(pr.owner)?.site
+    const links =
+      pr.links && Object.keys(pr.links).length
+        ? pr.links
+        : fallbackSite
+          ? { site: fallbackSite }
+          : {}
+    await db.insert(project).values({
+      id,
+      slug: pr.slug,
+      ownerId: U(pr.owner),
+      name: pr.name,
+      tagline: pr.tagline,
+      description: pr.description,
+      category: pr.category,
+      techStack: pr.techStack,
+      lookingFor: pr.lookingFor,
+      screenshots: [shot(`${pr.slug}-1`), shot(`${pr.slug}-2`)],
+      links,
+      trendingScore: pr.trendingScore,
+    })
+    await db
+      .insert(projectMember)
+      .values({ projectId: id, userId: U(pr.owner), role: 'owner' })
+      .onConflictDoNothing()
+  }
+  console.log(`  ✓ ${speakerProjects.length} speaker projects`)
+
   /* --- sessions (talks) --- */
   type SessionSeed = {
     key: string
