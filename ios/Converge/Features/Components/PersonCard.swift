@@ -22,7 +22,6 @@ struct PersonCard: View {
         VStack(alignment: .leading, spacing: 14) {
             NavigationLink(value: person) {
                 VStack(alignment: .leading, spacing: 10) {
-                    Color.clear.frame(height: 50) // room for the overlapping avatar
                     VStack(alignment: .leading, spacing: 3) {
                         Text(person.name)
                             .font(TypeRamp.title()).foregroundStyle(Palette.ink)
@@ -51,14 +50,26 @@ struct PersonCard: View {
 
             if !isSelf { connectButton }
         }
-        .padding(.horizontal, 20).padding(.top, 18).padding(.bottom, 18)
+        .padding(.horizontal, 20).padding(.top, 56).padding(.bottom, 18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .modifier(GlassFrame(innerRadius: 24, inset: 10))
+        // White inner box — shorter than the frame, leaving a frosted gap on top.
+        .background(Palette.surface, in: .rect(cornerRadius: 22))
+        .padding(EdgeInsets(top: 22, leading: 8, bottom: 8, trailing: 8))
+        .background {
+            ZStack {
+                RoundedRectangle(cornerRadius: 28).fill(.ultraThinMaterial)
+                RoundedRectangle(cornerRadius: 28).fill(.white.opacity(0.32))
+            }
+        }
+        .overlay { RoundedRectangle(cornerRadius: 28).strokeBorder(.white.opacity(0.6), lineWidth: 1) }
+        .shadow(color: Color(hex: 0x28326E, alpha: 0.07), radius: 13, x: 0, y: 10)
+        .shadow(color: Color(hex: 0x28326E, alpha: 0.06), radius: 1.5, x: 0, y: 1)
+        // Avatar straddles the white box's top edge but stays inside the frame.
         .overlay(alignment: .topLeading) {
-            Avatar(name: person.name, image: person.image, size: 84)
+            Avatar(name: person.name, image: person.image, size: 76)
                 .overlay(Circle().strokeBorder(Palette.surface, lineWidth: 4))
                 .padding(.leading, 20)
-                .offset(y: -6)
+                .padding(.top, 2)
         }
     }
 
