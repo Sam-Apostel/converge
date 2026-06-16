@@ -1,5 +1,7 @@
 import { betterAuth } from 'better-auth'
+import type { BetterAuthPlugin } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { createAuthMiddleware } from 'better-auth/api'
 import { mcp } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { passkey } from '@better-auth/passkey'
@@ -9,6 +11,48 @@ import * as authSchema from '#/db/auth-schema'
 
 const baseURL = process.env.BETTER_AUTH_URL ?? 'http://localhost:3000'
 const rpID = new URL(baseURL).hostname
+
+/** Custom URL scheme the native iOS app uses for OAuth deep-link callbacks. */
+const NATIVE_SCHEME = 'converge://'
+
+/**
+ * Native OAuth bridge (mirrors `@better-auth/expo` without the dependency).
+ *
+ * better-auth is cookie-based, but a native client running an OAuth flow in
+ * `ASWebAuthenticationSession` can't read the cookie the web callback sets. So
+ * on an OAuth callback that redirects to our trusted custom scheme, append the
+ * `Set-Cookie` value as a `?cookie=` param on the deep link; the app extracts
+ * it and stores it for subsequent API calls.
+ */
+const nativeRedirectCookie = {
+  id: 'native-redirect-cookie',
+  hooks: {
+    after: [
+      {
+        matcher: (context) =>
+          Boolean(
+            context.path?.startsWith('/callback') ||
+              context.path?.startsWith('/oauth2/callback'),
+          ),
+        handler: createAuthMiddleware(async (ctx) => {
+          const headers = ctx.context.responseHeaders
+          const location = headers?.get('location')
+          const cookie = headers?.get('set-cookie')
+          if (!location || !cookie) return
+          let redirectURL: URL
+          try {
+            redirectURL = new URL(location)
+          } catch {
+            return
+          }
+          if (!ctx.context.isTrustedOrigin(location)) return
+          redirectURL.searchParams.set('cookie', cookie)
+          ctx.setHeader('location', redirectURL.toString())
+        }),
+      },
+    ],
+  },
+} satisfies BetterAuthPlugin
 
 /**
  * Converge authentication.
@@ -24,6 +68,9 @@ export const auth = betterAuth({
   baseURL,
   secret: process.env.BETTER_AUTH_SECRET,
   database: drizzleAdapter(db, { provider: 'pg', schema: authSchema }),
+
+  // Trust the native app's custom scheme so OAuth deep-link callbacks are allowed.
+  trustedOrigins: [NATIVE_SCHEME, baseURL],
 
   emailAndPassword: {
     enabled: true,
@@ -56,6 +103,8 @@ export const auth = betterAuth({
     mcp({
       loginPage: '/login',
     }),
+    // Bridge OAuth session cookies to the native app's deep-link callback.
+    nativeRedirectCookie,
     // Must be the LAST plugin — it wraps cookie handling for the others.
     tanstackStartCookies(),
   ],

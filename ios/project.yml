@@ -30,6 +30,17 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         ENABLE_PREVIEWS: YES
         TARGETED_DEVICE_FAMILY: "1"
+    # Passkeys need the Associated Domains capability
+    # (webcredentials:converge.sams.land). Adding it requires an Apple ID signed
+    # into Xcode (Settings → Accounts) so the capability can be registered with
+    # the developer portal — a one-time GUI step. Once done, uncomment this and
+    # rebuild to enable passkey sign-in. GitHub OAuth and email/password work
+    # without it.
+    # entitlements:
+    #   path: Converge/Converge.entitlements
+    #   properties:
+    #     com.apple.developer.associated-domains:
+    #       - webcredentials:converge.sams.land
     info:
       path: Converge/Info.plist
       properties:

@@ -40,6 +40,7 @@ import { Route as AppMessagesRouteImport } from './routes/_app/messages'
 import { Route as AppDiscussionsRouteImport } from './routes/_app/discussions'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotwellKnownChar93OauthAuthorizationServerRouteImport } from './routes/[.well-known]/oauth-authorization-server'
+import { Route as Char91DotwellKnownChar93AppleAppSiteAssociationRouteImport } from './routes/[.well-known]/apple-app-site-association'
 import { Route as AppSessionsIndexRouteImport } from './routes/_app/sessions/index'
 import { Route as AppProjectsIndexRouteImport } from './routes/_app/projects/index'
 import { Route as AppPeopleIndexRouteImport } from './routes/_app/people/index'
@@ -218,6 +219,12 @@ const Char91DotwellKnownChar93OauthAuthorizationServerRoute =
     path: '/.well-known/oauth-authorization-server',
     getParentRoute: () => rootRouteImport,
   } as any)
+const Char91DotwellKnownChar93AppleAppSiteAssociationRoute =
+  Char91DotwellKnownChar93AppleAppSiteAssociationRouteImport.update({
+    id: '/.well-known/apple-app-site-association',
+    path: '/.well-known/apple-app-site-association',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppSessionsIndexRoute = AppSessionsIndexRouteImport.update({
   id: '/sessions/',
   path: '/sessions/',
@@ -329,6 +336,7 @@ export interface FileRoutesByFullPath {
   '/billboard': typeof BillboardRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/.well-known/apple-app-site-association': typeof Char91DotwellKnownChar93AppleAppSiteAssociationRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/discussions': typeof AppDiscussionsRouteWithChildren
@@ -381,6 +389,7 @@ export interface FileRoutesByTo {
   '/billboard': typeof BillboardRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/.well-known/apple-app-site-association': typeof Char91DotwellKnownChar93AppleAppSiteAssociationRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/discussions': typeof AppDiscussionsRouteWithChildren
@@ -436,6 +445,7 @@ export interface FileRoutesById {
   '/billboard': typeof BillboardRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/.well-known/apple-app-site-association': typeof Char91DotwellKnownChar93AppleAppSiteAssociationRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_app/discussions': typeof AppDiscussionsRouteWithChildren
@@ -492,6 +502,7 @@ export interface FileRouteTypes {
     | '/billboard'
     | '/login'
     | '/mcp'
+    | '/.well-known/apple-app-site-association'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/discussions'
@@ -544,6 +555,7 @@ export interface FileRouteTypes {
     | '/billboard'
     | '/login'
     | '/mcp'
+    | '/.well-known/apple-app-site-association'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/discussions'
@@ -598,6 +610,7 @@ export interface FileRouteTypes {
     | '/billboard'
     | '/login'
     | '/mcp'
+    | '/.well-known/apple-app-site-association'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/_app/discussions'
@@ -653,6 +666,7 @@ export interface RootRouteChildren {
   BillboardRoute: typeof BillboardRoute
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
+  Char91DotwellKnownChar93AppleAppSiteAssociationRoute: typeof Char91DotwellKnownChar93AppleAppSiteAssociationRoute
   Char91DotwellKnownChar93OauthAuthorizationServerRoute: typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiAiSettingsRoute: typeof ApiAiSettingsRoute
@@ -894,6 +908,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/oauth-authorization-server'
       fullPath: '/.well-known/oauth-authorization-server'
       preLoaderRoute: typeof Char91DotwellKnownChar93OauthAuthorizationServerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/apple-app-site-association': {
+      id: '/.well-known/apple-app-site-association'
+      path: '/.well-known/apple-app-site-association'
+      fullPath: '/.well-known/apple-app-site-association'
+      preLoaderRoute: typeof Char91DotwellKnownChar93AppleAppSiteAssociationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/sessions/': {
@@ -1200,6 +1221,8 @@ const rootRouteChildren: RootRouteChildren = {
   BillboardRoute: BillboardRoute,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
+  Char91DotwellKnownChar93AppleAppSiteAssociationRoute:
+    Char91DotwellKnownChar93AppleAppSiteAssociationRoute,
   Char91DotwellKnownChar93OauthAuthorizationServerRoute:
     Char91DotwellKnownChar93OauthAuthorizationServerRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:

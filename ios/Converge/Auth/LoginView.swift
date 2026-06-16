@@ -62,6 +62,30 @@ struct LoginView: View {
                         }
                     }
 
+                    HStack(spacing: 10) {
+                        Rectangle().fill(Palette.edge).frame(height: 1)
+                        Text("or").font(TypeRamp.caption()).foregroundStyle(Palette.faint)
+                        Rectangle().fill(Palette.edge).frame(height: 1)
+                    }
+
+                    Button(action: signInGitHub) {
+                        Label("Continue with GitHub", systemImage: "chevron.left.forwardslash.chevron.right")
+                            .font(TypeRamp.body().weight(.semibold))
+                            .frame(maxWidth: .infinity).padding(.vertical, 12)
+                            .foregroundStyle(Palette.surface)
+                            .background(Palette.ink, in: .capsule)
+                    }
+                    .buttonStyle(.plain)
+
+                    Button(action: signInPasskey) {
+                        Label("Sign in with a passkey", systemImage: "person.badge.key")
+                            .font(TypeRamp.body().weight(.medium))
+                            .frame(maxWidth: .infinity).padding(.vertical, 12)
+                            .foregroundStyle(Palette.ink)
+                            .background(Palette.pillow, in: .capsule)
+                    }
+                    .buttonStyle(.plain)
+
                     Button {
                         withAnimation { mode = mode == .signIn ? .signUp : .signIn; error = nil }
                     } label: {
@@ -95,6 +119,24 @@ struct LoginView: View {
             } catch {
                 self.error = friendly(error)
             }
+            busy = false
+        }
+    }
+
+    private func signInGitHub() {
+        busy = true; error = nil
+        Task {
+            do { try await NativeAuth.shared.signInWithGitHub(); await session.refresh() }
+            catch { self.error = friendly(error) }
+            busy = false
+        }
+    }
+
+    private func signInPasskey() {
+        busy = true; error = nil
+        Task {
+            do { try await NativeAuth.shared.signInWithPasskey(); await session.refresh() }
+            catch { self.error = friendly(error) }
             busy = false
         }
     }

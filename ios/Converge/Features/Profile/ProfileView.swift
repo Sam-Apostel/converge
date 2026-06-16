@@ -43,6 +43,7 @@ struct ProfileView: View {
     @Environment(SessionStore.self) private var session
     @State private var model = ProfileModel()
     @State private var editing = false
+    @State private var passkeyNote: String?
 
     var body: some View {
         ZStack {
@@ -86,13 +87,24 @@ struct ProfileView: View {
                     Spacer(minLength: 0)
                 }
 
-                Button { editing = true } label: {
-                    Label("Edit profile", systemImage: "pencil")
-                        .font(TypeRamp.body().weight(.semibold)).frame(maxWidth: .infinity)
-                        .padding(.vertical, 11).foregroundStyle(Palette.ink)
-                        .background(Palette.pillow, in: .capsule)
+                HStack(spacing: 10) {
+                    Button { editing = true } label: {
+                        Label("Edit profile", systemImage: "pencil")
+                            .font(TypeRamp.body().weight(.semibold)).frame(maxWidth: .infinity)
+                            .padding(.vertical, 11).foregroundStyle(Palette.ink)
+                            .background(Palette.pillow, in: .capsule)
+                    }
+                    .buttonStyle(.plain)
+                    Button(action: addPasskey) {
+                        Image(systemName: "person.badge.key")
+                            .font(.system(size: 16, weight: .medium)).foregroundStyle(Palette.ink)
+                            .frame(width: 46, height: 46).background(Palette.pillow, in: .circle)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
+                if let passkeyNote {
+                    Text(passkeyNote).font(TypeRamp.caption()).foregroundStyle(Palette.limeDeep)
+                }
 
                 if let bio = me.profile?.bio, !bio.isEmpty {
                     section("Why I'm here") { Text(bio).font(TypeRamp.reading()).foregroundStyle(Palette.inkSoft) }
@@ -117,6 +129,19 @@ struct ProfileView: View {
                 .padding(.top, 8)
             }
             .padding(20)
+        }
+    }
+
+    private func addPasskey() {
+        guard let me = model.me else { return }
+        passkeyNote = nil
+        Task {
+            do {
+                try await NativeAuth.shared.registerPasskey(displayName: me.name)
+                passkeyNote = "Passkey added ✓"
+            } catch {
+                passkeyNote = (error as? NativeAuth.AuthError)?.errorDescription ?? "Couldn't add passkey."
+            }
         }
     }
 
