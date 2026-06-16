@@ -29,10 +29,15 @@ struct GlassFrame: ViewModifier {
     var inset: CGFloat = 8
     /// Optional per-item hue washed through the frosted frame (web `tint`).
     var tint: Color? = nil
+    /// When false, the content supplies its own backgrounds (the frosted frame
+    /// shows through gaps) — e.g. a white input beside a dark send button.
+    var filled: Bool = true
 
     func body(content: Content) -> some View {
         content
-            .background(Palette.surface, in: .rect(cornerRadius: innerRadius))
+            .background {
+                if filled { RoundedRectangle(cornerRadius: innerRadius).fill(Palette.surface) }
+            }
             .padding(inset)
             .background {
                 let r = innerRadius + inset

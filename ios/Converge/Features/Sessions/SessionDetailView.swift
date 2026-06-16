@@ -249,20 +249,30 @@ struct SessionDetailView: View {
     private func qanda(_ d: SessionDetail) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Q&A").eyebrow()
-            GlassField {
-                HStack(alignment: .bottom, spacing: 8) {
-                    TextField("Ask the speaker…", text: $model.draftQuestion, axis: .vertical)
-                        .font(TypeRamp.body())
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Button { Task { await model.ask(sessionId: d.id) } } label: {
-                        Image(systemName: "arrow.up.circle.fill")
-                            .font(.system(size: 30))
-                            .foregroundStyle(Palette.ink)
-                            .symbolRenderingMode(.hierarchical)
-                    }
-                    .buttonStyle(.plain)
+            HStack(alignment: .bottom, spacing: 8) {
+                TextField("Ask the speaker…", text: $model.draftQuestion, axis: .vertical)
+                    .font(TypeRamp.body())
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 14).padding(.vertical, 14)
+                    .background(Palette.surface, in: .rect(cornerRadius: 16))
+                Button { Task { await model.ask(sessionId: d.id) } } label: {
+                    Image(systemName: "arrow.up")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(Palette.lime)
+                        .frame(width: 52, height: 52)
+                        .background {
+                            ZStack {
+                                LinearGradient(colors: [Palette.ink, Color(hex: 0x1C1E2E)],
+                                               startPoint: .topLeading, endPoint: .bottomTrailing)
+                                RadialGradient(colors: [Palette.lime.opacity(0.25), .clear],
+                                               center: .topTrailing, startRadius: 0, endRadius: 60)
+                            }
+                        }
+                        .clipShape(.rect(cornerRadius: 16))
                 }
+                .buttonStyle(.plain)
             }
+            .modifier(GlassFrame(innerRadius: 16, inset: 6, filled: false))
             ForEach(model.questions) { q in
                 QuestionCard(
                     question: q,
