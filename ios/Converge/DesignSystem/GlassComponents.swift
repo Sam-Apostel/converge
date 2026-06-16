@@ -20,21 +20,45 @@ struct SoftCard<Content: View>: View {
     }
 }
 
-/// The signature card: a frosted Liquid-Glass frame around an opaque white
-/// inner. The glass reads in the gap around the content.
+/// The signature card: a translucent frosted frame wrapping an opaque white
+/// inner, matching the web `GlassCard` (frame `bg-white/32` + `border-white/60`
+/// + `shadow-card`; inner pure white). The frame reads in the gap around the
+/// content — milky over the periwinkle canvas, frosted over richer backdrops.
+struct GlassFrame: ViewModifier {
+    var innerRadius: CGFloat = 18
+    var inset: CGFloat = 8
+
+    func body(content: Content) -> some View {
+        content
+            .background(Palette.surface, in: .rect(cornerRadius: innerRadius))
+            .padding(inset)
+            .background {
+                let r = innerRadius + inset
+                ZStack {
+                    RoundedRectangle(cornerRadius: r).fill(.ultraThinMaterial)
+                    RoundedRectangle(cornerRadius: r).fill(.white.opacity(0.32))
+                }
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: innerRadius + inset)
+                    .strokeBorder(.white.opacity(0.6), lineWidth: 1)
+            }
+            // --shadow-card: two soft drops in rgb(40,50,110).
+            .shadow(color: Color(hex: 0x28326E, alpha: 0.07), radius: 13, x: 0, y: 10)
+            .shadow(color: Color(hex: 0x28326E, alpha: 0.06), radius: 1.5, x: 0, y: 1)
+    }
+}
+
 struct GlassCard<Content: View>: View {
     var padding: CGFloat = 16
-    var inset: CGFloat = 6
+    var inset: CGFloat = 8
     @ViewBuilder var content: Content
 
     var body: some View {
         content
             .padding(padding)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Palette.surface, in: .rect(cornerRadius: 18))
-            .padding(inset)
-            .glassEffect(.regular, in: .rect(cornerRadius: 18 + inset))
-            .shadow(color: Color(hex: 0x28326E, alpha: 0.16), radius: 24, x: 0, y: 16)
+            .modifier(GlassFrame(innerRadius: 18, inset: inset))
     }
 }
 
@@ -80,9 +104,8 @@ struct GlassField<Content: View>: View {
         content
             .padding(.horizontal, 14)
             .padding(.vertical, 11)
-            .background(Palette.surface, in: .rect(cornerRadius: radius))
-            .padding(4)
-            .glassEffect(.regular, in: .rect(cornerRadius: radius + 4))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .modifier(GlassFrame(innerRadius: radius, inset: 5))
     }
 }
 
