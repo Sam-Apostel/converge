@@ -85,11 +85,11 @@ struct TasksView: View {
 
     private var composer: some View {
         HStack(spacing: 8) {
-            TextField("Add a task…", text: $model.draft)
-                .font(TypeRamp.body())
-                .padding(.horizontal, 12).padding(.vertical, 10)
-                .background(Palette.surface, in: .rect(cornerRadius: 14))
-                .onSubmit { Task { await model.add() } }
+            GlassField {
+                TextField("Add a task…", text: $model.draft)
+                    .font(TypeRamp.body())
+                    .onSubmit { Task { await model.add() } }
+            }
             Button { Task { await model.add() } } label: {
                 Image(systemName: "plus").foregroundStyle(Palette.ink)
                     .frame(width: 40, height: 40).background(Palette.lime, in: .circle)

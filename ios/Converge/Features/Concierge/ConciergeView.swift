@@ -112,10 +112,10 @@ struct ConciergeView: View {
 
     private var composer: some View {
         HStack(spacing: 8) {
-            TextField("Ask the concierge…", text: $model.draft, axis: .vertical)
-                .font(TypeRamp.body())
-                .padding(.horizontal, 12).padding(.vertical, 10)
-                .background(Palette.surface, in: .rect(cornerRadius: 18))
+            GlassField(radius: 18) {
+                TextField("Ask the concierge…", text: $model.draft, axis: .vertical)
+                    .font(TypeRamp.body())
+            }
             Button { Task { await model.send() } } label: {
                 Image(systemName: "arrow.up").foregroundStyle(Palette.ink)
                     .frame(width: 40, height: 40).background(Palette.lime, in: .circle)

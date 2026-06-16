@@ -50,5 +50,8 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         ITSAppUsesNonExemptEncryption: false
+        UIAppFonts:
+          - Geist.ttf
+          - GeistMono.ttf
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true

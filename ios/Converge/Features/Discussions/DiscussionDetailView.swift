@@ -78,10 +78,10 @@ struct DiscussionDetailView: View {
 
     private func composer(_ id: String) -> some View {
         HStack(spacing: 8) {
-            TextField("Reply…", text: $model.draft, axis: .vertical)
-                .font(TypeRamp.body())
-                .padding(.horizontal, 12).padding(.vertical, 10)
-                .background(Palette.surface, in: .rect(cornerRadius: 14))
+            GlassField {
+                TextField("Reply…", text: $model.draft, axis: .vertical)
+                    .font(TypeRamp.body())
+            }
             Button { Task { await model.reply(id: id) } } label: {
                 Image(systemName: "paperplane.fill").foregroundStyle(Palette.ink)
                     .frame(width: 40, height: 40).background(Palette.lime, in: .circle)

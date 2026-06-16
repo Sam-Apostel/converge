@@ -46,21 +46,23 @@ enum Palette {
     static let edge = Color(hex: 0x7882B4, alpha: 0.16)
 }
 
-// Type ramp from `--text-*` tokens. Geist isn't bundled yet, so we lean on the
-// system rounded face which carries a similar friendly-geometric feel; swap to
-// Geist in a later polish pass.
+// Type ramp from `--text-*` tokens, using the bundled brand typeface Geist
+// (Geist Mono for eyebrow labels / timestamps). Sizes scale with Dynamic Type.
 enum TypeRamp {
-    static func micro() -> Font { .system(size: 10, weight: .medium) }
-    static func tiny() -> Font { .system(size: 11, weight: .medium) }
-    static func caption() -> Font { .system(size: 12) }
-    static func note() -> Font { .system(size: 13) }
-    static func body() -> Font { .system(size: 14) }
-    static func reading() -> Font { .system(size: 15) }
-    static func title() -> Font { .system(size: 22, weight: .semibold) }
+    private static let sans = "Geist"
+    private static let monoFamily = "Geist Mono"
 
-    // Mono eyebrow — small caps, wide tracking, used for labels/timestamps.
-    static func eyebrow() -> Font { .system(size: 11, weight: .semibold, design: .monospaced) }
-    static func mono(_ size: CGFloat = 12) -> Font { .system(size: size, design: .monospaced) }
+    static func micro() -> Font { .custom(sans, size: 10).weight(.medium) }
+    static func tiny() -> Font { .custom(sans, size: 11).weight(.medium) }
+    static func caption() -> Font { .custom(sans, size: 12) }
+    static func note() -> Font { .custom(sans, size: 13) }
+    static func body() -> Font { .custom(sans, size: 14) }
+    static func reading() -> Font { .custom(sans, size: 15) }
+    static func title() -> Font { .custom(sans, size: 22).weight(.semibold) }
+
+    // Mono eyebrow — uppercased, wide tracking, used for labels/timestamps.
+    static func eyebrow() -> Font { .custom(monoFamily, size: 11).weight(.semibold) }
+    static func mono(_ size: CGFloat = 12) -> Font { .custom(monoFamily, size: size) }
 }
 
 extension Text {

@@ -159,21 +159,23 @@ struct SessionDetailView: View {
     }
 
     private func header(_ d: SessionDetail) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 8) {
-                if let track = d.track { Pill(text: track) }
-                if d.isLiveNow {
-                    HStack(spacing: 5) {
-                        LiveDot()
-                        Text("LIVE NOW").font(TypeRamp.tiny().weight(.bold)).foregroundStyle(Palette.limeDeep)
+        Spotlight(beam: d.isLiveNow) {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    if let track = d.track { Pill(text: track) }
+                    if d.isLiveNow {
+                        HStack(spacing: 5) {
+                            LiveDot()
+                            Text("LIVE NOW").font(TypeRamp.tiny().weight(.bold)).foregroundStyle(Palette.lime)
+                        }
                     }
                 }
-            }
-            Text(d.title).font(TypeRamp.title()).foregroundStyle(Palette.ink)
-            HStack(spacing: 10) {
-                Text(Format.timeRange(d.startsAt, d.endsAt)).font(TypeRamp.mono(13)).foregroundStyle(Palette.slate)
-                if let room = d.roomName {
-                    Label(room, systemImage: "mappin.and.ellipse").font(TypeRamp.caption()).foregroundStyle(Palette.mist)
+                Text(d.title).font(TypeRamp.title()).foregroundStyle(.white)
+                HStack(spacing: 10) {
+                    Text(Format.timeRange(d.startsAt, d.endsAt)).font(TypeRamp.mono(13)).foregroundStyle(Palette.frost)
+                    if let room = d.roomName {
+                        Label(room, systemImage: "mappin.and.ellipse").font(TypeRamp.caption()).foregroundStyle(Palette.frost)
+                    }
                 }
             }
         }
@@ -248,10 +250,10 @@ struct SessionDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Q&A").eyebrow()
             HStack(spacing: 8) {
-                TextField("Ask the speaker…", text: $model.draftQuestion, axis: .vertical)
-                    .font(TypeRamp.body())
-                    .padding(.horizontal, 12).padding(.vertical, 10)
-                    .background(Palette.surface, in: .rect(cornerRadius: 12))
+                GlassField {
+                    TextField("Ask the speaker…", text: $model.draftQuestion, axis: .vertical)
+                        .font(TypeRamp.body())
+                }
                 Button { Task { await model.ask(sessionId: d.id) } } label: {
                     Image(systemName: "paperplane.fill").foregroundStyle(Palette.ink)
                         .frame(width: 40, height: 40).background(Palette.lime, in: .circle)
