@@ -74,6 +74,8 @@ type PersonSeed = {
   socials: Record<string, string>
   /** Real headshot URL; falls back to a generated avatar when omitted. */
   image?: string
+  /** Grant the global super-admin flag — unlocks the admin MCP write surface. */
+  admin?: boolean
 }
 
 const people: PersonSeed[] = [
@@ -285,6 +287,7 @@ const people: PersonSeed[] = [
     interestedTopics: ['observability', 'community', 'react', 'performance'],
     availability: 'open',
     socials: { x: 'elenacosta', github: 'elena' },
+    admin: true,
   },
   {
     key: 'sven',
@@ -883,6 +886,7 @@ async function seed() {
       email: p.email,
       emailVerified: true,
       image: p.image ?? avatar(p.handle),
+      isAdmin: p.admin ?? false,
     })
     await db.insert(profile).values({
       userId: id,

@@ -57,6 +57,13 @@
       "when": 1781454673185,
       "tag": "0007_lying_clint_barton",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1781552313123,
+      "tag": "0008_daily_purple_man",
+      "breakpoints": true
     }
   ]
 }

@@ -1,5 +1,8 @@
 import { getRequestHeaders } from '@tanstack/react-start/server'
+import { eq } from 'drizzle-orm'
 
+import { db } from '#/db'
+import { user } from '#/db/schema'
 import { auth } from '#/lib/auth'
 
 /** The ambient request headers inside a server function. */
@@ -37,4 +40,14 @@ export async function requireUserId(headers?: Headers): Promise<string> {
     throw new Response('Unauthorized', { status: 401 })
   }
   return session.user.id
+}
+
+/** Whether a user holds the global super-admin flag. */
+export async function isAdminUser(userId: string): Promise<boolean> {
+  const [row] = await db
+    .select({ isAdmin: user.isAdmin })
+    .from(user)
+    .where(eq(user.id, userId))
+    .limit(1)
+  return row?.isAdmin ?? false
 }

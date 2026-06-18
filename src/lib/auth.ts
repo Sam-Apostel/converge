@@ -76,6 +76,19 @@ export const auth = betterAuth({
     enabled: true,
   },
 
+  // Global super-admin flag. `input: false` keeps it out of the signup/update
+  // API surface — it is granted out-of-band (seed / SQL) and read server-side to
+  // gate the admin MCP tools. Regenerate `auth-schema.ts` with `auth:generate`.
+  user: {
+    additionalFields: {
+      isAdmin: {
+        type: 'boolean',
+        defaultValue: false,
+        input: false,
+      },
+    },
+  },
+
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID ?? '',

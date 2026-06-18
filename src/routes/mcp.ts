@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { withMcpAuth } from 'better-auth/plugins'
 
 import { auth } from '#/lib/auth'
+import { isAdminUser } from '#/lib/server-auth'
 import { buildServer } from '#/mcp/server'
 
 /**
@@ -19,7 +20,8 @@ import { buildServer } from '#/mcp/server'
  * sessions.
  */
 const handler = withMcpAuth(auth, async (request, session) => {
-  const server = buildServer(session.userId)
+  const isAdmin = await isAdminUser(session.userId)
+  const server = buildServer(session.userId, { isAdmin })
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
   })
